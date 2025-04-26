@@ -1,0 +1,4 @@
+import{j as t}from"./index-DB-U-9Cm.js";import{b as c,C as p,h as f}from"./FileUpload-_tdyE3Rx.js";function i({name:l,label:o,size:a,borderColor:r,inputValidation:n,...u}){const{control:d}=c();return t.jsx(p,{name:l,control:d,render:({field:{ref:m,...s},fieldState:{error:e}})=>t.jsxs(t.Fragment,{children:[t.jsx("label",{className:"text-muted-foreground text-xs font-bold",htmlFor:o,children:o}),t.jsx("textarea",{ref:m,...s,value:typeof s.value=="number"&&s.value===0?"":s.value,onInput:x=>{n&&f(x,n)},className:`bg-transparent block w-full rounded-lg border dark:text-white ${a==="small"&&"p-1"||a==="medium"&&"p-3"||a==="large"&&"p-4"||"p-2"} placeholder-gray-500 focus:outline-none focus:z-10 
+              ${e?"focus:border-red-400":"focus:border-indigo-400"}  
+              ${e?"border-red-400":r??"border-gray-300"}
+          `,...u}),e&&t.jsx("span",{className:"text-red-400 text-xs",children:e==null?void 0:e.message})]})})}export{i as R};

@@ -1,0 +1,204 @@
+import { Image } from '@/components/image';
+import {
+  Card,
+  CardFooter,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  CardContent
+} from '@/components/ui/card';
+import { Link } from 'react-router-dom';
+import Page from '@/components/helmet-page';
+import { Button } from '@/components/ui/button';
+import { useTranslate } from '@/hooks/useTanslate';
+import { useApi } from '@/hooks/useCustomQuery';
+import { feeDemandApi } from '@/lib';
+// import { GET_FEE_DEMAND_AMOUNT_TYPE } from './type';
+import SkeletonLoader from '@/components/loaders/SkeletonLoader';
+import { Separator } from '@radix-ui/react-menubar';
+import useLastTransactionData from '@/hooks/useCommonData';
+import moment from 'moment';
+import { STUDENT_FEE_TYPE_LIST } from '../payment/type';
+import ChartFeeData from './ChartsFeeData';
+
+export default function Home() {
+  const { i18n } = useTranslate();
+  const { lastTransaction } = useLastTransactionData();
+
+  // const feeAmount = useApi<GET_FEE_DEMAND_AMOUNT_TYPE>({
+  //   api: feeDemandApi.getFeeDemandAmountBySid,
+  //   options: {
+  //     enabled: true
+  //   }
+  // });
+
+  const feeDemandData = useApi<STUDENT_FEE_TYPE_LIST>({
+    api: `${feeDemandApi.feeDemandByStudentId}`,
+    options: {
+      enabled: true
+    }
+  });
+
+  if (feeDemandData.isLoading) {
+    return (
+      <div className="p-6">
+        <Card className="mt-1">
+          <CardContent>
+            <div className="py-2">
+              <SkeletonLoader />
+              <SkeletonLoader />
+            </div>
+          </CardContent>
+        </Card>
+        <Separator className="my-4 mb-2" />
+        <div className="grid grid-cols-2 gap-4">
+          {Array.from({ length: 4 }).map((_, index) => (
+            <Card key={index + 1}>
+              <CardContent className="mt-5">
+                <SkeletonLoader />
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <Page title="Home">
+      <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 lg:grid-cols-3 xl:grid-cols-3">
+        {feeDemandData?.data?.data?.length! < 0 ? (
+          <div className="px-0 mt-0 relative">
+            <div className="bg-green-400 w-full py-2 rounded-lg border border-green-400 bg-opacity-0 px-4">
+              <h1 className="text-left text-sm text-green-400 font-semibold">
+                <span className="text-green-500 font-semibold">!</span> Alert :
+                Your fee is up to date.
+              </h1>
+            </div>
+          </div>
+        ) : (
+          <div className="px-0 mt-0 relative">
+            <div className="bg-red-400 w-full py-2 rounded-lg border border-red-400 bg-opacity-0 px-4">
+              <h1 className="text-left text-sm text-red-400 font-semibold">
+                <span className="text-red-500 font-semibold">!</span> Alert :
+                Pay your fee now.
+              </h1>
+            </div>
+          </div>
+        )}
+
+        <div className="grid auto-rows-max items-start gap-4 md:gap-8 lg:col-span-2">
+          <div className="grid gap-4 grid-cols-2 md:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4">
+            <div className="col-span-2">
+              {feeDemandData?.data?.data?.length! < 0 ? (
+                <Card x-chunk="dashboard-05-chunk-1">
+                  <CardHeader className="pb-3 flex justify-center items-center">
+                    <CardDescription>
+                      Last Payment Date{' '}
+                      {moment(lastTransaction?.data?.data?.createdAt).format(
+                        'MMMM YYYY'
+                      )}
+                    </CardDescription>
+                    <CardTitle className="text-4xl">₹{0}</CardTitle>
+                    <CardDescription className="max-w-lg text-balance leading-relaxed">
+                      {/* {lastTransaction?.data?.data?.paidFrom} -{' '}
+                      {lastTransaction?.data?.data?.paidUpto} */}
+                      Your fee is up to date.
+                    </CardDescription>
+                  </CardHeader>
+                </Card>
+              ) : (
+                <ChartFeeData feeDemandData={feeDemandData} lastPaymentDate={lastTransaction?.data?.data?.createdAt}/>
+                // <Card className="sm:col-span-2 " x-chunk="dashboard-05-chunk-0">
+                //   <CardHeader className="pb-3 flex justify-center items-center">
+                //     <CardDescription>
+                //       {feeDemandData.data?.data[0]?.feeDetails[0]?.sessionName}
+                //     </CardDescription>
+                //     <CardTitle className="text-4xl">
+                //       ₹{feeDemandData?.data?.pendingAmount}
+                //     </CardTitle>
+                //     <CardDescription className="max-w-lg text-balance leading-relaxed">
+                //       {feeDemandData?.data?.fromMonth} -{' '}
+                //       {feeDemandData?.data?.uptoMonth}
+                //     </CardDescription>
+                //   </CardHeader>
+                //   <CardFooter>
+                //     <Link className="mx-auto" to="/lms-app/payment">
+                //       <Button variant={'outline'} className="px-10">
+                //         Fee Details
+                //       </Button>
+                //     </Link>
+                //   </CardFooter>
+                // </Card>
+              )}
+            </div>
+            <Link to="/lms-app/details">
+              <Card x-chunk="dashboard-05-chunk-1">
+                <div className="py-4">
+                  <div className="flex justify-center">
+                    <Image
+                      src="/dtl.png"
+                      alt="Avatar"
+                      className="overflow-hidden w-10 h-10"
+                    />
+                  </div>
+                  <CardTitle className="text-md text-center">
+                    {i18n.t('details')}
+                  </CardTitle>
+                </div>
+              </Card>
+            </Link>
+            <Link to="/lms-app/payment-history">
+              <Card x-chunk="dashboard-05-chunk-1">
+                <div className="py-4">
+                  <div className="flex justify-center items-center">
+                    <Image
+                      src="/his.png"
+                      alt="Avatar"
+                      className="overflow-hidden w-10 h-10"
+                    />
+                  </div>
+                  <CardTitle className="text-md text-center">
+                    {i18n.t('history')}
+                  </CardTitle>
+                </div>
+              </Card>
+            </Link>
+            <Link to="/lms-app/profile">
+              <Card x-chunk="dashboard-05-chunk-1">
+                <div className="py-4">
+                  <div className="flex justify-center">
+                    <Image
+                      src="/user2.png"
+                      alt="Avatar"
+                      className="overflow-hidden w-10 h-10 "
+                    />
+                  </div>
+                  <CardTitle className="text-md text-center">
+                    {i18n.t('profile')}
+                  </CardTitle>
+                </div>
+              </Card>
+            </Link>
+            <Link to="/lms-app/receipt-verify">
+              <Card x-chunk="dashboard-05-chunk-1">
+                <div className="py-4">
+                  <div className="flex justify-center">
+                    <Image
+                      src="/receiptVerify.svg"
+                      alt="Avatar"
+                      className="overflow-hidden w-10 h-10"
+                    />
+                  </div>
+                  <CardTitle className="text-md text-center">
+                    {i18n.t('verifyReceipt')}
+                  </CardTitle>
+                </div>
+              </Card>
+            </Link>
+          </div>
+        </div>
+      </main>
+    </Page>
+  );
+}
