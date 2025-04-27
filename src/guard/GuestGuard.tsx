@@ -27,9 +27,9 @@ export default function GuestGuard({
 
   if (isAuthenticated) {
     if ((user?.role == "Admin") || (user?.role == "Owner")) {
-      return <Navigate to="/loan/admin-home" />;
+      return <Navigate to="/ijhesm/admin-home" />;
     }
-    return <Navigate to="/loan/auth/login" />;
+    return <Navigate to="/ijhesm/auth/login" />;
   }
 
   return <>{children}</>;

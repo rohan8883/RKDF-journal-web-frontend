@@ -28,14 +28,19 @@ const Page = forwardRef(
 
     return (
       <>
-        <Helmet>
-          <title>{`${title} | Loan Distribution`}</title>
-          {meta}
-        </Helmet>
-        <div ref={ref} {...other} className={cn('px-4 py-1', className)}>
-          {children}
-        </div>
-      </>
+      <Helmet>
+        <title>
+          {title
+            ? `${title} | INTERNATIONAL JOURNAL OF HUMANITIES, ENGINEERING, SCIENCE AND MANAGEMENT`
+            : 'INTERNATIONAL JOURNAL OF HUMANITIES, ENGINEERING, SCIENCE AND MANAGEMENT'}
+        </title>
+        {meta}
+      </Helmet>
+      <div ref={ref} {...other} className={cn('px-4 py-1', className)}>
+        {children}
+      </div>
+    </>
+    
     );
   }
 );

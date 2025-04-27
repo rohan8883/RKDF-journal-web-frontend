@@ -38,22 +38,23 @@ const ForgetPassword = lazyWithRetries(
 );
 
 // -------------------------------Guest routes--------------------------------
-const LandingPage = lazyWithRetries(() => import('@/pages/journal/guest/landing'));
-const About = lazyWithRetries(() => import('@/pages/journal/guest/about'));
-const News = lazyWithRetries(() => import('@/pages/journal/guest/news'));
+const LandingPage = lazyWithRetries(() => import('@/pages/ijhesm/guest/landing'));
+const About = lazyWithRetries(() => import('@/pages/ijhesm/guest/about'));
+const News = lazyWithRetries(() => import('@/pages/ijhesm/guest/news'));
+const Contact = lazyWithRetries(() => import('@/pages/ijhesm/guest/contact'));
 
 
 
 // -------------------------------Admin--------------------------------
-const AdminHome = lazyWithRetries(() => import('@/pages/journal/admin/home'));
-const CreateUser = lazyWithRetries(() => import('@/pages/journal/admin/create-user'));
-const RoleMaster = lazyWithRetries(() => import('@/pages/journal/admin/role'));
-const PlanMaster = lazyWithRetries(() => import('@/pages/journal/admin/plans'));
-const UserMaster = lazyWithRetries(() => import('@/pages/journal/admin/users'));
-const AddMember = lazyWithRetries(() => import('@/pages/journal/admin/new-loan-request'));
-const LoanList = lazyWithRetries(() => import('@/pages/journal/admin/loan-list'));
-const MakePayment = lazyWithRetries(() => import('@/pages/journal/admin/loan-payment'));
-const Profile = lazyWithRetries(() => import('@/pages/journal/admin/profile'));
+const AdminHome = lazyWithRetries(() => import('@/pages/ijhesm/admin/home'));
+const CreateUser = lazyWithRetries(() => import('@/pages/ijhesm/admin/create-user'));
+const RoleMaster = lazyWithRetries(() => import('@/pages/ijhesm/admin/role'));
+const PlanMaster = lazyWithRetries(() => import('@/pages/ijhesm/admin/plans'));
+const UserMaster = lazyWithRetries(() => import('@/pages/ijhesm/admin/users'));
+const AddMember = lazyWithRetries(() => import('@/pages/ijhesm/admin/new-loan-request'));
+const LoanList = lazyWithRetries(() => import('@/pages/ijhesm/admin/loan-list'));
+const MakePayment = lazyWithRetries(() => import('@/pages/ijhesm/admin/loan-payment'));
+const Profile = lazyWithRetries(() => import('@/pages/ijhesm/admin/profile'));
 
 
 
@@ -226,6 +227,12 @@ const routes: Route[] = [
         name: 'About Page',
         path: 'about',
         element: <About />
+      },
+      {
+        id: '3',
+        name: 'About Page',
+        path: 'contact',
+        element: <Contact />
       },
     ]
   }
