@@ -83,7 +83,7 @@ const routes: Route[] = [
     pages: [
       {
         id: '1',
-        name: 'Login',
+        name: 'Login NNN',
         path: 'login',
         element: <Login />
       },

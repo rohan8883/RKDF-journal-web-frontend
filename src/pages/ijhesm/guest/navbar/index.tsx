@@ -127,6 +127,7 @@ const Navbar = () => {
                 <div className="flex flex-col">
                   <Link
                     to={item.link}
+                    onClick={() => setIsMobileMenuOpen(false)} // <-- Add this
                     className="flex items-center justify-between py-2 text-gray-700 font-semibold hover:text-blue-600"
                   >
                     {item.title}
@@ -138,6 +139,7 @@ const Navbar = () => {
                         <Link
                           key={dropdownIndex}
                           to={dropdownItem.link}
+                          onClick={() => setIsMobileMenuOpen(false)} // <-- Also add here
                           className="block py-2 text-sm text-gray-600 hover:text-blue-600"
                         >
                           {dropdownItem.title}
@@ -152,7 +154,8 @@ const Navbar = () => {
         </div>
       )}
 
-     
+
+
     </header>
   )
 }
