@@ -9,42 +9,38 @@ const Navbar = () => {
 
   const navItems = [
     { title: "HOME", link: "/" },
-    { title: "ABOUT US", link: "/ijhesm/about" },
     {
-      title: "EDITORIAL BOARD",
-      link: "/editorial-board",
+      title: "ABOUT",
+      link: "/",
       hasDropdown: true,
       dropdownItems: [
-        { title: "EDITORIAL TEAM", link: "/editorial-team" },
-        { title: "ADVISORY BOARD", link: "/advisory-board" },
+        { title: "ABOUT THE JOURNAL", link: "/" },
+        { title: "PRIVACY STATEMENT", link: "/" },
+        { title: "ETHICS POLICY", link: "/" },
+        { title: "ALL POLICY", link: "/" },
+        { title: "INDEXING", link: "/" },
       ],
     },
-    { title: "CURRENT ISSUE", link: "/current-issue" },
-    {
-      title: "ARCHIVES",
-      link: "/archives",
-      hasDropdown: true,
-      dropdownItems: [
-        { title: "2023 ISSUES", link: "/archives/2023" },
-        { title: "2022 ISSUES", link: "/archives/2022" },
-        { title: "2021 ISSUES", link: "/archives/2021" },
-      ],
-    },
+    { title: "EDITORIAL BOARD", link: "/ijhesm/about" },
     {
       title: "FOR AUTHOR",
-      link: "/for-author",
+      link: "",
       hasDropdown: true,
       dropdownItems: [
-        { title: "CALL FOR PAPER", link: "/call-for-paper" },
-        { title: "AUTHOR GUIDELINES", link: "/author-guidelines" },
-        { title: "COPYRIGHT FORM", link: "/copyright-form" },
+        { title: "SUBMIT PAPER", link: "/call-for-paper" },
+        { title: "PUBLICATION PROCEDURE", link: "/author-guidelines" },
+        { title: "ARTICLE PROCESSING CHARGE", link: "/processing-charges" },
         { title: "SAMPLE PAPER FORMAT", link: "/sample-paper-format" },
-        { title: "PROCESSING CHARGES", link: "/processing-charges" },
+        { title: "COPYRIGHT FORM", link: "/" },
+        { title: "RESEARCH AREA", link: "/" },
       ],
     },
-    { title: "RESEARCH AREA", link: "/research-area" },
-    { title: "PAPER SUBMIT", link: "/paper-submit" },
-    { title: "CONTACT US", link: "/ijhesm/contact" },
+    { title: "CURRENT", link: "/current-issue" },
+    { title: "ARCHIVES", link: "/current-issue" },
+    
+   
+    { title: "NEWS", link: "/research-area" },
+    { title: "CONTACT", link: "/ijhesm/contact" },
     { title: "REGISTRATION", link: "/contact-us" },
     { title: "LOGIN", link: "/ijhesm/auth/login" },
   ];
