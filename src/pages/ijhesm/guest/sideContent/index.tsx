@@ -76,9 +76,7 @@ export default function SideContent() {
                 </div>
               </CardContent>
             </Card>
-
-
-            
+      
             {/* Journal Certifications */}
             <Card>
             <CardHeader className="pb-2">
@@ -92,7 +90,7 @@ export default function SideContent() {
                         src="/l-4.png?height=80&width=80"
                         alt="Open Access"
                         width={80}
-                        height={80}
+                        // height={80}
                         className="object-contain"
                       />
                     </div>
@@ -104,7 +102,7 @@ export default function SideContent() {
                         src="/peer-review.jpg?height=80&width=80"
                         alt="Peer Reviewed"
                         width={80}
-                        height={80}
+                        // height={80}
                         className="object-contain"
                       />
                     </div>
@@ -116,7 +114,7 @@ export default function SideContent() {
                         src="/l-3.png?height=80&width=80"
                         alt="ISSN Approved"
                         width={80}
-                        height={80}
+                        // height={80}
                         className="object-contain"
                       />
                     </div>
@@ -128,7 +126,7 @@ export default function SideContent() {
                         src="/l-5.png?height=80&width=80"
                         alt="Creative Common"
                         width={80}
-                        height={80}
+                        // height={80}
                         className="object-contain"
                       />
                     </div>
@@ -140,7 +138,7 @@ export default function SideContent() {
                         src="/DOI.png?height=80&width=100"
                         alt="DOI"
                         width={100}
-                        height={80}
+                        // height={80}
                         className="object-contain"
                       />
                     </div>
@@ -149,8 +147,6 @@ export default function SideContent() {
                 </div>
               </CardContent>
             </Card>
-            
           </div>
-      
     )
 }

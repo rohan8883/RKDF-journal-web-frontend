@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import SideContent from '../sideContent'
 import Page from '@/components/helmet-page'
-import { Image } from '@/components/image';
 import { ArrowRight, BookOpen, FileText, Upload, CreditCard, Award, Check, ExternalLink } from 'lucide-react'
 
 export default function LandingPage() {

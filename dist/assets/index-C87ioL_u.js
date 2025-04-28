@@ -1,1 +1,0 @@
-import{j as r}from"./index-Bp9LYJeM.js";import{P as i}from"./index-AF2f4XN8.js";import"./router-DMIetGpf.js";import"./axios-DmypytPv.js";const o=()=>r.jsx(i,{children:r.jsx("div",{children:"Landing page"})});export{o as default};
