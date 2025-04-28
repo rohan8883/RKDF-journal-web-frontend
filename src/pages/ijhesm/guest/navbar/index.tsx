@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { Link } from 'react-router-dom'
 import { ChevronDown, Menu, X } from "lucide-react"
-
+import { Image } from '@/components/image';
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -51,7 +51,7 @@ const Navbar = () => {
       <div className="flex items-center justify-between p-4 bg-white">
         <div className="flex items-center gap-4">
           <div className="relative w-20 h-20">
-            <img
+            <Image
               src="/HeaderLogo.png"
               alt="BIJMRD Logo"
               className="object-contain w-full h-full"

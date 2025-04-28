@@ -36,7 +36,7 @@ const Page = forwardRef(
         </title>
         {meta}
       </Helmet>
-      <div ref={ref} {...other} className={cn('px-4 py-1', className)}>
+      <div ref={ref} {...other} className={cn('px-0 py-1', className)}>
         {children}
       </div>
     </>

@@ -12,6 +12,7 @@ import {
 import { useStore } from '@/store';
 import { usePostMutation } from '@/hooks/useCustomQuery';
 import { authApi, getErrorMessage } from '@/lib';
+import { Link } from 'react-router-dom';
 
 const schema = yup.object({
   email: yup.string().email().required(),
@@ -49,7 +50,7 @@ export default function LoginForm() {
       <div className="space-y-4 ">
         <div className="space-y-2">
           <RHFTextField
-            className="rounded-xl py-6 px-5 w-full bg-background"
+            className="rounded  py-4 px-5 w-full bg-background"
             name="email"
             inputValidation={['email', 'removeSpace']}
             placeholder="Enter your email"
@@ -57,7 +58,7 @@ export default function LoginForm() {
         </div>
         <div className="space-y-2">
           <RHFPasswordField
-            className="rounded-xl py-6 px-5 w-full bg-background"
+            className="rounded py-4 px-5 w-full bg-background"
             name="password"
             placeholder="Enter your password"
           />
@@ -66,46 +67,17 @@ export default function LoginForm() {
           <ButtonLoading
             type="submit"
             isLoading={methods.formState.isSubmitting}
-            className="w-full rounded-xl py-5 px-4 mt-2 shadow-none"
+            className="w-full rounded  py-4 px-4 mt-2 shadow-none"
             variant="outline"
           >
             Login
           </ButtonLoading>
-        </div>
-        {/* or */}
-        {/* <div className="flex items-center gap-2">
-          <hr className="flex-1" />
-          <span>or</span>
-          <hr className="flex-1" />
-        </div> */}
-        {/* <div>
-          <Link
-            to="/auth/otp-login"
-            className="w-full justify-center rounded-xl py-2 text-white bg-[#4285F4] hover:bg-[#4285F4]/90 focus:ring-4 focus:outline-none focus:ring-[#4285F4]/50 font-medium text-sm px-5  text-center inline-flex items-center dark:focus:ring-[#4285F4]/55 me-2 mb-2"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6 mr-2"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 5v14m7-7H5"
-              />
-            </svg>
-            Sign in with Mobile
-          </Link>
-        </div> */}
-{/* 
+        </div> 
         <div className="text-center">
           <Link to="/loan/auth/forget-password">
             <span className="text-sm text-primary">Forget password?</span>
           </Link>
-        </div> */}
+        </div>
       </div>
     </FormProviders>
   );
