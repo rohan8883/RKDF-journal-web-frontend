@@ -36,12 +36,22 @@ const Register = lazyWithRetries(() => import('@/pages/auth/register'));
 const ForgetPassword = lazyWithRetries(
   () => import('@/pages/auth/forget-password')
 );
-
 // -------------------------------Guest routes--------------------------------
 const LandingPage = lazyWithRetries(() => import('@/pages/ijhesm/guest/landing'));
 const About = lazyWithRetries(() => import('@/pages/ijhesm/guest/about'));
 const News = lazyWithRetries(() => import('@/pages/ijhesm/guest/news'));
 const Contact = lazyWithRetries(() => import('@/pages/ijhesm/guest/contact'));
+const Privacy = lazyWithRetries(() => import('@/pages/ijhesm/guest/privacy'));
+const EthicsPolicy = lazyWithRetries(() => import('@/pages/ijhesm/guest/ethicsPolicy'));
+const AllPolicy = lazyWithRetries(() => import('@/pages/ijhesm/guest/allPolicy'));
+const PubChange = lazyWithRetries(() => import('@/pages/ijhesm/guest/pubCharge'));
+const ResearchArea = lazyWithRetries(() => import('@/pages/ijhesm/guest/researchArea'));
+const Submissions = lazyWithRetries(() => import('@/pages/ijhesm/guest/submissions'));
+const Archive = lazyWithRetries(() => import('@/pages/ijhesm/guest/archive'));
+const Announcement = lazyWithRetries(() => import('@/pages/ijhesm/guest/announcement'));
+const EditorialTeam = lazyWithRetries(() => import('@/pages/ijhesm/guest/editorialTeam'));
+const Indexing = lazyWithRetries(() => import('@/pages/ijhesm/guest/indexing'));
+const PublicationProcedure = lazyWithRetries(() => import('@/pages/ijhesm/guest/publicationProcedure'));
 
 
 
@@ -233,6 +243,72 @@ const routes: Route[] = [
         name: 'About Page',
         path: 'contact',
         element: <Contact />
+      },
+      {
+        id: '3',
+        name: 'Privacy',
+        path: 'privacy',
+        element: <Privacy />
+      },
+      {
+        id: '3',
+        name: 'Ethics Policy',
+        path: 'ethicsPolicy',
+        element: <EthicsPolicy />
+      },
+      {
+        id: '3',
+        name: 'All Policy',
+        path: 'allPolicy',
+        element: <AllPolicy />
+      },
+      {
+        id: '3',
+        name: 'Announcement',
+        path: 'announcement',
+        element: <Announcement />
+      },
+      {
+        id: '3',
+        name: 'Pub Change',
+        path: 'pubChange',
+        element: <PubChange />
+      },
+      {
+        id: '3',
+        name: 'Publication Procedure',
+        path: 'publicationProcedure',
+        element: <PublicationProcedure />
+      },
+      {
+        id: '3',
+        name: 'ResearchArea',
+        path: 'researchArea',
+        element: <ResearchArea />
+      },
+      {
+        id: '3',
+        name: 'Submissions',
+        path: 'submissions',
+        element: <Submissions />
+      },
+      {
+        id: '3',
+        name: 'Archive',
+        path: 'archive',
+        element: <Archive />
+      },
+      {
+        id: '3',
+        name: 'Editorial Team',
+        path: 'editorialTeam',
+        element: <EditorialTeam />
+      },
+      {
+        id: '3',
+        name: 'Indexing',
+        path: 'indexing',
+        element: <Indexing />
       },
     ]
   }

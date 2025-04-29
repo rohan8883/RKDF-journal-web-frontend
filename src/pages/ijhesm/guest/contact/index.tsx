@@ -53,7 +53,6 @@ export default function Contact() {
                       </div>
                     </div>
                   </div>
-                  
                   {/* Support Contact Section */}
                   <div className="flex flex-col sm:flex-row items-start sm:space-x-4">
                     <div className="bg-purple-100 p-3 rounded-full flex-shrink-0 mb-3 sm:mb-0">
@@ -96,7 +95,6 @@ export default function Contact() {
                 </div>
               </div>
             </div>
-            
             {/* Sidebar - Takes 1/3 on desktop */}
             <SideContent />
           </div>
