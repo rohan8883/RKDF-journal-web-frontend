@@ -41,7 +41,7 @@ const Navbar = () => {
    
     { title: "NEWS", link: "/ijhesm/announcement" },
     { title: "CONTACT", link: "/ijhesm/contact" },
-    { title: "REGISTRATION", link: "/contact-us" },
+    { title: "REGISTRATION", link: "/ijhesm/registration" },
     { title: "LOGIN", link: "/ijhesm/auth/login" },
   ];
 

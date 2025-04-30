@@ -51,6 +51,8 @@ const Archive = lazyWithRetries(() => import('@/pages/ijhesm/guest/archive'));
 const Announcement = lazyWithRetries(() => import('@/pages/ijhesm/guest/announcement'));
 const EditorialTeam = lazyWithRetries(() => import('@/pages/ijhesm/guest/editorialTeam'));
 const Indexing = lazyWithRetries(() => import('@/pages/ijhesm/guest/indexing'));
+const LoginPage = lazyWithRetries(() => import('@/pages/ijhesm/guest/loginPage'));
+const Registration = lazyWithRetries(() => import('@/pages/ijhesm/guest/registration'));
 const PublicationProcedure = lazyWithRetries(() => import('@/pages/ijhesm/guest/publicationProcedure'));
 
 
@@ -93,7 +95,7 @@ const routes: Route[] = [
     pages: [
       {
         id: '1',
-        name: 'Login NNN',
+        name: 'Login',
         path: 'login',
         element: <Login />
       },
@@ -309,6 +311,18 @@ const routes: Route[] = [
         name: 'Indexing',
         path: 'indexing',
         element: <Indexing />
+      },
+      {
+        id: '3',
+        name: 'Login',
+        path: 'login-page',
+        element: <LoginPage />
+      },
+      {
+        id: '3',
+        name: 'Login',
+        path: 'registration',
+        element: <Registration />
       },
     ]
   }
