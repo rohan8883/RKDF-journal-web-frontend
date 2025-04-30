@@ -16,8 +16,8 @@ export type { AxiosRequestConfig, AxiosResponse };
 //   }
 // };
 
-export const BASE_URI = 'https://apiloan.algoworks.online';
-// export const BASE_URI = 'http://localhost:3008';
+// export const BASE_URI = 'https://apiloan.algoworks.online';
+export const BASE_URI = 'http://localhost:3008';
 // export const BASE_URI = 'https://apigymsphere.algoworks.online'; 
 // export const BASE_URI = URL();
 

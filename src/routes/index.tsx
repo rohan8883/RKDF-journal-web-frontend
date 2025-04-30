@@ -8,15 +8,15 @@ export default function AllRoutes() {
   return (
     <Routes>
       <Route
-        path="/ijhesm"
-        element={<Navigate to="/ijhesm/landing-page" />}
+        path="/Journal"
+        element={<Navigate to="/Journal/landing-page" />}
         // element={<Navigate to="/loan/auth/login" />}
         index={true}
       />
 
       {/*************************************Auth Routes********************************************/}
       <Route
-        path="/ijhesm/auth"
+        path="/Journal/auth"
         element={
           <GuestGuard>
             <AuthLayout />
@@ -34,7 +34,7 @@ export default function AllRoutes() {
 
       {/*************************************GYM Routes********************************************/}
       <Route
-        path="/ijhesm"
+        path="/Journal"
         element={
           <AuthGuard>
             <StudentLayout />
@@ -52,7 +52,7 @@ export default function AllRoutes() {
 
 {/* admin */}
       <Route
-        path="/ijhesm"
+        path="/Journal"
         element={
           <AuthGuard>
             <AdminLayout />
@@ -69,7 +69,7 @@ export default function AllRoutes() {
       </Route>
 
       {/*************************************Guest Routes********************************************/}
-      <Route path="/ijhesm">
+      <Route path="/Journal">
         {routes?.map(
           ({ layout, pages }) =>
             layout === 'guest' &&
@@ -81,7 +81,7 @@ export default function AllRoutes() {
 
       {/***************************************404 Routes****************************************************/}
       <Route path="*" element={<NotFound />} />
-      <Route path="" element={<Navigate to="/ijhesm" replace />} />
+      <Route path="" element={<Navigate to="/Journal" replace />} />
     </Routes>
   );
 }

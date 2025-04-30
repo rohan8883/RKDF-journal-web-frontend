@@ -1,6 +1,6 @@
 {
-  "name": "Loan App",
-  "short_name": "Loan App",
+  "name": "IJHESM App",
+  "short_name": "IJHESM App",
   "display": "standalone",
   "start_url": ".",
   "theme_color": "#7c3aef",

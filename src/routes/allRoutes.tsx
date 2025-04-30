@@ -37,36 +37,36 @@ const ForgetPassword = lazyWithRetries(
   () => import('@/pages/auth/forget-password')
 );
 // -------------------------------Guest routes--------------------------------
-const LandingPage = lazyWithRetries(() => import('@/pages/ijhesm/guest/landing'));
-const About = lazyWithRetries(() => import('@/pages/ijhesm/guest/about'));
-const News = lazyWithRetries(() => import('@/pages/ijhesm/guest/news'));
-const Contact = lazyWithRetries(() => import('@/pages/ijhesm/guest/contact'));
-const Privacy = lazyWithRetries(() => import('@/pages/ijhesm/guest/privacy'));
-const EthicsPolicy = lazyWithRetries(() => import('@/pages/ijhesm/guest/ethicsPolicy'));
-const AllPolicy = lazyWithRetries(() => import('@/pages/ijhesm/guest/allPolicy'));
-const PubChange = lazyWithRetries(() => import('@/pages/ijhesm/guest/pubCharge'));
-const ResearchArea = lazyWithRetries(() => import('@/pages/ijhesm/guest/researchArea'));
-const Submissions = lazyWithRetries(() => import('@/pages/ijhesm/guest/submissions'));
-const Archive = lazyWithRetries(() => import('@/pages/ijhesm/guest/archive'));
-const Announcement = lazyWithRetries(() => import('@/pages/ijhesm/guest/announcement'));
-const EditorialTeam = lazyWithRetries(() => import('@/pages/ijhesm/guest/editorialTeam'));
-const Indexing = lazyWithRetries(() => import('@/pages/ijhesm/guest/indexing'));
-const LoginPage = lazyWithRetries(() => import('@/pages/ijhesm/guest/loginPage'));
-const Registration = lazyWithRetries(() => import('@/pages/ijhesm/guest/registration'));
-const PublicationProcedure = lazyWithRetries(() => import('@/pages/ijhesm/guest/publicationProcedure'));
+const LandingPage = lazyWithRetries(() => import('@/pages/Journal/guest/landing'));
+const About = lazyWithRetries(() => import('@/pages/Journal/guest/about'));
+const News = lazyWithRetries(() => import('@/pages/Journal/guest/news'));
+const Contact = lazyWithRetries(() => import('@/pages/Journal/guest/contact'));
+const Privacy = lazyWithRetries(() => import('@/pages/Journal/guest/privacy'));
+const EthicsPolicy = lazyWithRetries(() => import('@/pages/Journal/guest/ethicsPolicy'));
+const AllPolicy = lazyWithRetries(() => import('@/pages/Journal/guest/allPolicy'));
+const PubChange = lazyWithRetries(() => import('@/pages/Journal/guest/pubCharge'));
+const ResearchArea = lazyWithRetries(() => import('@/pages/Journal/guest/researchArea'));
+const Submissions = lazyWithRetries(() => import('@/pages/Journal/guest/submissions'));
+const Archive = lazyWithRetries(() => import('@/pages/Journal/guest/archive'));
+const Announcement = lazyWithRetries(() => import('@/pages/Journal/guest/announcement'));
+const EditorialTeam = lazyWithRetries(() => import('@/pages/Journal/guest/editorialTeam'));
+const Indexing = lazyWithRetries(() => import('@/pages/Journal/guest/indexing'));
+const LoginPage = lazyWithRetries(() => import('@/pages/Journal/guest/loginPage'));
+const Registration = lazyWithRetries(() => import('@/pages/Journal/guest/registration'));
+const PublicationProcedure = lazyWithRetries(() => import('@/pages/Journal/guest/publicationProcedure'));
 
 
 
 // -------------------------------Admin--------------------------------
-const AdminHome = lazyWithRetries(() => import('@/pages/ijhesm/admin/home'));
-const CreateUser = lazyWithRetries(() => import('@/pages/ijhesm/admin/create-user'));
-const RoleMaster = lazyWithRetries(() => import('@/pages/ijhesm/admin/role'));
-const PlanMaster = lazyWithRetries(() => import('@/pages/ijhesm/admin/plans'));
-const UserMaster = lazyWithRetries(() => import('@/pages/ijhesm/admin/users'));
-const AddMember = lazyWithRetries(() => import('@/pages/ijhesm/admin/new-loan-request'));
-const LoanList = lazyWithRetries(() => import('@/pages/ijhesm/admin/loan-list'));
-const MakePayment = lazyWithRetries(() => import('@/pages/ijhesm/admin/loan-payment'));
-const Profile = lazyWithRetries(() => import('@/pages/ijhesm/admin/profile'));
+const AdminHome = lazyWithRetries(() => import('@/pages/Journal/admin/home'));
+const CreateUser = lazyWithRetries(() => import('@/pages/Journal/admin/create-user'));
+const RoleMaster = lazyWithRetries(() => import('@/pages/Journal/admin/role'));
+const PlanMaster = lazyWithRetries(() => import('@/pages/Journal/admin/plans'));
+const UserMaster = lazyWithRetries(() => import('@/pages/Journal/admin/users'));
+const AddMember = lazyWithRetries(() => import('@/pages/Journal/admin/new-loan-request'));
+const LoanList = lazyWithRetries(() => import('@/pages/Journal/admin/loan-list'));
+const MakePayment = lazyWithRetries(() => import('@/pages/Journal/admin/loan-payment'));
+const Profile = lazyWithRetries(() => import('@/pages/Journal/admin/profile'));
 
 
 
