@@ -115,6 +115,7 @@ export const useAuth = create<AuthStore>((set, get) => ({
     setSession(null);
     set({ isAuthenticated: false, user: null });
     localStorage.removeItem('token');
+    localStorage.removeItem('isLoggedIn');
     get().initialize();
   }
 }));

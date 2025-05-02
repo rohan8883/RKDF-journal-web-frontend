@@ -14,6 +14,7 @@ export const isValidToken = (token: string) => {
 export const setSession = (token: string | null) => {
   if (token) {
     localStorage.setItem('token', token);
+    localStorage.setItem('isLoggedIn', 'true');
     // axios.defaults.headers.common.Authorization = `Bearer ${token}`;
   } else {
     localStorage.removeItem('token');

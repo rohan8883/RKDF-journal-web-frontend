@@ -106,7 +106,7 @@ const navigate = useNavigate()
                   onClick={() =>
                   {
                     handleMenuItemClick("Profile")
-                    navigate('/loan/profile');
+                    navigate('/journal/profile');
                   }
 
                   }

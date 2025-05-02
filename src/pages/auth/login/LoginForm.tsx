@@ -74,7 +74,7 @@ export default function LoginForm() {
           </ButtonLoading>
         </div> 
         <div className="text-center">
-          <Link to="/loan/auth/forget-password">
+          <Link to="/journal/auth/forget-password">
             <span className="text-sm text-primary">Forget password?</span>
           </Link>
         </div>

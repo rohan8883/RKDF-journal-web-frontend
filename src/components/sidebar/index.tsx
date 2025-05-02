@@ -36,37 +36,37 @@ const AdminSideBar = [
   {
     icon: User,
     label: 'Add Owner',
-    path: '/loan/registration-form'
+    path: '/journal/registration-form'
   },
   {
     icon: List,
     label: 'Owners List',
-    path: '/loan/owner-list'
+    path: '/journal/owner-list'
   },
   {
     icon: User,
     label: 'Add Member',
-    path: '/loan/add-member'
+    path: '/journal/add-member'
   },
   {
     icon: List,
     label: 'Plan Master List',
-    path: '/loan/masters/plan'
+    path: '/journal/masters/plan'
   },
   {
     icon: List,
     label: 'Month Master List',
-    path: '/loan/masters/month'
+    path: '/journal/masters/month'
   },
   {
     icon: List,
     label: 'Plan Mapping List',
-    path: '/loan/masters/plan-mapping'
+    path: '/journal/masters/plan-mapping'
   },
   {
     icon: List,
     label: 'Report',
-    path: '/loan/month-plan-report'
+    path: '/journal/month-plan-report'
   }
 ];
 const SideBar = [
@@ -74,23 +74,23 @@ const SideBar = [
   {
     icon: User,
     label: 'Add Member',
-    path: '/loan/add-member'
+    path: '/journal/add-member'
   },
   {
     icon: List,
     label: 'Plan Master List',
-    path: '/loan/masters/plan'
+    path: '/journal/masters/plan'
   },
 
   {
     icon: List,
     label: 'Plan Mapping List',
-    path: '/loan/masters/plan-mapping'
+    path: '/journal/masters/plan-mapping'
   },
   {
     icon: List,
     label: 'Report',
-    path: '/loan/month-plan-report'
+    path: '/journal/month-plan-report'
   }
 ];
 
@@ -103,7 +103,7 @@ export default function SideBarMenu({
   const { pathname } = useLocation();
   const navigate = useNavigate();
 
-  const equalPath = ['/loan/auth/login'];
+  const equalPath = ['/journal/auth/login'];
 
   const handleNavigate = (path: string) => {
     navigate(path);
@@ -246,7 +246,7 @@ export default function SideBarMenu({
                   <MenubarItem
                     className="flex space-x-2 items-center justify-start"
                     onClick={() => {
-                      navigate('/loan');
+                      navigate('/journal');
                     }}
                   >
                     <HomeIcon className="h-5 w-5" />
@@ -255,7 +255,7 @@ export default function SideBarMenu({
                   <MenubarItem
                     className="flex space-x-2 items-center justify-start"
                     onClick={() => {
-                      navigate('/loan/profile');
+                      navigate('/journal/profile');
                     }}
                   >
                     <CircleUserRound className="h-5 w-5" />

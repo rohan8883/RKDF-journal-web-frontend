@@ -1,22 +1,29 @@
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { Toaster } from 'react-hot-toast';
-import { useLocation } from 'react-router-dom'; // <-- Import useLocation
 import AllRoutes from './routes';
 import Navbar from './pages/Journal/guest/navbar';
 import Footer from './pages/Journal/guest/footer';
+import { useLocation } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 
 export default function App() {
-  const location = useLocation(); // <-- Get current location
-
-  // Check if URL matches 'Journal/admin-home'
-  const isAdminHome = location.pathname === '/Journal/admin-home';
+  const location = useLocation();
+  const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem('isLoggedIn') === 'true');
+  useEffect(() => {
+    // Watch for route changes and update login status
+    const status = localStorage.getItem('isLoggedIn') === 'true';
+    setIsLoggedIn(status);
+  }, [location]);
+  
+  const shouldShowNavAndFooter = !isLoggedIn;
 
   return (
     <TooltipProvider>
       <Toaster position="top-center" reverseOrder={false} />
-      {!isAdminHome && <Navbar />}
+      {shouldShowNavAndFooter && <Navbar />}
       <AllRoutes />
-      {!isAdminHome && <Footer />}
+      {shouldShowNavAndFooter && <Footer />}
     </TooltipProvider>
   );
 }
+

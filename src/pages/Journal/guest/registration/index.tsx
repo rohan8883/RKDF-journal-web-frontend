@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Page from '@/components/helmet-page';
 import { ButtonLoading, RHFTextField, FormProviders } from '@/components/forms';
 import { usePostMutation } from '@/hooks/useCustomQuery';
@@ -28,7 +28,7 @@ export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const postRegister = usePostMutation({});
-
+const navigate =useNavigate()
 
   const methods = useForm<yup.InferType<typeof schema>>({
     defaultValues: {
@@ -63,6 +63,7 @@ export default function Register() {
 
       if (response?.data?.success) {
         toast.success('Registration successful! Please check your email to verify your account.');
+        navigate("/Journal/auth/login")
       } else {
         toast.error(response?.data?.message || 'Registration failed');
       }

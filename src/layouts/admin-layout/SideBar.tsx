@@ -92,7 +92,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                   toggleSubmenu(item.name);
                 } else {
                   handleMenuItemClick(item.name);
-                  navigate(`/loan/${item.url}`);
+                  navigate(`/journal/${item.url}`);
                 }
               }}
               className={`
@@ -142,7 +142,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                   <div
                     key={subItem.name}
                     onClick={() => {
-                      navigate(`/loan/${subItem.url}`);
+                      navigate(`/journal/${subItem.url}`);
                       handleMenuItemClick(item.name, subItem.name);
                     }}
                     className={`
