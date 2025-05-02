@@ -14,6 +14,8 @@ import SideContent from '../sideContent';
 const schema = yup.object({
   givenName: yup.string().required('given name is required'),
   familyName: yup.string().required('family name is required'),
+  userName: yup.string().required('user name is required'),
+  mobile: yup.string().required('mobile is required'),
   email: yup.string().email('Valid email required').required('Email is required'),
   password: yup.string().min(8, 'Password must be at least 8 characters').required('Password is required'),
   confirmPassword: yup.string()
@@ -32,6 +34,8 @@ export default function Register() {
     defaultValues: {
       givenName: '',
       familyName: '',
+      userName: '',
+      mobile: '',
       email: '',
       password: '',
       confirmPassword: '',
@@ -47,9 +51,11 @@ export default function Register() {
       const response = await postRegister.mutateAsync({
         api: authApi.register,
         data: {
-          name: data?.givenName,
+          fullName: data?.givenName,
           familyName: data?.familyName,
           email: data.email,
+          mobile: data.mobile,
+          userName: data.userName,
           password: data.password,
           affiliation: data.affiliation,
         }
@@ -134,7 +140,40 @@ export default function Register() {
                           </div>
                         </div>
                       </div>
-                      {/* Affiliation */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* First Name */}
+                        <div>
+                          <label htmlFor="userName" className="block text-sm font-medium text-gray-700 mb-1">
+                              User Name
+                          </label>
+                          <div className="relative rounded-md shadow-sm">
+                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            {errors.userName ? "" : <User className="h-5 w-5 text-gray-400" />  } 
+                            </div>
+                            <RHFTextField
+                              name="userName"
+                              id="userName"
+                              className={`block w-full pl-10 pr-3 py-2 border ${errors.userName ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm`}
+                              placeholder="Enter User Name"
+                            />
+                          </div>
+                        </div>
+                         {/* User Name */}
+                      <div>
+                        <label htmlFor="mobile" className="block text-sm font-medium text-gray-700 mb-1">
+                        Mobile 
+                        </label>
+                        <RHFTextField
+                          name="mobile"
+                          id="mobile"
+                          inputValidation={['mobile']}
+                          className={`block w-full px-3 py-2 border ${errors.mobile ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm`}
+                          placeholder="Enter mobile"
+                        />
+                      </div>
+                      </div>
+                     
+                       {/* Affiliation */}
                       <div>
                         <label htmlFor="affiliation" className="block text-sm font-medium text-gray-700 mb-1">
                           Institution/Affiliation
