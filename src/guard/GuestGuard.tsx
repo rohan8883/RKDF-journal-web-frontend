@@ -26,9 +26,9 @@ export default function GuestGuard({
   }
 
   if (isAuthenticated) {
-    if ((user?.role == "Admin") || (user?.role == "Owner")) {
+    // if ((user?.role == "Admin") || (user?.role == "Owner")) {
       return <Navigate to="/Journal/admin-home" />;
-    }
+    // }
     return <Navigate to="/Journal/auth/login" />;
   }
 

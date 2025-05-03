@@ -61,6 +61,7 @@ const PublicationProcedure = lazyWithRetries(() => import('@/pages/Journal/guest
 const AdminHome = lazyWithRetries(() => import('@/pages/Journal/admin/home'));
 const CreateUser = lazyWithRetries(() => import('@/pages/Journal/admin/create-user'));
 const RoleMaster = lazyWithRetries(() => import('@/pages/Journal/admin/role'));
+const JournalsPage = lazyWithRetries(() => import('@/pages/Journal/admin/Journal'));
 const PlanMaster = lazyWithRetries(() => import('@/pages/Journal/admin/plans'));
 const UserMaster = lazyWithRetries(() => import('@/pages/Journal/admin/users'));
 const AddMember = lazyWithRetries(() => import('@/pages/Journal/admin/new-loan-request'));
@@ -212,6 +213,13 @@ const routes: Route[] = [
         name: 'Plans List',
         path: 'plans-list',
         element: <PlanMaster />,
+        exact: true
+      },
+      {
+        id: '9',
+        name: 'Journals Page',
+        path: 'Journals-page',
+        element: <JournalsPage />,
         exact: true
       },
      

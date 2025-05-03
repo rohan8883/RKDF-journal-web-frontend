@@ -29,6 +29,7 @@ export const loanApi = {
   getAllUserMasterList: '/user/get-all-user-mater-list',
   getAllUserByUlb: '/user/get-all-user-by-ulb',
   updateUser: '/user/update-profile',
+  updateUserRole: '/user/update-user-role',
   deleteUser: '/user/delete-user',
   getUserById: '/user/edit',
   updateUserStatus: '/user/update-user-status',
@@ -43,32 +44,25 @@ export const loanApi = {
   updateRoleStatus: '/role/update-role-status',
   deleteRole: '/role/delete-role',
 
-  
+
 
   // users api list
   createUserswithImage: '/user/create-user-with-img',
   updateUserwithImage: '/user/update-user-with-image',
 
-  //===========================RO SERVICE API===============================
-   
+
+
   // ====================loan distribution api=====================================
-    
-   createLoan: "/provide-loan/create-loan",
-   createPayment: "/provide-loan/make-payment",
-   getAllLoans: "/provide-loan/get-all-loans",
-   getAllLoanById: "/provide-loan/get-all-loans-by-id",
 
-   createMember: '/member/create-member',
-   getMember: '/member/get-member',
-   updateMember: '/member/update-member',
-   getAllMembers: '/member/get-members',
-   deleteMember: '/member/update-member-status',
 
-   createPlan: '/plan/create-plan',
-   getAllPlan: '/plan/get-all-plan',
-   getPlanById: '/plan/get-plan-by-id',
-   updatePlan: '/plan/update-plan',
-   updatePlanStatus: '/plan/update-plan-status',
-   deletePlan: '/plan/delete-plan',
+} as const;
+export const rkdfApi = {
+  // ════════════════════════════║  API OF JOURNAL MASTER ║═════════════════════════════════
+  createJournal: '/journal/create-journals',
+  getAllJournal: '/journal/get-all-journals',
+  getJournalById: '/journal/get-journals-by-id',
+  updateJournal: '/journal/update-journals',
+  updateJournalStatus: '/journal/update-journals-status',
+  deleteJournal: '/journal/delete-journals',
 
 } as const;

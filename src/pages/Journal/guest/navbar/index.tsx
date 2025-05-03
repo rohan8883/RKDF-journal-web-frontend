@@ -4,6 +4,7 @@ import { useState } from "react"
 import { Link } from 'react-router-dom'
 import { ChevronDown, Menu, X } from "lucide-react"
 import { Image } from '@/components/image';
+
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -30,15 +31,13 @@ const Navbar = () => {
         { title: "SUBMIT PAPER", link: "/Journal/submissions" },
         { title: "PUBLICATION PROCEDURE", link: "/Journal/publicationProcedure" },
         { title: "ARTICLE PROCESSING CHARGE", link: "/Journal/pubChange" },
-        { title: "SAMPLE PAPER FORMAT", link: "/" },
-        { title: "COPYRIGHT FORM", link: "/" },
+        { title: "SAMPLE PAPER FORMAT", link: "/RKDF_Journal_Format.pdf", target: "_blank" },
+        { title: "COPYRIGHT FORM", link: "/Copyright Agreement Form.pdf",target:"_blank" },
         { title: "RESEARCH AREA", link: "/Journal/researchArea" },
       ],
     },
     { title: "CURRENT", link: "/" },
     { title: "ARCHIVES", link: "/Journal/archive" },
-    
-   
     { title: "NEWS", link: "/Journal/announcement" },
     { title: "CONTACT", link: "/Journal/contact" },
     { title: "REGISTRATION", link: "/Journal/registration" },
@@ -97,12 +96,23 @@ const Navbar = () => {
                     <ul className="py-1">
                       {item.dropdownItems.map((dropdownItem, dropdownIndex) => (
                         <li key={dropdownIndex}>
-                          <Link
-                            to={dropdownItem.link}
-                            className="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-100"
-                          >
-                            {dropdownItem.title}
-                          </Link>
+                          {dropdownItem.target === "_blank" ? (
+                            <a
+                              href={dropdownItem.link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-100"
+                            >
+                              {dropdownItem.title}
+                            </a>
+                          ) : (
+                            <Link
+                              to={dropdownItem.link}
+                              className="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-100"
+                            >
+                              {dropdownItem.title}
+                            </Link>
+                          )}
                         </li>
                       ))}
                     </ul>
@@ -123,7 +133,7 @@ const Navbar = () => {
                 <div className="flex flex-col">
                   <Link
                     to={item.link}
-                    onClick={() => setIsMobileMenuOpen(false)} // <-- Add this
+                    onClick={() => setIsMobileMenuOpen(false)}
                     className="flex items-center justify-between py-2 text-gray-700 font-semibold hover:text-blue-600"
                   >
                     {item.title}
@@ -132,14 +142,26 @@ const Navbar = () => {
                   {item.hasDropdown && (
                     <div className="ml-4 mt-1">
                       {item.dropdownItems.map((dropdownItem, dropdownIndex) => (
-                        <Link
-                          key={dropdownIndex}
-                          to={dropdownItem.link}
-                          onClick={() => setIsMobileMenuOpen(false)} // <-- Also add here
-                          className="block py-2 text-sm text-gray-600 hover:text-blue-600"
-                        >
-                          {dropdownItem.title}
-                        </Link>
+                        dropdownItem.target === "_blank" ? (
+                          <a
+                            key={dropdownIndex}
+                            href={dropdownItem.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="block py-2 text-sm text-gray-600 hover:text-blue-600"
+                          >
+                            {dropdownItem.title}
+                          </a>
+                        ) : (
+                          <Link
+                            key={dropdownIndex}
+                            to={dropdownItem.link}
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            className="block py-2 text-sm text-gray-600 hover:text-blue-600"
+                          >
+                            {dropdownItem.title}
+                          </Link>
+                        )
                       ))}
                     </div>
                   )}
@@ -149,11 +171,8 @@ const Navbar = () => {
           </ul>
         </div>
       )}
-
-
-
     </header>
-  )
-}
+  );
+};
 
 export default Navbar;

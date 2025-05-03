@@ -3,6 +3,7 @@ export type I_USER_TYPE = {
   _id: string
   fullName: string
   roleId: string
+  role: string
   email: string
   address: string
   password: string
