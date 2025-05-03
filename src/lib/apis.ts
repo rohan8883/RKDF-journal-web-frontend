@@ -44,19 +44,13 @@ export const loanApi = {
   updateRoleStatus: '/role/update-role-status',
   deleteRole: '/role/delete-role',
 
-
-
   // users api list
   createUserswithImage: '/user/create-user-with-img',
   updateUserwithImage: '/user/update-user-with-image',
 
-
-
-  // ====================loan distribution api=====================================
-
-
 } as const;
 export const rkdfApi = {
+  getAllUser: '/user-d/get-all-user',
   // ════════════════════════════║  API OF JOURNAL MASTER ║═════════════════════════════════
   createJournal: '/journal/create-journals',
   getAllJournal: '/journal/get-all-journals',
@@ -64,5 +58,20 @@ export const rkdfApi = {
   updateJournal: '/journal/update-journals',
   updateJournalStatus: '/journal/update-journals-status',
   deleteJournal: '/journal/delete-journals',
+
+  // ════════════════════════════║  API OF ISSUE MASTER ║═════════════════════════════════
+  createIssue: '/issue/create-issues',
+  getAllIssue: '/issue/get-all-issues',
+  getIssueById: '/issue/get-issues-by-id',
+  updateIssue: '/issue/update-issues',
+  updateIssueStatus: '/issue/update-issues-status',
+  deleteIssue: '/issue/delete-issues',
+  // ════════════════════════════║  API OF Submissions MASTER ║═════════════════════════════════
+  createSubmissions: '/submission/create-submission',
+  getAllSubmissions: '/submission/get-all-submission',
+  getSubmissionsById: '/submission/get-submission-by-id',
+  updateSubmissions: '/submission/update-submission',
+  updateSubmissionsStatus: '/submission/update-submission-status',
+  deleteSubmissions: '/submission/delete-submission',
 
 } as const;

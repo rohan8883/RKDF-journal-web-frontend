@@ -17,7 +17,7 @@ import {
 } from '@/components/ui/table'
 import JournalForm from './JournalForm'
 import { useApi, usePutMutation } from '@/hooks/useCustomQuery'
-import { getErrorMessage, authApi, rkdfApi } from '@/lib'
+import { getErrorMessage,  rkdfApi } from '@/lib'
 import PaginationComponent from '@/components/pagination'
 import { Separator } from '@/components/ui/separator'
 import SearchBox from '@/components/search-box'

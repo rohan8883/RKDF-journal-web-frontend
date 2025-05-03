@@ -71,7 +71,7 @@ interface UserCardProps {
 }
 
 
-export default function HomePage() {
+export default function UserList() {
   const [page, setPage] = useState<number>(1)
   const mutate = usePutMutation({})
   const [perPage, setPerPage] = useState<number>(10)

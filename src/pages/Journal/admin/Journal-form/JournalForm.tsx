@@ -12,7 +12,7 @@ import {
 import { Separator } from '@/components/ui/separator'
 import EditDialogBox from '@/components/edit-dialog-box'
 import { useApi, usePostMutation, usePutMutation } from '@/hooks/useCustomQuery'
-import { authApi, rkdfApi } from '@/lib'
+import {  rkdfApi } from '@/lib'
 
 // Define the schema for journal form
 const schema = yup.object().shape({

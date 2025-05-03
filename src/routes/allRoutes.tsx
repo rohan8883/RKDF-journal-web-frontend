@@ -61,7 +61,10 @@ const PublicationProcedure = lazyWithRetries(() => import('@/pages/Journal/guest
 const AdminHome = lazyWithRetries(() => import('@/pages/Journal/admin/home'));
 const CreateUser = lazyWithRetries(() => import('@/pages/Journal/admin/create-user'));
 const RoleMaster = lazyWithRetries(() => import('@/pages/Journal/admin/role'));
-const JournalsPage = lazyWithRetries(() => import('@/pages/Journal/admin/Journal'));
+const JournalsPage = lazyWithRetries(() => import('@/pages/Journal/admin/Journal-form'));
+const IssuePage = lazyWithRetries(() => import('@/pages/Journal/admin/issue'));
+const SubmissionForm = lazyWithRetries(() => import('@/pages/Journal/admin/submission-form'));
+
 const PlanMaster = lazyWithRetries(() => import('@/pages/Journal/admin/plans'));
 const UserMaster = lazyWithRetries(() => import('@/pages/Journal/admin/users'));
 const AddMember = lazyWithRetries(() => import('@/pages/Journal/admin/new-loan-request'));
@@ -222,6 +225,19 @@ const routes: Route[] = [
         element: <JournalsPage />,
         exact: true
       },
+      {
+        id: '9',
+        name: 'Issue Page',
+        path: 'issue-list',
+        element: <IssuePage />,
+        exact: true
+      },
+      {
+        id: '3',
+        name: 'Submission Form',
+        path: 'submission-form',
+        element: <SubmissionForm />
+      },
      
     ]
 
@@ -331,6 +347,12 @@ const routes: Route[] = [
         name: 'Login',
         path: 'registration',
         element: <Registration />
+      },
+      {
+        id: '3',
+        name: 'Submission Form',
+        path: 'submission-form',
+        element: <SubmissionForm />
       },
     ]
   }
