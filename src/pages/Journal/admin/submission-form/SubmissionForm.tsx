@@ -24,7 +24,7 @@ const schema = yup.object().shape({
   title: yup.string().required("Title is required"),
   abstract: yup.string().required("Abstract is required"),
   keywords: yup.string(),
-  submittedBy: yup.string().required("Submitter is required"),
+  // submittedBy: yup.string().required("Submitter is required"),
   journalId: yup.string().required("Journal is required"),
   manuscriptFile: yup.mixed().required("Manuscript file is required"),
   coverLetter: yup.mixed(),
@@ -80,7 +80,7 @@ export default function SubmissionForm({
       title: "",
       abstract: "",
       keywords: "",
-      submittedBy: "",
+      // submittedBy: "",
       journalId: "",
       manuscriptFile: undefined,
       coverLetter: null,
@@ -96,19 +96,19 @@ export default function SubmissionForm({
       data.append("title", formData.title);
       data.append("abstract", formData.abstract);
       if (formData.keywords) data.append("keywords", formData.keywords);
-      data.append("submittedBy", formData.submittedBy);
+      // data.append("submittedBy", formData.submittedBy);
       data.append("journalId", formData.journalId);
 
       // Handle manuscript file
-      const manuscriptFile = Array.isArray(formData.manuscriptFile) 
-        ? formData.manuscriptFile[0] 
+      const manuscriptFile = Array.isArray(formData.manuscriptFile)
+        ? formData.manuscriptFile[0]
         : formData.manuscriptFile;
       data.append("manuscriptFile", manuscriptFile);
 
       // Handle cover letter if exists
       if (formData.coverLetter) {
-        const coverLetter = Array.isArray(formData.coverLetter) 
-          ? formData.coverLetter[0] 
+        const coverLetter = Array.isArray(formData.coverLetter)
+          ? formData.coverLetter[0]
           : formData.coverLetter;
         data.append("coverLetter", coverLetter);
       }
@@ -156,7 +156,7 @@ export default function SubmissionForm({
         title: data?.data?.title,
         abstract: data?.data?.abstract,
         keywords: data?.data?.keywords?.join(", "),
-        submittedBy: data?.data?.submittedBy?._id || data?.data?.submittedBy,
+        // submittedBy: data?.data?.submittedBy?._id || data?.data?.submittedBy,
         journalId: data?.data?.journalId?._id || data?.data?.journalId,
         manuscriptFile: undefined,
         coverLetter: null,
@@ -166,7 +166,7 @@ export default function SubmissionForm({
         title: "",
         abstract: "",
         keywords: "",
-        submittedBy: "",
+        // submittedBy: "",
         journalId: "",
         manuscriptFile: undefined,
         coverLetter: null,
@@ -197,22 +197,13 @@ export default function SubmissionForm({
           </div>
 
           <div>
-            <RHFTextField 
-              name="keywords" 
-              label="Keywords" 
-              placeholder="Comma separated keywords" 
+            <RHFTextField
+              name="keywords"
+              label="Keywords"
+              placeholder="Comma separated keywords"
             />
           </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <RHFSelectField
-              name="submittedBy"
-              label="Submitted By"
-              data={personList?.data?.data?.docs?.map((item: any) => ({
-                label: item.name,
-                value: item._id,
-              }))}
-            />
+          <div>
             <RHFSelectField
               name="journalId"
               label="Journal"
@@ -224,18 +215,18 @@ export default function SubmissionForm({
           </div>
 
           <div>
-            <RHFUploadFiled 
-              name="manuscriptFile" 
-              label="Manuscript File" 
+            <RHFUploadFiled
+              name="manuscriptFile"
+              label="Manuscript File"
               accept=".pdf,.doc,.docx"
               required
             />
           </div>
 
           <div>
-            <RHFUploadFiled 
-              name="coverLetter" 
-              label="Cover Letter (Optional)" 
+            <RHFUploadFiled
+              name="coverLetter"
+              label="Cover Letter (Optional)"
               accept=".pdf,.doc,.docx"
             />
           </div>

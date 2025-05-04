@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
-  CardDescription, 
+  CardDescription,
   CardTitle,
 } from '@/components/ui/card'
 import {
@@ -15,38 +15,42 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { PlusCircle, Edit, Trash2, Search, ChevronDown, FileText } from 'lucide-react'
-import SubmissionForm from './SubmissionForm'
+import ArticleForm from './ArticleForm'
 import { useApi } from '@/hooks/useCustomQuery'
-import { rkdfApi } from '@/lib'
+import { getErrorMessage, rkdfApi } from '@/lib'
 import PaginationComponent from '@/components/pagination'
 import { Separator } from '@/components/ui/separator'
 import Spinner from '@/components/loaders/Spinner'
 import { Badge } from "@/components/ui/badge"
-import { 
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { format } from 'date-fns'
+import toast from 'react-hot-toast'
+import { ArticleDetail } from './ArticleDetails'
 
-interface SubmissionCardProps {
-  submission: any;
+interface ArticleCardProps {
+  article: any;
   index: number;
 }
 
-export default function SubmissionList() {
+export default function ArticleList() {
   const [page, setPage] = useState<number>(1)
   const [perPage, setPerPage] = useState<number>(10)
   const [search, setSearch] = useState<string>('')
   const [open, setOpen] = useState<boolean>(false)
   const [id, setId] = useState<string>('')
   const [edit, setEdit] = useState<boolean>(false)
+  const [detailOpen, setDetailOpen] = useState(false)
+  const [selectedArticle, setSelectedArticle] = useState<any>(null)
   // const deleteMutation = useDeleteMutation({})
 
-  const submissionData = useApi<any>({
-    api: `${rkdfApi.getAllSubmissions}?page=${page}&limit=${perPage}&q=${search}`,
-    key: 'getAllSubmissions',
+  const articleData = useApi<any>({
+    api: `${rkdfApi.getAllArticles}?page=${page}&limit=${perPage}&q=${search}`,
+    key: 'getAllArticles',
     value: [page, perPage, search],
     options: {
       enabled: true,
@@ -56,12 +60,12 @@ export default function SubmissionList() {
   // const handleDelete = async (id: string): Promise<void> => {
   //   try {
   //     const result = await deleteMutation.mutateAsync({
-  //       api: `${rkdfApi.deleteSubmission}/${id}`,
+  //       api: `${rkdfApi.deleteArticle}/${id}`,
   //     })
-      
+
   //     if (result?.data?.success) {
   //       toast.success(result.data?.message)
-  //       submissionData.refetch()
+  //       articleData.refetch()
   //     } else {
   //       toast.error(result.data?.message)
   //     }
@@ -83,57 +87,57 @@ export default function SubmissionList() {
   const handleSearchSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault()
     setPage(1)
-    submissionData.refetch()
+    articleData.refetch()
   }
 
-  // Submission card for mobile view
-  const SubmissionCard: React.FC<SubmissionCardProps> = ({ submission, index }) => (
+  // Article card for mobile view
+  const ArticleCard: React.FC<ArticleCardProps> = ({ article, index }) => (
     <Card className="mb-4">
       <CardContent className="pt-4">
         <div className="flex justify-between items-start mb-2">
           <div>
-            <h3 className="font-medium">{submission?.title}</h3>
+            <h3 className="font-medium">{article?.title}</h3>
             <p className="text-sm text-gray-500">
-              {submission?.journal?.title} • Submitted by {submission?.author?.fullName}
+              {article?.issue?.journal?.title} - Vol. {article?.issue?.volume}, No. {article?.issue?.issueNumber}
             </p>
           </div>
           <Badge variant="outline">
-            {/* {format(new Date(submission?.createdAt), 'MMM d, yyyy')} */}
+            {format(new Date(article?.publicationDate), 'MMM d, yyyy')}
           </Badge>
         </div>
-        
+
         <p className="text-sm text-gray-600 mb-3 line-clamp-2">
-          {submission?.abstract}
+          {article.abstract}
         </p>
-        
-        {/* {submission?.keywords?.length > 0 && (
+
+        {article?.keywords?.length > 0 && (
           <div className="flex flex-wrap gap-2 mb-3">
-            {submission?.keywords?.map((keyword: string, i: number) => (
+            {article.keywords.map((keyword: string, i: number) => (
               <Badge key={i} variant="secondary">{keyword}</Badge>
             ))}
           </div>
-        )} */}
-        
+        )}
+
         <div className="flex justify-between items-center mt-2">
           <div className="flex gap-2">
-            <Button 
-              size="sm" 
-              onClick={() => handleEdit(submission?._id)}
+            <Button
+              size="sm"
+              onClick={() => handleEdit(article?._id)}
               className="flex items-center gap-1"
             >
               <Edit size={14} /> Edit
             </Button>
-            <Button 
-              size="sm" 
+            <Button
+              size="sm"
               variant="destructive"
-              // onClick={() => handleDelete(submission?._id)}
+              // onClick={() => handleDelete(article?._id)}
               className="flex items-center gap-1"
             >
               <Trash2 size={14} /> Delete
             </Button>
           </div>
           <Button size="sm" variant="outline">
-            <FileText size={14} className="mr-2" /> View Files
+            <FileText size={14} className="mr-2" /> View Details
           </Button>
         </div>
       </CardContent>
@@ -142,28 +146,35 @@ export default function SubmissionList() {
 
   return (
     <main className="container mx-auto px-4 py-6">
-      <SubmissionForm
+      {selectedArticle && (
+        <ArticleDetail
+          article={selectedArticle}
+          open={detailOpen}
+          onOpenChange={setDetailOpen}
+        />
+      )}
+      <ArticleForm
         open={open}
         setOpen={setOpen}
-        title={edit ? 'Edit Submission' : 'Add Submission'}
+        title={edit ? 'Edit Article' : 'Add Article'}
         id={id}
         edit={edit}
         setEdit={setEdit}
-        refetch={submissionData.refetch}
+        refetch={articleData.refetch}
       />
-      
+
       <div className="bg-white rounded-lg shadow">
         <div className="p-4 md:p-6">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
             <CardTitle className="text-xl font-bold">
-              Submission Management
+              Article Management
             </CardTitle>
-            
+
             <div className="flex flex-col sm:flex-row w-full md:w-auto gap-3">
               <form onSubmit={handleSearchSubmit} className="relative w-full sm:w-64">
                 <input
                   type="text"
-                  placeholder="Search submissions..."
+                  placeholder="Search articles..."
                   value={search}
                   onChange={handleSearchChange}
                   className="w-full h-10 pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
@@ -180,16 +191,16 @@ export default function SubmissionList() {
                 }}
               >
                 <PlusCircle size={18} />
-                Add Submission
+                Add Article
               </Button>
             </div>
           </div>
 
           <CardDescription className="mb-4">
-            Total Submissions: {submissionData?.data?.data?.totalDocs || 0}
+            Total Articles: {articleData.data?.data?.totalDocs || 0}
           </CardDescription>
 
-          {submissionData?.isLoading ? (
+          {articleData.isLoading ? (
             <div className="flex h-32 items-center justify-center">
               <Spinner />
             </div>
@@ -202,33 +213,33 @@ export default function SubmissionList() {
                     <TableRow>
                       <TableHead className="w-12">#</TableHead>
                       <TableHead>Title</TableHead>
-                      <TableHead>Journal</TableHead>
-                      <TableHead>Submitted By</TableHead>
-                      {/* <TableHead>Date</TableHead> */}
-                      <TableHead>Status</TableHead>
+                      <TableHead>Journal/Issue</TableHead>
+                      <TableHead>Publication Date</TableHead>
+                      <TableHead>Pages</TableHead>
                       <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {submissionData?.data?.data?.docs?.length === 0 ? (
+                    {articleData?.data?.data?.docs?.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={7} className="text-center py-8">
-                          No submissions found
+                        <TableCell colSpan={6} className="text-center py-8">
+                          No articles found
                         </TableCell>
                       </TableRow>
                     ) : (
-                      submissionData?.data?.data?.docs?.map((submission: any, index: number) => (
-                        <TableRow key={submission?._id}>
+                      articleData?.data?.data?.docs?.map((article: any, index: number) => (
+                        <TableRow key={article?._id}>
                           <TableCell>{((page * perPage) - perPage) + index + 1}</TableCell>
                           <TableCell className="font-medium">
-                            {submission?.title}
+                            {article?.title}
                           </TableCell>
-                          <TableCell>{submission?.journal?.title}</TableCell>
-                          <TableCell>{submission?.author?.fullName}</TableCell>
-                         
                           <TableCell>
-                            <Badge variant="outline">Pending</Badge>
+                            {article?.issue?.journal?.title} - Vol. {article?.issue?.volume}, No. {article?.issue?.issueNumber}
                           </TableCell>
+                          <TableCell>
+                            {format(new Date(article?.publicationDate), 'MMM d, yyyy')}
+                          </TableCell>
+                          <TableCell>{article?.pages || 'N/A'}</TableCell>
                           <TableCell className="text-right">
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
@@ -237,17 +248,20 @@ export default function SubmissionList() {
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end">
-                                <DropdownMenuItem onClick={() => handleEdit(submission?._id)}>
+                                <DropdownMenuItem onClick={() => handleEdit(article?._id)}>
                                   <Edit size={14} className="mr-2" /> Edit
                                 </DropdownMenuItem>
-                                <DropdownMenuItem 
-                                  // onClick={() => handleDelete(submission?._id)}
+                                <DropdownMenuItem
+                                  // onClick={() => handleDelete(article?._id)}
                                   className="text-red-600"
                                 >
                                   <Trash2 size={14} className="mr-2" /> Delete
                                 </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                  <FileText size={14} className="mr-2" /> View Files
+                                <DropdownMenuItem onClick={() => {
+                                  setSelectedArticle(article)
+                                  setDetailOpen(true)
+                                }}>
+                                  <FileText size={14} className="mr-2" /> View Details
                                 </DropdownMenuItem>
                               </DropdownMenuContent>
                             </DropdownMenu>
@@ -261,34 +275,34 @@ export default function SubmissionList() {
 
               {/* Mobile Card View */}
               <div className="md:hidden">
-                {submissionData?.data?.data?.docs?.length === 0 ? (
+                {articleData?.data?.data?.docs?.length === 0 ? (
                   <div className="text-center py-8">
-                    No submissions found
+                    No articles found
                   </div>
                 ) : (
-                  submissionData?.data?.data?.docs?.map((submission: any, index: number) => (
-                    <SubmissionCard 
-                      key={submission?._id} 
-                      submission={submission} 
-                      index={index} 
+                  articleData?.data?.data?.docs?.map((article: any, index: number) => (
+                    <ArticleCard
+                      key={article?._id}
+                      article={article}
+                      index={index}
                     />
                   ))
                 )}
               </div>
 
               <Separator className="my-4" />
-              
+
               <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
                 <div className="text-sm text-gray-500">
-                  Showing {((page - 1) * perPage) + 1} to {Math.min(page * perPage, submissionData?.data?.data?.totalDocs || 0)} of {submissionData?.data?.data?.totalDocs || 0} entries
+                  Showing {((page - 1) * perPage) + 1} to {Math.min(page * perPage, articleData?.data?.data?.totalDocs || 0)} of {articleData?.data?.data?.totalDocs || 0} entries
                 </div>
-                
+
                 <PaginationComponent
                   page={page}
                   perPage={perPage}
-                  totalPage={submissionData?.data?.data?.totalDocs}
-                  hasNextPage={submissionData?.data?.data?.hasNextPage}
-                  hasPrevPage={submissionData?.data?.data?.hasPrevPage}
+                  totalPage={articleData?.data?.data?.totalDocs}
+                  hasNextPage={articleData?.data?.data?.hasNextPage}
+                  hasPrevPage={articleData?.data?.data?.hasPrevPage}
                   setPage={setPage}
                   setPerPage={setPerPage}
                 />

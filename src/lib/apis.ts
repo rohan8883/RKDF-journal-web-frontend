@@ -58,7 +58,6 @@ export const rkdfApi = {
   updateJournal: '/journal/update-journals',
   updateJournalStatus: '/journal/update-journals-status',
   deleteJournal: '/journal/delete-journals',
-
   // ════════════════════════════║  API OF ISSUE MASTER ║═════════════════════════════════
   createIssue: '/issue/create-issues',
   getAllIssue: '/issue/get-all-issues',
@@ -66,12 +65,19 @@ export const rkdfApi = {
   updateIssue: '/issue/update-issues',
   updateIssueStatus: '/issue/update-issues-status',
   deleteIssue: '/issue/delete-issues',
-  // ════════════════════════════║  API OF Submissions MASTER ║═════════════════════════════════
-  createSubmissions: '/submission/create-submission',
-  getAllSubmissions: '/submission/get-all-submission',
-  getSubmissionsById: '/submission/get-submission-by-id',
-  updateSubmissions: '/submission/update-submission',
-  updateSubmissionsStatus: '/submission/update-submission-status',
-  deleteSubmissions: '/submission/delete-submission',
+  // ════════════════════════════║  API OF SUBMISSION MASTER ║═════════════════════════════════
+  createSubmissions: '/submission/create-submissions',
+  getAllSubmissions: '/submission/get-all-submissions',
+  getSubmissionsById: '/submission/get-by-id-submissions',
+  updateSubmissions: '/submission/update-submissions',
+  updateSubmissionsStatus: '/submission/update-submissions-status',
+  deleteSubmissions: '/submission/delete-submissions',
+  // ════════════════════════════║  API OF ARTICLE MASTER ║═════════════════════════════════
+  createArticles: '/article/create-articles',
+  getAllArticles: '/article/get-all-articles',
+  getArticlesById: '/article/get-by-id-articles',
+  updateArticles: '/article/update-articles',
+  updateArticlesStatus: '/article/update-articles-status',
+  deleteArticles: '/article/delete-articles',
 
 } as const;
