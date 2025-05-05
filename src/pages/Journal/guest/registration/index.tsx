@@ -8,8 +8,16 @@ import { Link, useNavigate } from 'react-router-dom';
 import Page from '@/components/helmet-page';
 import { ButtonLoading, RHFTextField, FormProviders } from '@/components/forms';
 import { usePostMutation } from '@/hooks/useCustomQuery';
-import { authApi, getErrorMessage } from '@/lib';
+import { authApi, getErrorMessage, rkdfApi } from '@/lib';
 import SideContent from '../sideContent';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 
 const schema = yup.object({
   givenName: yup.string().required('given name is required'),
@@ -28,7 +36,10 @@ export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const postRegister = usePostMutation({});
-const navigate =useNavigate()
+  const [otpModalOpen, setOtpModalOpen] = useState(false);
+  const [otp, setOtp] = useState('');
+  const [formData, setFormData] = useState<yup.InferType<typeof schema> | null>(null);
+  const navigate = useNavigate();
 
   const methods = useForm<yup.InferType<typeof schema>>({
     defaultValues: {
@@ -46,24 +57,77 @@ const navigate =useNavigate()
 
   const { formState: { errors } } = methods;
 
-  const onSubmit = async (data: yup.InferType<typeof schema>) => {
+  const handleSendOtp = async (data: yup.InferType<typeof schema>) => {
     try {
+      const res = await postRegister.mutateAsync({
+        api: rkdfApi.sendOtp,
+        data: { email: data.email },
+      });
+      
+      if (res.data.success) {
+        toast.success("OTP sent to your email!");
+        setOtpModalOpen(true);
+        setFormData(data);
+      } else {
+        toast.error(res.data.message || "Failed to send OTP");
+      }
+    } catch (error) {
+      toast.error(getErrorMessage(error));
+    }
+  };
+
+  const handleSubmitForm = async (data: yup.InferType<typeof schema>) => {
+    if (!data) return;
+    
+    try {
+      // Validate form data first
+      await methods.trigger();
+      if (!methods.formState.isValid) {
+        return toast.error("Please complete all required fields correctly");
+      }
+      
+      // Send OTP and open modal
+      await handleSendOtp(data);
+    } catch (error) {
+      toast.error(getErrorMessage(error));
+    }
+  };
+
+  const verifyOtpAndRegister = async () => {
+    if (!formData) return;
+    
+    try {
+      // 1. Verify OTP first
+      const otpVerifyRes = await postRegister.mutateAsync({
+        api: rkdfApi.verifyEmailOtp,
+        data: {
+          email: formData.email,
+          otp: otp,
+        }
+      });
+
+      if (!otpVerifyRes.data.success) {
+        return toast.error(otpVerifyRes.data.message || "OTP verification failed");
+      }
+
+      // 2. Proceed with registration after OTP success
       const response = await postRegister.mutateAsync({
         api: authApi.register,
         data: {
-          fullName: data?.givenName,
-          familyName: data?.familyName,
-          email: data.email,
-          mobile: data.mobile,
-          userName: data.userName,
-          password: data.password,
-          affiliation: data.affiliation,
+          fullName: formData.givenName,
+          familyName: formData.familyName,
+          email: formData.email,
+          mobile: formData.mobile,
+          userName: formData.userName,
+          password: formData.password,
+          affiliation: formData.affiliation,
         }
       });
 
       if (response?.data?.success) {
-        toast.success('Registration successful! Please check your email to verify your account.');
-        navigate("/Journal/auth/login")
+        toast.success('Registration successful! Please log in.');
+        setOtpModalOpen(false);
+        navigate("/Journal/auth/login");
       } else {
         toast.error(response?.data?.message || 'Registration failed');
       }
@@ -103,7 +167,7 @@ const navigate =useNavigate()
 
                 {/* Card Body */}
                 <div className="p-6 sm:p-8">
-                  <FormProviders methods={methods} onSubmit={methods.handleSubmit(onSubmit)}>
+                  <FormProviders methods={methods} onSubmit={methods.handleSubmit(handleSubmitForm)}>
                     <div className="space-y-6">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {/* First Name */}
@@ -113,7 +177,7 @@ const navigate =useNavigate()
                           </label>
                           <div className="relative rounded-md shadow-sm">
                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            {errors.givenName ? "" : <User className="h-5 w-5 text-gray-400" />  } 
+                              {errors.givenName ? "" : <User className="h-5 w-5 text-gray-400" />}
                             </div>
                             <RHFTextField
                               name="givenName"
@@ -130,7 +194,7 @@ const navigate =useNavigate()
                           </label>
                           <div className="relative rounded-md shadow-sm">
                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            {errors.familyName ? "" :<User className="h-5 w-5 text-gray-400" />}
+                              {errors.familyName ? "" : <User className="h-5 w-5 text-gray-400" />}
                             </div>
                             <RHFTextField
                               name="familyName"
@@ -142,14 +206,14 @@ const navigate =useNavigate()
                         </div>
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {/* First Name */}
+                        {/* User Name */}
                         <div>
                           <label htmlFor="userName" className="block text-sm font-medium text-gray-700 mb-1">
-                              User Name
+                            User Name
                           </label>
                           <div className="relative rounded-md shadow-sm">
                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            {errors.userName ? "" : <User className="h-5 w-5 text-gray-400" />  } 
+                              {errors.userName ? "" : <User className="h-5 w-5 text-gray-400" />}
                             </div>
                             <RHFTextField
                               name="userName"
@@ -159,22 +223,22 @@ const navigate =useNavigate()
                             />
                           </div>
                         </div>
-                         {/* User Name */}
-                      <div>
-                        <label htmlFor="mobile" className="block text-sm font-medium text-gray-700 mb-1">
-                        Mobile 
-                        </label>
-                        <RHFTextField
-                          name="mobile"
-                          id="mobile"
-                          inputValidation={['mobile']}
-                          className={`block w-full px-3 py-2 border ${errors.mobile ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm`}
-                          placeholder="Enter mobile"
-                        />
+                        {/* Mobile */}
+                        <div>
+                          <label htmlFor="mobile" className="block text-sm font-medium text-gray-700 mb-1">
+                            Mobile
+                          </label>
+                          <RHFTextField
+                            name="mobile"
+                            id="mobile"
+                            inputValidation={['mobile']}
+                            className={`block w-full px-3 py-2 border ${errors.mobile ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm`}
+                            placeholder="Enter mobile"
+                          />
+                        </div>
                       </div>
-                      </div>
-                     
-                       {/* Affiliation */}
+
+                      {/* Affiliation */}
                       <div>
                         <label htmlFor="affiliation" className="block text-sm font-medium text-gray-700 mb-1">
                           Institution/Affiliation
@@ -193,7 +257,7 @@ const navigate =useNavigate()
                         </label>
                         <div className="relative rounded-md shadow-sm">
                           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                          {errors.email ? "" :  <Mail className="h-5 w-5 text-gray-400" />}
+                            {errors.email ? "" : <Mail className="h-5 w-5 text-gray-400" />}
                           </div>
                           <RHFTextField
                             name="email"
@@ -212,7 +276,7 @@ const navigate =useNavigate()
                         </label>
                         <div className="relative rounded-md shadow-sm">
                           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                          {errors.password ? "" : <Lock className="h-5 w-5 text-gray-400" />}
+                            {errors.password ? "" : <Lock className="h-5 w-5 text-gray-400" />}
                           </div>
                           <RHFTextField
                             name="password"
@@ -235,7 +299,6 @@ const navigate =useNavigate()
                             </button>
                           </div>
                         </div>
-
                       </div>
 
                       {/* Confirm Password */}
@@ -245,7 +308,7 @@ const navigate =useNavigate()
                         </label>
                         <div className="relative rounded-md shadow-sm">
                           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                          {errors.confirmPassword ? "" :  <Lock className="h-5 w-5 text-gray-400" />}
+                            {errors.confirmPassword ? "" : <Lock className="h-5 w-5 text-gray-400" />}
                           </div>
                           <RHFTextField
                             name="confirmPassword"
@@ -268,9 +331,7 @@ const navigate =useNavigate()
                             </button>
                           </div>
                         </div>
-
                       </div>
-
 
                       {/* Submit Button */}
                       <div>
@@ -318,6 +379,47 @@ const navigate =useNavigate()
           </div>
         </main>
       </div>
+
+      {/* OTP Verification Modal */}
+      <Dialog open={otpModalOpen} onOpenChange={setOtpModalOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Enter OTP Verification</DialogTitle>
+            <DialogDescription>
+              Please enter the OTP sent to your email address
+            </DialogDescription>
+          </DialogHeader>
+          <div className="p-4">
+            <div className="space-y-4">
+              <div>
+                <label htmlFor="otp" className="block text-sm font-medium text-gray-700 mb-1">OTP Code</label>
+                <input
+                  type="text"
+                  id="otp"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm"
+                  placeholder="Enter the 6-digit OTP"
+                />
+              </div>
+              <div className="flex justify-end space-x-2">
+                <Button 
+                  variant="outline" 
+                  onClick={() => setOtpModalOpen(false)}
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  onClick={verifyOtpAndRegister}
+                  className="bg-teal-600 hover:bg-teal-700 text-white"
+                >
+                  Verify & Register
+                </Button>
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </Page>
   );
 }

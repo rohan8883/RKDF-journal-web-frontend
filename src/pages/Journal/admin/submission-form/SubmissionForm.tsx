@@ -68,12 +68,12 @@ export default function SubmissionForm({
     },
   });
 
-  const personList = useApi<any>({
-    api: `${rkdfApi.getAllUser}?page=1&limit=100`,
-    options: {
-      enabled: true,
-    },
-  });
+  // const personList = useApi<any>({
+  //   api: `${rkdfApi.getAllUser}?page=1&limit=100`,
+  //   options: {
+  //     enabled: true,
+  //   },
+  // });
 
   const methods = useForm<FormData>({
     defaultValues: {

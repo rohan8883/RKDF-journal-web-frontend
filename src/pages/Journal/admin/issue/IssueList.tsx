@@ -17,7 +17,7 @@ import {
 import { PlusCircle, Edit, Trash2, Search, ChevronDown } from 'lucide-react'
 import IssueForm from './IssueForm'
 import { useApi, } from '@/hooks/useCustomQuery'
-import { getErrorMessage, rkdfApi } from '@/lib'
+import { rkdfApi } from '@/lib'
 import PaginationComponent from '@/components/pagination'
 import { Separator } from '@/components/ui/separator'
 import Spinner from '@/components/loaders/Spinner'
@@ -28,8 +28,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { format } from 'date-fns'
-import toast from 'react-hot-toast'
+import { format } from 'date-fns' 
 
 interface IssueCardProps {
   issue: any;
@@ -88,7 +87,7 @@ export default function IssueList() {
   }
 
   // Issue card for mobile view
-  const IssueCard: React.FC<IssueCardProps> = ({ issue, index }) => (
+  const IssueCard: React.FC<IssueCardProps> = ({ issue }) => (
     <Card className="mb-4">
       <CardContent className="pt-4">
         <div className="flex justify-between items-start mb-2">

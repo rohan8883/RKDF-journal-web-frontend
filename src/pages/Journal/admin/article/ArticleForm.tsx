@@ -10,7 +10,6 @@ import {
   RHFTextArea,
   RHFSelectField,
 } from "@/components/forms";
-import { Separator } from "@/components/ui/separator";
 import EditDialogBox from "@/components/edit-dialog-box-w-full";
 import {
   useApi,
@@ -273,7 +272,7 @@ export default function ArticleForm({
   const showFormErrors = () => {
     const errors = methods.formState.errors;
     const errorMessages = Object.entries(errors)
-      .map(([field, error]) => error?.message)
+      .map(([, error]) => error?.message)
       .filter(Boolean);
     
     if (errorMessages.length > 0) {

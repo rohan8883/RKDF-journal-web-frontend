@@ -17,7 +17,7 @@ import {
 import { PlusCircle, Edit, Trash2, Search, ChevronDown, FileText } from 'lucide-react'
 import ArticleForm from './ArticleForm'
 import { useApi } from '@/hooks/useCustomQuery'
-import { getErrorMessage, rkdfApi } from '@/lib'
+import {rkdfApi } from '@/lib'
 import PaginationComponent from '@/components/pagination'
 import { Separator } from '@/components/ui/separator'
 import Spinner from '@/components/loaders/Spinner'
@@ -28,8 +28,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { format } from 'date-fns'
-import toast from 'react-hot-toast'
+import { format } from 'date-fns' 
 import { ArticleDetail } from './ArticleDetails'
 
 interface ArticleCardProps {
@@ -91,7 +90,7 @@ export default function ArticleList() {
   }
 
   // Article card for mobile view
-  const ArticleCard: React.FC<ArticleCardProps> = ({ article, index }) => (
+  const ArticleCard: React.FC<ArticleCardProps> = ({ article }) => (
     <Card className="mb-4">
       <CardContent className="pt-4">
         <div className="flex justify-between items-start mb-2">

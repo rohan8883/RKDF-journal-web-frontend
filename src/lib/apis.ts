@@ -79,5 +79,8 @@ export const rkdfApi = {
   updateArticles: '/article/update-articles',
   updateArticlesStatus: '/article/update-articles-status',
   deleteArticles: '/article/delete-articles',
+ // ════════════════════════════║  API OF OTP or VERIFY EMAIL ║═════════════════════════════════
+  sendOtp: '/otp/send-otp',
+  verifyEmailOtp: '/otp/verify-otp',
 
 } as const;

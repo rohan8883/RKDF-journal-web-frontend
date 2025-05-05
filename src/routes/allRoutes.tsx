@@ -65,12 +65,7 @@ const JournalsPage = lazyWithRetries(() => import('@/pages/Journal/admin/Journal
 const IssuePage = lazyWithRetries(() => import('@/pages/Journal/admin/issue'));
 const SubmissionForm = lazyWithRetries(() => import('@/pages/Journal/admin/submission-form'));
 const ArticlePage = lazyWithRetries(() => import('@/pages/Journal/admin/article'));
-
-const PlanMaster = lazyWithRetries(() => import('@/pages/Journal/admin/plans'));
-const UserMaster = lazyWithRetries(() => import('@/pages/Journal/admin/users'));
-const AddMember = lazyWithRetries(() => import('@/pages/Journal/admin/new-loan-request'));
-const LoanList = lazyWithRetries(() => import('@/pages/Journal/admin/loan-list'));
-const MakePayment = lazyWithRetries(() => import('@/pages/Journal/admin/loan-payment'));
+const UserMaster = lazyWithRetries(() => import('@/pages/Journal/admin/users'));  
 const Profile = lazyWithRetries(() => import('@/pages/Journal/admin/profile'));
 
 
@@ -183,28 +178,8 @@ const routes: Route[] = [
         path: 'user',
         element: <UserMaster />,
         exact: true
-      },
-      {
-        id: '6',
-        name: 'Add User',
-        path: 'new-loan-request',
-        element: <AddMember />,
-        exact: true
-      },
-      {
-        id: '7',
-        name: 'Add User',
-        path: 'loan-list',
-        element: <LoanList />,
-        exact: true
-      },
-      {
-        id: '8',
-        name: 'Make Payment',
-        path: 'make-payment/:id',
-        element: <MakePayment />,
-        exact: true
-      },
+      }, 
+      
       {
         id: '9',
         name: 'User Profile',
@@ -212,13 +187,7 @@ const routes: Route[] = [
         element: <Profile />,
         exact: true
       },
-      {
-        id: '9',
-        name: 'Plans List',
-        path: 'plans-list',
-        element: <PlanMaster />,
-        exact: true
-      },
+
       {
         id: '9',
         name: 'Journals Page',

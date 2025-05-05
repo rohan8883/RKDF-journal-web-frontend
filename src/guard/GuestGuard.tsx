@@ -10,7 +10,7 @@ export default function GuestGuard({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { isAuthenticated, isInitialized, initialize, user } = useStore();
+  const { isAuthenticated, isInitialized, initialize } = useStore();
   useEffect(() => {
     if (!isInitialized) {
       initialize();
