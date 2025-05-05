@@ -143,8 +143,8 @@ const AdminDashboard: React.FC = () => {
         />
 
         {/* Main Content */}
-        <div className="bg-white p-4 rounded-lg shadow-md m-4  ">
-          <h1 className="text-2xl font-bold mb-4">{activeMenuItem}</h1>
+        <div className="bg-white  rounded-lg shadow-md  m-2  ">
+          {/* <h1 className="text-2xl font-bold mb-4">{activeMenuItem}</h1> */}
           <Outlet />
         </div>
       </div>

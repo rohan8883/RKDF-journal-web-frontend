@@ -158,7 +158,7 @@ export default function ProfileScreen() {
             </CardContent>
             <CardFooter className="flex flex-row items-center border-t bg-muted/50 px-6 py-3">
               <div className="text-xs text-muted-foreground flex-1">
-              GymSphere
+              RKDF University
               </div>
               <div className="text-xs text-muted-foreground text-right">
                 Version 1.0.0

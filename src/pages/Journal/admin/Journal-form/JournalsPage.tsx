@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import moment from 'moment'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -148,7 +147,6 @@ export default function JournalsPage() {
                       <TableHead className=''>Publisher</TableHead>
                       <TableHead className=''>ISSN</TableHead>
                       <TableHead className=''>Founded Year</TableHead>
-                      <TableHead className=''>Created at</TableHead>
                       <TableHead className=''>Status</TableHead>
                       <TableHead>Action</TableHead>
                     </TableRow>
@@ -161,9 +159,6 @@ export default function JournalsPage() {
                         <TableCell>{journal?.publisher}</TableCell>
                         <TableCell>{journal?.issn}</TableCell>
                         <TableCell>{journal?.foundedYear}</TableCell>
-                        <TableCell>
-                          {moment(journal?.createdAt).format('DD-MM-YYYY')}
-                        </TableCell>
                         <TableCell>
                           <Switch
                             checked={journal?.status === 1}

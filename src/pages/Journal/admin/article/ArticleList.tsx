@@ -215,6 +215,7 @@ export default function ArticleList() {
                       <TableHead>Journal/Issue</TableHead>
                       <TableHead>Publication Date</TableHead>
                       <TableHead>Pages</TableHead>
+                      <TableHead>Status</TableHead>
                       <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -239,6 +240,7 @@ export default function ArticleList() {
                             {format(new Date(article?.publicationDate), 'MMM d, yyyy')}
                           </TableCell>
                           <TableCell>{article?.pages || 'N/A'}</TableCell>
+                          <TableCell>{article?.status == 1 ? "Review" : 'Pending'}</TableCell>
                           <TableCell className="text-right">
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
