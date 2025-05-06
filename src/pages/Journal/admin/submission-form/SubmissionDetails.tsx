@@ -40,7 +40,7 @@ const statusConfig = {
 export default function SubmissionDetailsView({ submissionId }: Readonly<Props>) {
   const [messagesExpanded, setMessagesExpanded] = useState(true);
   
-  const { data, isLoading, error } = useApi<any>({
+  const { data, isLoading} = useApi<any>({
     api: `${rkdfApi?.getSubmissionsById}/${submissionId}`,
     options: {
       enabled: !!submissionId,

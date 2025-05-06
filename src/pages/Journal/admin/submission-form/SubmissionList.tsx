@@ -77,7 +77,7 @@ export default function SubmissionList() {
   }
 
   // Submission card for mobile view
-  const SubmissionCard: React.FC<SubmissionCardProps> = ({ submission, index, handleViewDetails }) => (
+  const SubmissionCard: React.FC<SubmissionCardProps> = ({ submission,  handleViewDetails }) => (
     <Card className="mb-4">
       <CardContent className="pt-4">
         <div className="flex justify-between items-start mb-2">
