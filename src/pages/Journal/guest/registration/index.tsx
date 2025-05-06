@@ -362,7 +362,7 @@ export default function Register() {
                     </div>
 
                     <div className="mt-4 text-center">
-                      <Link to="/login" className="font-medium text-teal-600 hover:text-teal-500 text-sm flex items-center justify-center gap-1">
+                      <Link to="/Journal/auth/login" className="font-medium text-teal-600 hover:text-teal-500 text-sm flex items-center justify-center gap-1">
                         Sign in to your account
                         <ArrowRight className="h-4 w-4" />
                       </Link>

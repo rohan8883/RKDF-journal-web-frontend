@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom' // Import from react-router-dom instead
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -32,9 +33,11 @@ import {
 interface SubmissionCardProps {
   submission: any;
   index: number;
+  handleViewDetails: (id: string) => void;
 }
 
 export default function SubmissionList() {
+  const navigate = useNavigate() // Use navigate from react-router
   const [page, setPage] = useState<number>(1)
   const [perPage, setPerPage] = useState<number>(10)
   const [search, setSearch] = useState<string>('')
@@ -52,27 +55,15 @@ export default function SubmissionList() {
     },
   })
 
-  // const handleDelete = async (id: string): Promise<void> => {
-  //   try {
-  //     const result = await deleteMutation.mutateAsync({
-  //       api: `${rkdfApi.deleteSubmission}/${id}`,
-  //     })
-      
-  //     if (result?.data?.success) {
-  //       toast.success(result.data?.message)
-  //       submissionData.refetch()
-  //     } else {
-  //       toast.error(result.data?.message)
-  //     }
-  //   } catch (error) {
-  //     toast.error(getErrorMessage(error))
-  //   }
-  // }
-
   const handleEdit = (id: string): void => {
     setOpen(true)
     setEdit(true)
     setId(id)
+  }
+
+  // Navigate to submission details page
+  const handleViewDetails = (id: string): void => {
+    navigate(`/journal/submissions/${id}`)
   }
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -86,7 +77,7 @@ export default function SubmissionList() {
   }
 
   // Submission card for mobile view
-  const SubmissionCard: React.FC<SubmissionCardProps> = ({ submission}) => (
+  const SubmissionCard: React.FC<SubmissionCardProps> = ({ submission, index, handleViewDetails }) => (
     <Card className="mb-4">
       <CardContent className="pt-4">
         <div className="flex justify-between items-start mb-2">
@@ -105,14 +96,6 @@ export default function SubmissionList() {
           {submission?.abstract}
         </p>
         
-        {/* {submission?.keywords?.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-3">
-            {submission?.keywords?.map((keyword: string, i: number) => (
-              <Badge key={i} variant="secondary">{keyword}</Badge>
-            ))}
-          </div>
-        )} */}
-        
         <div className="flex justify-between items-center mt-2">
           <div className="flex gap-2">
             <Button 
@@ -125,15 +108,23 @@ export default function SubmissionList() {
             <Button 
               size="sm" 
               variant="destructive"
-              // onClick={() => handleDelete(submission?._id)}
               className="flex items-center gap-1"
             >
               <Trash2 size={14} /> Delete
             </Button>
           </div>
-          <Button size="sm" variant="outline">
-            <FileText size={14} className="mr-2" /> View Files
-          </Button>
+          <div className="flex gap-2">
+            <Button size="sm" variant="outline">
+              <FileText size={14} className="mr-2" /> View Files
+            </Button>
+            <Button 
+              size="sm" 
+              variant="outline"
+              onClick={() => handleViewDetails(submission?._id)}
+            >
+              <FileText size={14} className="mr-2" /> View Details
+            </Button>
+          </div>
         </div>
       </CardContent>
     </Card>
@@ -203,7 +194,6 @@ export default function SubmissionList() {
                       <TableHead>Title</TableHead>
                       <TableHead>Journal</TableHead>
                       <TableHead>Submitted By</TableHead>
-                      {/* <TableHead>Date</TableHead> */}
                       <TableHead>Status</TableHead>
                       <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
@@ -239,14 +229,14 @@ export default function SubmissionList() {
                                 <DropdownMenuItem onClick={() => handleEdit(submission?._id)}>
                                   <Edit size={14} className="mr-2" /> Edit
                                 </DropdownMenuItem>
-                                <DropdownMenuItem 
-                                  // onClick={() => handleDelete(submission?._id)}
-                                  className="text-red-600"
-                                >
+                                <DropdownMenuItem className="text-red-600">
                                   <Trash2 size={14} className="mr-2" /> Delete
                                 </DropdownMenuItem>
                                 <DropdownMenuItem>
                                   <FileText size={14} className="mr-2" /> View Files
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleViewDetails(submission?._id)}>
+                                  <FileText size={14} className="mr-2" /> View Details
                                 </DropdownMenuItem>
                               </DropdownMenuContent>
                             </DropdownMenu>
@@ -269,7 +259,8 @@ export default function SubmissionList() {
                     <SubmissionCard 
                       key={submission?._id} 
                       submission={submission} 
-                      index={index} 
+                      index={index}
+                      handleViewDetails={handleViewDetails}
                     />
                   ))
                 )}

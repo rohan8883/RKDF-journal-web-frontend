@@ -6,6 +6,7 @@ export type I_USER_TYPE = {
   role: string
   email: string
   address: string
+  userName: string
   password: string
   mobile: string
   status: number

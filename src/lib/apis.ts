@@ -72,6 +72,8 @@ export const rkdfApi = {
   updateSubmissions: '/submission/update-submissions',
   updateSubmissionsStatus: '/submission/update-submissions-status',
   deleteSubmissions: '/submission/delete-submissions',
+  getReviewerMessages: '/otp/',
+
   // ════════════════════════════║  API OF ARTICLE MASTER ║═════════════════════════════════
   createArticles: '/article/create-articles',
   getAllArticles: '/article/get-all-articles',
@@ -83,4 +85,5 @@ export const rkdfApi = {
   sendOtp: '/otp/send-otp',
   verifyEmailOtp: '/otp/verify-otp',
 
+  
 } as const;

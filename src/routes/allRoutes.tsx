@@ -64,6 +64,7 @@ const RoleMaster = lazyWithRetries(() => import('@/pages/Journal/admin/role'));
 const JournalsPage = lazyWithRetries(() => import('@/pages/Journal/admin/Journal-form'));
 const IssuePage = lazyWithRetries(() => import('@/pages/Journal/admin/issue'));
 const SubmissionForm = lazyWithRetries(() => import('@/pages/Journal/admin/submission-form'));
+const SubmissionDetails = lazyWithRetries(() => import('@/pages/Journal/admin/submission-form/SubmissionDetails'));
 const ArticlePage = lazyWithRetries(() => import('@/pages/Journal/admin/article'));
 const UserMaster = lazyWithRetries(() => import('@/pages/Journal/admin/users'));  
 const Profile = lazyWithRetries(() => import('@/pages/Journal/admin/profile'));
@@ -214,7 +215,12 @@ const routes: Route[] = [
         path: 'article',
         element: <ArticlePage />
       },
-     
+      {
+        id: '3',
+        name: 'Submission Details',
+        path: 'submissions/:id',
+        element: <SubmissionDetails />
+      },
     ]
 
   },
@@ -320,7 +326,7 @@ const routes: Route[] = [
       },
       {
         id: '3',
-        name: 'Login',
+        name: 'Registration',
         path: 'registration',
         element: <Registration />
       },
@@ -330,6 +336,7 @@ const routes: Route[] = [
         path: 'submission-form',
         element: <SubmissionForm />
       },
+     
     ]
   }
 ];

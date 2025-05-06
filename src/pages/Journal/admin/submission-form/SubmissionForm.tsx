@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
@@ -8,26 +8,73 @@ import {
   RHFTextField,
   FormProviders,
   RHFTextArea,
-  RHFUploadFiled,
   RHFSelectField,
 } from "@/components/forms";
-import { Separator } from "@/components/ui/separator";
-import EditDialogBox from "@/components/edit-dialog-box";
+import EditDialogBox from "@/components/edit-dialog-box-w-full";
 import {
   useApi,
   usePostMutation,
   usePutMutation,
 } from "@/hooks/useCustomQuery";
 import { rkdfApi } from "@/lib";
+import { 
+  Book, 
+  FileText, 
+  Tag, 
+  BookOpen, 
+  Save,
+  Upload,
+  File,
+  Trash,
+  Archive,
+  FileSymlink
+} from "lucide-react";
+
 
 const schema = yup.object().shape({
   title: yup.string().required("Title is required"),
   abstract: yup.string().required("Abstract is required"),
   keywords: yup.string(),
-  // submittedBy: yup.string().required("Submitter is required"),
   journalId: yup.string().required("Journal is required"),
-  manuscriptFile: yup.mixed().required("Manuscript file is required"),
-  coverLetter: yup.mixed(),
+  manuscriptFile: yup.mixed()
+    .required("Manuscript file is required")
+    .test(
+      "fileType",
+      "Only PDF, DOC or DOCX files are accepted",
+      (value) => {
+        if (!value) return false;
+        const file = Array.isArray(value) ? value[0] : value;
+        return file && ["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"].includes(file.type);
+      }
+    )
+    .test(
+      "fileSize",
+      "File size must be less than 10MB",
+      (value) => {
+        if (!value) return false;
+        const file = Array.isArray(value) ? value[0] : value;
+        return file && file.size <= 10 * 1024 * 1024; // 10MB
+      }
+    ),
+  coverLetter: yup.mixed()
+    .test(
+      "fileType",
+      "Only PDF, DOC or DOCX files are accepted",
+      (value) => {
+        if (!value) return true; // Optional field
+        const file = Array.isArray(value) ? value[0] : value;
+        return file && ["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"].includes(file.type);
+      }
+    )
+    .test(
+      "fileSize",
+      "File size must be less than 5MB",
+      (value) => {
+        if (!value) return true; // Optional field
+        const file = Array.isArray(value) ? value[0] : value;
+        return file && file.size <= 5 * 1024 * 1024; // 5MB
+      }
+    ),
 });
 
 type FormData = yup.InferType<typeof schema>;
@@ -51,6 +98,9 @@ export default function SubmissionForm({
   setEdit,
   refetch,
 }: Readonly<Props>) {
+  const [manuscriptFileName, setManuscriptFileName] = useState<string>("");
+  const [coverLetterFileName, setCoverLetterFileName] = useState<string>("");
+  
   const postMutation = usePostMutation({});
   const putMutation = usePutMutation({});
 
@@ -67,26 +117,74 @@ export default function SubmissionForm({
       enabled: true,
     },
   });
-
-  // const personList = useApi<any>({
-  //   api: `${rkdfApi.getAllUser}?page=1&limit=100`,
-  //   options: {
-  //     enabled: true,
-  //   },
-  // });
-
+ 
   const methods = useForm<FormData>({
     defaultValues: {
       title: "",
       abstract: "",
-      keywords: "",
-      // submittedBy: "",
+      keywords: "", 
       journalId: "",
       manuscriptFile: undefined,
-      coverLetter: null,
+      coverLetter: undefined,
     },
     resolver: yupResolver(schema),
   });
+
+  const handleManuscriptFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      
+      // Validate file type
+      const allowedTypes = ["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"];
+      if (!allowedTypes.includes(file.type)) {
+        toast.error("Only PDF, DOC or DOCX files are allowed");
+        return;
+      }
+      
+      // Validate file size (limit to 10MB)
+      if (file.size > 10 * 1024 * 1024) {
+        toast.error("File size should not exceed 10MB");
+        return;
+      }
+      
+      methods.setValue("manuscriptFile", file);
+      setManuscriptFileName(file.name);
+      toast.success("Manuscript file selected successfully");
+    }
+  };
+
+  const handleCoverLetterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      
+      // Validate file type
+      const allowedTypes = ["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"];
+      if (!allowedTypes.includes(file.type)) {
+        toast.error("Only PDF, DOC or DOCX files are allowed");
+        return;
+      }
+      
+      // Validate file size (limit to 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error("File size should not exceed 5MB");
+        return;
+      }
+      
+      methods.setValue("coverLetter", file);
+      setCoverLetterFileName(file.name);
+      toast.success("Cover letter file selected successfully");
+    }
+  };
+
+  const clearManuscriptFile = () => {
+    methods.setValue("manuscriptFile", "");
+    setManuscriptFileName("");
+  };
+
+  const clearCoverLetterFile = () => {
+    methods.setValue("coverLetter", undefined);
+    setCoverLetterFileName("");
+  };
 
   const onSubmit = async (formData: FormData) => {
     try {
@@ -95,8 +193,7 @@ export default function SubmissionForm({
       // Append all text fields
       data.append("title", formData.title);
       data.append("abstract", formData.abstract);
-      if (formData.keywords) data.append("keywords", formData.keywords);
-      // data.append("submittedBy", formData.submittedBy);
+      if (formData.keywords) data.append("keywords", formData.keywords); 
       data.append("journalId", formData.journalId);
 
       // Handle manuscript file
@@ -155,25 +252,47 @@ export default function SubmissionForm({
       methods.reset({
         title: data?.data?.title,
         abstract: data?.data?.abstract,
-        keywords: data?.data?.keywords?.join(", "),
-        // submittedBy: data?.data?.submittedBy?._id || data?.data?.submittedBy,
+        keywords: data?.data?.keywords?.join(", "), 
         journalId: data?.data?.journalId?._id || data?.data?.journalId,
         manuscriptFile: undefined,
-        coverLetter: null,
+        coverLetter: undefined,
       });
+      
+      // If manuscript file exists in the data
+      if (data?.data?.manuscriptFile) {
+        setManuscriptFileName(data?.data?.manuscriptFile.split('/').pop() || "Current manuscript file");
+      }
+      
+      // If cover letter exists in the data
+      if (data?.data?.coverLetter) {
+        setCoverLetterFileName(data?.data?.coverLetter.split('/').pop() || "Current cover letter");
+      }
     } else {
       methods.reset({
         title: "",
         abstract: "",
-        keywords: "",
-        // submittedBy: "",
+        keywords: "", 
         journalId: "",
         manuscriptFile: undefined,
-        coverLetter: null,
+        coverLetter: undefined,
       });
+      setManuscriptFileName("");
+      setCoverLetterFileName("");
     }
   }, [edit, data, methods.reset]);
 
+  // Helper function to show form errors in toast
+  const showFormErrors = () => {
+    const errors = methods.formState.errors;
+    const errorMessages = Object.entries(errors)
+      .map(([, error]) => error?.message)
+      .filter(Boolean);
+    
+    if (errorMessages.length > 0) {
+      toast.error(errorMessages.join(", "));
+    }
+  };
+  
   return (
     <EditDialogBox
       open={open}
@@ -185,60 +304,199 @@ export default function SubmissionForm({
     >
       <FormProviders
         methods={methods}
-        onSubmit={methods.handleSubmit(onSubmit)}
+        onSubmit={methods.handleSubmit(onSubmit, showFormErrors)}
       >
-        <div className="grid grid-cols-1 gap-x-2 gap-y-4">
-          <div>
-            <RHFTextField name="title" label="Title" placeholder="Enter title" />
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg">
+          <div className="space-y-4 max-h-[75vh] overflow-y-auto pr-2">
+            {/* Title Section */}
+            <div className="bg-white p-3 rounded-lg shadow-sm">
+              <h3 className="text-lg font-medium text-gray-800 mb-3 flex items-center">
+                <Book className="h-5 w-5 mr-2 text-blue-600" />
+                Basic Information
+              </h3>
+              <div className="space-y-4">
+                <div className="relative">
+                  <RHFTextField 
+                    name="title" 
+                    label="Submission Title" 
+                    placeholder="Enter a descriptive title for your submission" 
+                    className="pr-2 pl-2"
+                  />
+                </div>
+                
+                <div className="relative w-full">
+                  <RHFTextArea 
+                    name="abstract" 
+                    label="Abstract" 
+                    placeholder="Provide a concise summary of your submission" 
+                    rows={4}
+                    className="w-full border rounded-md p-1 shadow-sm"
+                  />
+                </div>
+                
+                <div className="flex items-center gap-2">
+                  <Tag className="h-4 w-4 text-blue-600" />
+                  <RHFTextField 
+                    name="keywords" 
+                    label="Keywords" 
+                    placeholder="E.g., research, medicine, technology (comma separated)" 
+                    className="pr-2 pl-2"
+                  />
+                </div>
+              </div>
+            </div>
+            
+            {/* Journal Selection */}
+            <div className="bg-white p-4 rounded-lg shadow-sm">
+              <h3 className="text-lg font-medium text-gray-800 mb-3 flex items-center">
+                <BookOpen className="h-5 w-5 mr-2 text-blue-600" />
+                Journal Information
+              </h3>
+              <div className="space-y-4">
+                <RHFSelectField
+                  name="journalId"
+                  label="Select Journal"
+                  data={journalList?.data?.data?.docs?.map((item: any) => ({
+                    label: item.title,
+                    value: item._id,
+                  }))}
+                  className="pr-2 pl-2"
+                />
+              </div>
+            </div>
+            
+            {/* Manuscript Upload Section */}
+            <div className="bg-white p-4 rounded-lg shadow-sm">
+              <h3 className="text-lg font-medium text-gray-800 mb-3 flex items-center">
+                <Archive className="h-5 w-5 mr-2 text-blue-600" />
+                Manuscript File
+              </h3>
+              
+              <div className="space-y-4">
+                {/* Manuscript File Upload */}
+                <div className="border-2 border-dashed border-blue-200 rounded-lg p-4 bg-blue-50 hover:bg-blue-100 transition-colors">
+                  <div className="flex flex-col items-center justify-center space-y-2">
+                    <Upload className="h-10 w-10 text-blue-500" />
+                    <p className="text-sm text-gray-600 text-center">
+                      Upload your manuscript file (PDF, DOC, DOCX - max 10MB)
+                    </p>
+                    
+                    <input
+                      type="file"
+                      id="manuscriptUpload"
+                      accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                      onChange={handleManuscriptFileChange}
+                      className="hidden"
+                    />
+                    
+                    <label 
+                      htmlFor="manuscriptUpload" 
+                      className="px-4 py-2 bg-blue-600 text-white rounded-md cursor-pointer hover:bg-blue-700 transition-colors"
+                    >
+                      <Upload className="h-4 w-4 inline mr-2" />
+                      Select Manuscript File
+                    </label>
+                  </div>
+                </div>
+                
+                {/* Selected File Display */}
+                {manuscriptFileName && (
+                  <div className="bg-gray-100 p-3 rounded-md">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <FileText className="h-5 w-5 text-blue-600" />
+                        <span className="text-gray-700 font-medium">{manuscriptFileName}</span>
+                      </div>
+                      <button 
+                        type="button"
+                        onClick={clearManuscriptFile}
+                        className="text-red-500 hover:text-red-700"
+                      >
+                        <Trash className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                )}
+                
+                {/* Hidden field to maintain form state */}
+                <input 
+                  type="hidden" 
+                  {...methods.register("manuscriptFile")}
+                />
+              </div>
+            </div>
+            
+            {/* Cover Letter Upload Section */}
+            <div className="bg-white p-4 rounded-lg shadow-sm">
+              <h3 className="text-lg font-medium text-gray-800 mb-3 flex items-center">
+                <FileSymlink className="h-5 w-5 mr-2 text-blue-600" />
+                Cover Letter (Optional)
+              </h3>
+              
+              <div className="space-y-4">
+                {/* Cover Letter File Upload */}
+                <div className="border-2 border-dashed border-blue-200 rounded-lg p-4 bg-blue-50 hover:bg-blue-100 transition-colors">
+                  <div className="flex flex-col items-center justify-center space-y-2">
+                    <Upload className="h-10 w-10 text-blue-500" />
+                    <p className="text-sm text-gray-600 text-center">
+                      Upload a cover letter for your submission (PDF, DOC, DOCX - max 5MB)
+                    </p>
+                    
+                    <input
+                      type="file"
+                      id="coverLetterUpload"
+                      accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                      onChange={handleCoverLetterChange}
+                      className="hidden"
+                    />
+                    
+                    <label 
+                      htmlFor="coverLetterUpload" 
+                      className="px-4 py-2 bg-blue-600 text-white rounded-md cursor-pointer hover:bg-blue-700 transition-colors"
+                    >
+                      <Upload className="h-4 w-4 inline mr-2" />
+                      Select Cover Letter
+                    </label>
+                  </div>
+                </div>
+                
+                {/* Selected File Display */}
+                {coverLetterFileName && (
+                  <div className="bg-gray-100 p-3 rounded-md">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <File className="h-5 w-5 text-blue-600" />
+                        <span className="text-gray-700 font-medium">{coverLetterFileName}</span>
+                      </div>
+                      <button 
+                        type="button"
+                        onClick={clearCoverLetterFile}
+                        className="text-red-500 hover:text-red-700"
+                      >
+                        <Trash className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                )}
+                
+                {/* Hidden field to maintain form state */}
+                <input 
+                  type="hidden" 
+                  {...methods.register("coverLetter")}
+                />
+              </div>
+            </div>
           </div>
 
-          <div>
-            <RHFTextArea name="abstract" label="Abstract" placeholder="Enter abstract" rows={5} />
-          </div>
-
-          <div>
-            <RHFTextField
-              name="keywords"
-              label="Keywords"
-              placeholder="Comma separated keywords"
-            />
-          </div>
-          <div>
-            <RHFSelectField
-              name="journalId"
-              label="Journal"
-              data={journalList?.data?.data?.docs?.map((item: any) => ({
-                label: item.title,
-                value: item._id,
-              }))}
-            />
-          </div>
-
-          <div>
-            <RHFUploadFiled
-              name="manuscriptFile"
-              label="Manuscript File"
-              accept=".pdf,.doc,.docx"
-              required
-            />
-          </div>
-
-          <div>
-            <RHFUploadFiled
-              name="coverLetter"
-              label="Cover Letter (Optional)"
-              accept=".pdf,.doc,.docx"
-            />
-          </div>
-
-          <Separator />
-          <div>
+          <div className="mt-4">
             <ButtonLoading
               isLoading={methods.formState.isSubmitting}
               type="submit"
-              className="h-11 w-full rounded-xl"
+              className="h-12 w-full rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-medium flex items-center justify-center"
+              disabled={methods.formState.isSubmitting}
             >
-              Submit
+              <Save className="h-5 w-5 mr-2" />
+              {edit ? "Update Submission" : "Submit Manuscript"}
             </ButtonLoading>
           </div>
         </div>

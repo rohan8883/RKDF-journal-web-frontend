@@ -2,6 +2,7 @@ export const menuItems = [
   {
     name: "Dashboard",
     url: 'admin-home',
+    roles: ["Admin", "Editor", "Reviewer"],
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -21,6 +22,7 @@ export const menuItems = [
   },
   {
     name: "Submissions",
+    roles: ["Admin", "Author", "Editor", "Reviewer"],
     url: 'submission-form',
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg"
@@ -34,6 +36,7 @@ export const menuItems = [
   },
   {
     name: "Articles",
+    roles: ["Admin", "Author", "Editor", "Reviewer"],
     url: 'article',
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" 
@@ -47,6 +50,7 @@ export const menuItems = [
   },
   {
     name: "Journal",
+    roles: ["Admin",  "Editor", "Reviewer"],
     url: 'Journals-page',
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" 
@@ -60,6 +64,7 @@ export const menuItems = [
   },
   {
     name: "Issue",
+    roles: ["Admin", "Editor", "Reviewer"],
     url: 'issue-list',
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" 
@@ -74,6 +79,7 @@ export const menuItems = [
  
   {
     name: "Masters",
+    roles: ["Admin"],
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"

@@ -25,15 +25,13 @@ import {
   Tag, 
   FileSpreadsheet, 
   Link, 
-  Archive, 
+  Archive,
   Save,
   Upload,
   File,
-  FileUp,
   Trash
 } from "lucide-react";
 
-// Modified schema to make fullText optional when uploading PDF
 const schema = yup.object().shape({
   title: yup.string().required("Title is required"),
   abstract: yup.string().required("Abstract is required"),
@@ -43,7 +41,26 @@ const schema = yup.object().shape({
   doi: yup.string(),
   pages: yup.string().matches(/^\d+-\d+$/, "Pages must be in format XXXX-XXXX"),
   publicationDate: yup.string().required("Publication date is required"),
-  fullText: yup.string(), // Made optional since we're using file upload
+  fullTextFile: yup.mixed()
+    .required("PDF file is required")
+    .test(
+      "fileType",
+      "Only PDF files are accepted",
+      (value) => {
+        if (!value) return false;
+        const file = Array.isArray(value) ? value[0] : value;
+        return file && file.type === "application/pdf";
+      }
+    )
+    .test(
+      "fileSize",
+      "File size must be less than 10MB",
+      (value) => {
+        if (!value) return false;
+        const file = Array.isArray(value) ? value[0] : value;
+        return file && file.size <= 10 * 1024 * 1024; // 10MB
+      }
+    ),
 });
 
 type FormData = yup.InferType<typeof schema>;
@@ -67,11 +84,7 @@ export default function ArticleForm({
   setEdit,
   refetch,
 }: Readonly<Props>) {
-  const [pdfFile, setPdfFile] = useState<File | null>(null);
   const [pdfFileName, setPdfFileName] = useState<string>("");
-  const [uploadProgress, setUploadProgress] = useState<number>(0);
-  const [isUploading, setIsUploading] = useState<boolean>(false);
-  
   const postMutation = usePostMutation({});
   const putMutation = usePutMutation({});
 
@@ -106,7 +119,7 @@ export default function ArticleForm({
       doi: "",
       pages: "",
       publicationDate: "",
-      fullText: "",
+      fullTextFile: undefined,
     },
     resolver: yupResolver(schema),
   });
@@ -127,86 +140,45 @@ export default function ArticleForm({
         return;
       }
       
-      setPdfFile(file);
+      methods.setValue("fullTextFile", file);
       setPdfFileName(file.name);
       toast.success("PDF file selected successfully");
     }
   };
 
   const clearSelectedFile = () => {
-    setPdfFile(null);
+    methods.setValue("fullTextFile", "");
     setPdfFileName("");
-  };
-
-  const uploadPDF = async (): Promise<string | null> => {
-    if (!pdfFile) {
-      toast.error("No PDF file selected");
-      return null;
-    }
-    
-    setIsUploading(true);
-    setUploadProgress(0);
-    
-    try {
-      // Create FormData for file upload
-      const formData = new FormData();
-      formData.append('file', pdfFile);
-      
-      // Simulate progress (replace with actual API upload call)
-      const uploadResponse = await new Promise<{ data: { fileUrl: string } }>((resolve) => {
-        let progress = 0;
-        const interval = setInterval(() => {
-          progress += 10;
-          setUploadProgress(progress);
-          
-          if (progress >= 100) {
-            clearInterval(interval);
-            // Replace this with your actual API response structure
-            resolve({ data: { fileUrl: `https://example.com/uploads/${pdfFile.name}` } });
-          }
-        }, 300);
-      });
-      
-      setIsUploading(false);
-      toast.success("PDF uploaded successfully");
-      return uploadResponse.data.fileUrl;
-      
-    } catch (error) {
-      console.error("File upload error:", error);
-      toast.error("Failed to upload PDF file");
-      setIsUploading(false);
-      return null;
-    }
   };
 
   const onSubmit = async (formData: FormData) => {
     try {
-      let pdfUrl = null;
+      const data = new FormData();
+
+      // Append all text fields
+      data.append("title", formData.title);
+      data.append("abstract", formData.abstract);
+      if (formData.keywords) data.append("keywords", formData.keywords);
+      data.append("issueId", formData.issueId);
+      if (formData.submissionId) data.append("submissionId", formData.submissionId);
+      if (formData.doi) data.append("doi", formData.doi);
+      if (formData.pages) data.append("pages", formData.pages);
+      data.append("publicationDate", formData.publicationDate);
       
-      if (pdfFile) {
-        pdfUrl = await uploadPDF();
-        if (!pdfUrl) {
-          return; // Stop submission if upload failed
-        }
-      }
-      
-      const payload = {
-        title: formData.title,
-        abstract: formData.abstract,
-        keywords: formData.keywords,
-        issueId: formData.issueId,
-        submissionId: formData.submissionId || undefined,
-        doi: formData.doi,
-        pages: formData.pages,
-        publicationDate: formData.publicationDate,
-        fullText: pdfUrl || formData.fullText, // Use PDF URL if available, otherwise use text content
-        fileType: pdfFile ? 'pdf' : 'text',
-      };
+      // Handle PDF file upload
+      const fullTextFile = Array.isArray(formData.fullTextFile)
+        ? formData.fullTextFile[0]
+        : formData.fullTextFile;
+      data.append("fullTextFile", fullTextFile);
+      data.append("fileType", "pdf");
 
       if (edit && id) {
         const res = await putMutation.mutateAsync({
           api: `${rkdfApi.updateArticles}/${id}`,
-          data: payload,
+          data,
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         });
         if (res.data?.success) {
           toast.success(res?.data?.message);
@@ -216,7 +188,10 @@ export default function ArticleForm({
       } else {
         const res = await postMutation.mutateAsync({
           api: rkdfApi.createArticles,
-          data: payload,
+          data,
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         });
         if (res.data?.success) {
           toast.success(res?.data?.message);
@@ -245,10 +220,10 @@ export default function ArticleForm({
         doi: data?.data?.doi,
         pages: data?.data?.pages,
         publicationDate: data?.data?.publicationDate?.split('T')[0],
-        fullText: data?.data?.fullText,
+        fullTextFile: undefined,
       });
       
-      // If PDF URL exists in the data
+      // If PDF exists in the data
       if (data?.data?.fullText && data?.data?.fileType === 'pdf') {
         setPdfFileName(data?.data?.fullText.split('/').pop() || "Current PDF file");
       }
@@ -262,9 +237,9 @@ export default function ArticleForm({
         doi: "",
         pages: "",
         publicationDate: "",
-        fullText: "",
+        fullTextFile: undefined,
       });
-      clearSelectedFile();
+      setPdfFileName("");
     }
   }, [edit, data, methods.reset]);
 
@@ -401,20 +376,20 @@ export default function ArticleForm({
               </div>
             </div>
             
-            {/* PDF Upload Section - Replacing Full Text */}
+            {/* PDF Upload Section */}
             <div className="bg-white p-4 rounded-lg shadow-sm">
               <h3 className="text-lg font-medium text-gray-800 mb-3 flex items-center">
                 <FileText className="h-5 w-5 mr-2 text-blue-600" />
-                Article Full Text
+                Article Full Text (PDF)
               </h3>
               
               <div className="space-y-4">
                 {/* PDF File Upload */}
                 <div className="border-2 border-dashed border-blue-200 rounded-lg p-4 bg-blue-50 hover:bg-blue-100 transition-colors">
                   <div className="flex flex-col items-center justify-center space-y-2">
-                    <FileUp className="h-10 w-10 text-blue-500" />
+                    <Upload className="h-10 w-10 text-blue-500" />
                     <p className="text-sm text-gray-600 text-center">
-                      Upload PDF file containing the full text of your article
+                      Upload PDF file containing the full text of your article (max 10MB)
                     </p>
                     
                     <input
@@ -451,51 +426,24 @@ export default function ArticleForm({
                         <Trash className="h-4 w-4" />
                       </button>
                     </div>
-                    
-                    {/* Upload progress bar - only visible when uploading */}
-                    {isUploading && (
-                      <div className="mt-2">
-                        <div className="w-full bg-gray-200 rounded-full h-2.5">
-                          <div 
-                            className="bg-blue-600 h-2.5 rounded-full transition-all duration-300" 
-                            style={{ width: `${uploadProgress}%` }}
-                          ></div>
-                        </div>
-                        <p className="text-xs text-gray-500 mt-1 text-right">{uploadProgress}% Uploaded</p>
-                      </div>
-                    )}
                   </div>
                 )}
                 
                 {/* Hidden field to maintain form state */}
                 <input 
                   type="hidden" 
-                  {...methods.register("fullText")}
+                  {...methods.register("fullTextFile")}
                 />
-                
-                {/* Optional: Fallback textarea for when PDF upload is not possible */}
-                {/* <div className="mt-4">
-                  <p className="text-sm text-gray-500 mb-2">
-                    If you cannot upload a PDF, you can enter the text content below:
-                  </p>
-                  <RHFTextArea 
-                    name="fullText" 
-                    label="Text Content (Optional if PDF is uploaded)" 
-                    placeholder="Enter the full text of your article if PDF upload is not available" 
-                    rows={4}
-                    className="pr-2 pl-2 w-full"
-                  />
-                </div> */}
               </div>
             </div>
           </div>
 
           <div className="mt-4">
             <ButtonLoading
-              isLoading={methods.formState.isSubmitting || isUploading}
+              isLoading={methods.formState.isSubmitting}
               type="submit"
               className="h-12 w-full rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-medium flex items-center justify-center"
-              disabled={methods.formState.isSubmitting || isUploading}
+              disabled={methods.formState.isSubmitting}
             >
               <Save className="h-5 w-5 mr-2" />
               {edit ? "Update Article" : "Publish Article"}

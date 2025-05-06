@@ -18,12 +18,16 @@ export default function LandingPage() {
               An International Peer Reviewed, Open Access Journal committed to advancing multidisciplinary research and scholarship
             </p>
             <div className="flex flex-col sm:flex-row gap-4 mt-8 justify-center">
-              <Button className="bg-white text-teal-700 hover:bg-teal-50 font-medium text-base shadow-lg flex items-center gap-2">
-                <Upload size={18} /> Submit Paper
-              </Button>
-              <Button className="bg-teal-600 hover:bg-teal-500 border border-teal-400 font-medium text-base shadow-lg flex items-center gap-2">
-                <FileText size={18} /> Publication Guidelines
-              </Button>
+              <Link to={'/Journal/submissions'}>
+                <Button className="bg-white text-teal-700 hover:bg-teal-50 font-medium text-base shadow-lg flex items-center gap-2">
+                  <Upload size={18} /> Submit Paper
+                </Button>
+              </Link>
+              <Link to={'/Journal/publicationProcedure'}>
+                <Button className="bg-teal-600 hover:bg-teal-500 border border-teal-400 font-medium text-base shadow-lg flex items-center gap-2">
+                  <FileText size={18} /> Publication Guidelines
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
@@ -43,17 +47,20 @@ export default function LandingPage() {
                 <Card className="border-t-0 rounded-t-none shadow-md">
                   <CardContent className="p-6">
                     <p className="text-gray-700 leading-relaxed">
-                      IJHESM (International Journal of Humanities Engineering, Science and Management) is a prestigious open access 
-                      journal published by RKDF University Ranchi. Our journal serves as a platform for researchers, 
+                      IJHESM (International Journal of Humanities Engineering, Science and Management) is a prestigious open access
+                      journal published by RKDF University Ranchi. Our journal serves as a platform for researchers,
                       academicians, and professionals to share their discoveries and innovative ideas across multiple disciplines.
                     </p>
                     <div className="flex flex-wrap gap-3 mt-6">
-                      <Button className="bg-teal-600 hover:bg-teal-700 shadow-md flex items-center gap-2">
-                        <Upload size={16} /> Submit Paper Online
-                      </Button>
-                      <Button className="bg-teal-50 text-teal-700 hover:bg-teal-100 border border-teal-200 shadow-md flex items-center gap-2">
-                        <FileText size={16} /> Publication Process
-                      </Button>
+                      <Link to={'/Journal/submissions'}>
+                        <Button className="bg-teal-600 hover:bg-teal-700 shadow-md flex items-center gap-2">
+                          <Upload size={16} /> Submit Paper Online
+                        </Button>
+                      </Link>
+                      <Link to="/Journal/publicationProcedure">
+                        <Button className="bg-teal-50 text-teal-700 hover:bg-teal-100 border border-teal-200 shadow-md flex items-center gap-2">
+                          <FileText size={16} /> Publication Process
+                        </Button></Link>
                     </div>
                   </CardContent>
                 </Card>
@@ -86,7 +93,7 @@ export default function LandingPage() {
                         </p>
                         <p className="text-gray-700 text-justify mt-4 leading-relaxed">
                           It is our ultimate objective to make bridge between established theory and its practical application
-                          in the related areas of society. We welcome the researchers and scholars to their research findings, 
+                          in the related areas of society. We welcome the researchers and scholars to their research findings,
                           facts, suggestions, recommendations and reviews to IJHESM.
                         </p>
                       </div>
@@ -97,8 +104,8 @@ export default function LandingPage() {
                         <p className="font-semibold text-gray-800 text-center">Dr. Shuchitangshu Chatterjee</p>
                         <p className="text-gray-600 text-center text-sm">Vice Chancellor</p>
                         <p className="text-gray-600 text-center text-sm">RKDF University Ranchi</p>
-                        <a href="mailto:vc@rkdfuniversity.org" 
-                           className="mt-3 text-teal-600 hover:text-teal-800 flex items-center text-sm">
+                        <a href="mailto:vc@rkdfuniversity.org"
+                          className="mt-3 text-teal-600 hover:text-teal-800 flex items-center text-sm">
                           <ExternalLink size={14} className="mr-1" /> vc@rkdfuniversity.org
                         </a>
                       </div>
@@ -174,20 +181,20 @@ export default function LandingPage() {
                     <div className="bg-gray-50 p-4 rounded-lg border border-gray-100">
                       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                         {[
-                          "Research Papers", 
-                          "Survey Papers", 
-                          "Study Papers", 
-                          "Subjective Papers", 
-                          "Experimental Results", 
+                          "Research Papers",
+                          "Survey Papers",
+                          "Study Papers",
+                          "Subjective Papers",
+                          "Experimental Results",
                           "Analysis Studies",
-                          "Informative Articles", 
-                          "Comparison Papers", 
-                          "Case Studies", 
-                          "Review Papers", 
-                          "Comparative Studies", 
+                          "Informative Articles",
+                          "Comparison Papers",
+                          "Case Studies",
+                          "Review Papers",
+                          "Comparative Studies",
                           "Dissertation Chapters",
-                          "Research Proposals", 
-                          "Working Projects", 
+                          "Research Proposals",
+                          "Working Projects",
                           "New Innovation & Ideas"
                         ].map((item, index) => (
                           <div key={index} className="flex items-center">
@@ -210,7 +217,7 @@ export default function LandingPage() {
                 <Card className="border-t-0 rounded-t-none shadow-md">
                   <CardContent className="p-6">
                     <p className="text-gray-700 mb-6 text-center font-medium">Follow these steps to publish your research paper</p>
-                    
+
                     <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
                       <div className="flex flex-col items-center max-w-full sm:max-w-xs">
                         <div className="w-20 h-20 bg-teal-100 rounded-full flex items-center justify-center shadow-md">
@@ -219,9 +226,9 @@ export default function LandingPage() {
                         <span className="mt-3 font-medium text-gray-800">Step 1</span>
                         <span className="text-sm text-gray-600 text-center">Submit Article</span>
                       </div>
-                      
+
                       <ArrowRight className="h-6 w-6 text-gray-400 rotate-90 sm:rotate-0 hidden sm:block" />
-                      
+
                       <div className="flex flex-col items-center max-w-full sm:max-w-xs">
                         <div className="w-20 h-20 bg-indigo-100 rounded-full flex items-center justify-center shadow-md">
                           <FileText className="h-10 w-10 text-indigo-600" />
@@ -229,9 +236,9 @@ export default function LandingPage() {
                         <span className="mt-3 font-medium text-gray-800">Step 2</span>
                         <span className="text-sm text-gray-600 text-center">Peer Review Process</span>
                       </div>
-                      
+
                       <ArrowRight className="h-6 w-6 text-gray-400 rotate-90 sm:rotate-0 hidden sm:block" />
-                      
+
                       <div className="flex flex-col items-center max-w-full sm:max-w-xs">
                         <div className="w-20 h-20 bg-pink-100 rounded-full flex items-center justify-center shadow-md">
                           <CreditCard className="h-10 w-10 text-pink-600" />
@@ -239,9 +246,9 @@ export default function LandingPage() {
                         <span className="mt-3 font-medium text-gray-800">Step 3</span>
                         <span className="text-sm text-gray-600 text-center">Pay Fees</span>
                       </div>
-                      
+
                       <ArrowRight className="h-6 w-6 text-gray-400 rotate-90 sm:rotate-0 hidden sm:block" />
-                      
+
                       <div className="flex flex-col items-center max-w-full sm:max-w-xs">
                         <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center shadow-md">
                           <Award className="h-10 w-10 text-blue-600" />
@@ -250,7 +257,7 @@ export default function LandingPage() {
                         <span className="text-sm text-gray-600 text-center">Paper Published Online</span>
                       </div>
                     </div>
-                    
+
                     <div className="flex justify-center mt-6">
                       <Button className="bg-teal-600 hover:bg-teal-700 shadow-md flex items-center gap-2">
                         More Details <ArrowRight size={16} />
@@ -260,7 +267,7 @@ export default function LandingPage() {
                 </Card>
               </section>
             </div>
-            
+
             {/* Sidebar - Takes 1/3 on desktop */}
             <SideContent />
           </div>

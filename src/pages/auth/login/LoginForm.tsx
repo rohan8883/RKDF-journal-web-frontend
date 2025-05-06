@@ -36,7 +36,7 @@ export default function LoginForm() {
         api: authApi.login,
         data: data
       });
-      if (response?.data?.success) {
+      if (response?.data?.success) { 
         await login(response);
       } else {
         toast.error(response?.data?.message);
