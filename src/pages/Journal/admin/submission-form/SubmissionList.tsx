@@ -229,14 +229,11 @@ export default function SubmissionList() {
                                 <DropdownMenuItem onClick={() => handleEdit(submission?._id)}>
                                   <Edit size={14} className="mr-2" /> Edit
                                 </DropdownMenuItem>
+                                 <DropdownMenuItem onClick={() => handleViewDetails(submission?._id)}>
+                                  <FileText size={14} className="mr-2" /> View Details
+                                </DropdownMenuItem>
                                 <DropdownMenuItem className="text-red-600">
                                   <Trash2 size={14} className="mr-2" /> Delete
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                  <FileText size={14} className="mr-2" /> View Files
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => handleViewDetails(submission?._id)}>
-                                  <FileText size={14} className="mr-2" /> View Details
                                 </DropdownMenuItem>
                               </DropdownMenuContent>
                             </DropdownMenu>

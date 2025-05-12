@@ -4,8 +4,8 @@ import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 
 export type { AxiosRequestConfig, AxiosResponse };
 
-export const BASE_URI = 'https://api.ijhesm.org';
-// export const BASE_URI = 'http://localhost:3008';
+// export const BASE_URI = 'https://api.ijhesm.org';
+export const BASE_URI = 'http://localhost:3008';
 
 
 const axiosInstance = axios.create({

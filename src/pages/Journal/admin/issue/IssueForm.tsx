@@ -8,17 +8,21 @@ import {
   RHFTextField,
   FormProviders,
   RHFTextArea,
-  RHFUploadFiled,
   RHFSelectField,
 } from "@/components/forms";
 import { Separator } from "@/components/ui/separator";
 import EditDialogBox from "@/components/edit-dialog-box";
-import {
-  useApi,
-  usePostMutation,
-  usePutMutation,
-} from "@/hooks/useCustomQuery";
+import { useApi, usePostMutation, usePutMutation } from "@/hooks/useCustomQuery";
 import { rkdfApi } from "@/lib";
+import {
+  BookOpen,
+  Hash,
+  Calendar,
+  Type,
+  FileText,
+  Layers,
+  Bookmark,
+} from "lucide-react";
 
 const schema = yup.object().shape({
   journalId: yup.string().required("Journal is required"),
@@ -27,7 +31,6 @@ const schema = yup.object().shape({
   title: yup.string().required("Title is required"),
   publicationDate: yup.string().required("Publication date is required"),
   description: yup.string(),
-  coverImage: yup.mixed(),
 });
 
 type FormData = yup.InferType<typeof schema>;
@@ -56,16 +59,12 @@ export default function IssueForm({
 
   const { data, isFetching } = useApi<any>({
     api: `${rkdfApi.getIssueById}/${id}`,
-    options: {
-      enabled: edit,
-    },
+    options: { enabled: edit },
   });
 
   const journalList = useApi<any>({
     api: `${rkdfApi.getAllJournal}?page=1&limit=100`,
-    options: {
-      enabled: true,
-    },
+    options: { enabled: true },
   });
 
   const methods = useForm<FormData>({
@@ -76,68 +75,37 @@ export default function IssueForm({
       title: "",
       publicationDate: "",
       description: "",
-      coverImage: null,
     },
     resolver: yupResolver(schema),
   });
 
   const onSubmit = async (formData: FormData) => {
     try {
-      const data = new FormData();
+      const payload = { ...formData };
 
-      // Append all text fields
-      data.append("journalId", formData.journalId);
-      data.append("volume", formData.volume);
-      data.append("issueNumber", formData.issueNumber);
-      data.append("title", formData.title);
-      data.append("publicationDate", formData.publicationDate);
-      
-      if (formData.description) {
-        data.append("description", formData.description);
-      }
-
-      // Handle file upload
-      if (formData.coverImage) {
-        // If coverImage is an array (from RHFUploadFiled), take the first item
-        const file = Array.isArray(formData.coverImage) 
-          ? formData.coverImage[0] 
-          : formData.coverImage;
-        data.append("coverImage", file);
-      }
-
+      let res;
       if (edit && id) {
-        const res = await putMutation.mutateAsync({
+        res = await putMutation.mutateAsync({
           api: `${rkdfApi.updateIssue}/${id}`,
-          data,
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
+          data: payload,
         });
-        if (res.data?.success) {
-          toast.success(res?.data?.message);
-        } else {
-          toast.error("Issue not updated successfully");
-        }
       } else {
-        const res = await postMutation.mutateAsync({
+        res = await postMutation.mutateAsync({
           api: rkdfApi.createIssue,
-          data,
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
+          data: payload,
         });
-        if (res.data?.success) {
-          toast.success(res?.data?.message);
-        } else {
-          toast.error("Issue not created successfully");
-        }
       }
 
-      setOpen(false);
-      if (setEdit) setEdit(false);
-      if (refetch) refetch();
-    } catch (error) {
-      console.error("Submission error:", error);
+      if (res.data?.success) {
+        toast.success(res.data.message || "Success");
+        setOpen(false);
+        if (setEdit) setEdit(false);
+        if (refetch) refetch();
+      } else {
+        toast.error("Something went wrong");
+      }
+    } catch (err) {
+      console.error(err);
       toast.error("Failed to submit the form");
     }
   };
@@ -149,9 +117,8 @@ export default function IssueForm({
         volume: data?.data?.volume,
         issueNumber: data?.data?.issueNumber,
         title: data?.data?.title,
-        publicationDate: data?.data?.publicationDate?.split('T')[0], // Format date if needed
+        publicationDate: data?.data?.publicationDate?.split("T")[0],
         description: data?.data?.description,
-        coverImage: null, // Reset to null for edit mode
       });
     } else {
       methods.reset({
@@ -161,7 +128,6 @@ export default function IssueForm({
         title: "",
         publicationDate: "",
         description: "",
-        coverImage: null,
       });
     }
   }, [edit, data, methods.reset]);
@@ -175,15 +141,17 @@ export default function IssueForm({
       edit={edit}
       isLoading={isFetching}
     >
-      <FormProviders
-        methods={methods}
-        onSubmit={methods.handleSubmit(onSubmit)}
-      >
-        <div className="grid grid-cols-1 gap-x-2 gap-y-4">
-          <div>
+      <FormProviders methods={methods} onSubmit={methods.handleSubmit(onSubmit)}>
+        <div className="space-y-6">
+          {/* Journal Selection */}
+          <div className="bg-gray-50 p-4 rounded-xl shadow-sm border">
+            <div className="flex items-center gap-2 mb-2 text-gray-700">
+              <BookOpen className="h-5 w-5" />
+              <label className="font-medium">Journal</label>
+            </div>
             <RHFSelectField
               name="journalId"
-              label="Journal"
+              // placeholder="Select a journal"
               data={journalList?.data?.data?.docs?.map((item: any) => ({
                 label: item.title,
                 value: item._id,
@@ -191,44 +159,82 @@ export default function IssueForm({
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <RHFTextField name="volume" label="Volume" placeholder="Enter volume" />
-            <RHFTextField name="issueNumber" label="Issue Number" placeholder="Enter issue number" />
+          {/* Volume, Issue Number */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="bg-gray-50 p-4 rounded-xl shadow-sm border">
+              <div className="flex items-center gap-2 mb-2 text-gray-700">
+                <Layers className="h-5 w-5" />
+                <label className="font-medium">Volume</label>
+              </div>
+              <RHFTextField 
+                name="volume" 
+                placeholder="Enter volume number" 
+                className="w-full"
+              />
+            </div>
+            <div className="bg-gray-50 p-4 rounded-xl shadow-sm border">
+              <div className="flex items-center gap-2 mb-2 text-gray-700">
+                <Hash className="h-5 w-5" />
+                <label className="font-medium">Issue Number</label>
+              </div>
+              <RHFTextField 
+                name="issueNumber" 
+                placeholder="Enter issue number" 
+                className="w-full"
+              />
+            </div>
           </div>
 
-          <div>
-            <RHFTextField name="title" label="Title" placeholder="Enter title" />
-          </div>
-
-          <div>
+          {/* Title */}
+          <div className="bg-gray-50 p-4 rounded-xl shadow-sm border">
+            <div className="flex items-center gap-2 mb-2 text-gray-700">
+              <Type className="h-5 w-5" />
+              <label className="font-medium">Title</label>
+            </div>
             <RHFTextField 
-              name="publicationDate" 
-              label="Publication Date" 
-              placeholder="YYYY-MM-DD"
-              type="date"
+              name="title" 
+              placeholder="Enter issue title" 
+              className="w-full"
             />
           </div>
 
-          <div>
-            <RHFTextArea name="description" label="Description" placeholder="Enter description" />
+          {/* Publication Date */}
+          <div className="bg-gray-50 p-4 rounded-xl shadow-sm border">
+            <div className="flex items-center gap-2 mb-2 text-gray-700">
+              <Calendar className="h-5 w-5" />
+              <label className="font-medium">Publication Date</label>
+            </div>
+            <RHFTextField
+              name="publicationDate"
+              type="date"
+              className="w-full"
+            />
           </div>
 
-          <div>
-            <RHFUploadFiled 
-              name="coverImage" 
-              label="Cover Image" 
-              accept="image/*"
+          {/* Description */}
+          <div className="bg-gray-50 p-4 rounded-xl shadow-sm border">
+            <div className="flex items-center gap-2 mb-2 text-gray-700">
+              <FileText className="h-5 w-5" />
+              <label className="font-medium">Description</label>
+            </div>
+            <RHFTextArea 
+              name="description" 
+              placeholder="Enter description (optional)" 
+              className="w-full min-h-[100px]"
             />
           </div>
 
           <Separator />
+
+          {/* Submit Button */}
           <div>
             <ButtonLoading
               isLoading={methods.formState.isSubmitting}
               type="submit"
-              className="h-11 w-full rounded-xl"
+              className="h-11 w-full rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold flex items-center justify-center gap-2"
             >
-              Submit
+              <Bookmark className="h-4 w-4" />
+              {edit ? "Update Issue" : "Create Issue"}
             </ButtonLoading>
           </div>
         </div>

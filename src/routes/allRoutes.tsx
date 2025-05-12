@@ -218,7 +218,7 @@ const routes: Route[] = [
       {
         id: '3',
         name: 'Submission Details',
-        path: 'submissions/:id',
+        path: 'submissions/:submissionId',
         element: <SubmissionDetails />
       },
     ]

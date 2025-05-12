@@ -1,4 +1,5 @@
-import  { useState } from "react";
+import { useState } from "react";
+import { useParams } from "react-router-dom";
 import { useApi } from "@/hooks/useCustomQuery";
 import { rkdfApi } from "@/lib";
 import { 
@@ -24,12 +25,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge"; 
 import { format } from "date-fns";
 
-type Props = {
-  submissionId: string;
-};
-
-// Status mapping for colors and labels
+// Updated status mapping
 const statusConfig = {
+  "submitted": { color: "bg-blue-100 text-blue-800", icon: <FileText className="h-4 w-4" /> },
   "pending": { color: "bg-yellow-100 text-yellow-800", icon: <Clock className="h-4 w-4" /> },
   "under_review": { color: "bg-blue-100 text-blue-800", icon: <AlertCircle className="h-4 w-4" /> },
   "accepted": { color: "bg-green-100 text-green-800", icon: <CheckCircle className="h-4 w-4" /> },
@@ -37,10 +35,11 @@ const statusConfig = {
   "revisions_required": { color: "bg-purple-100 text-purple-800", icon: <FileText className="h-4 w-4" /> }
 };
 
-export default function SubmissionDetailsView({ submissionId }: Readonly<Props>) {
+export default function SubmissionDetailsView() {
   const [messagesExpanded, setMessagesExpanded] = useState(true);
+  const { submissionId } = useParams<{ submissionId: string }>();
   
-  const { data, isLoading} = useApi<any>({
+  const { data, isLoading } = useApi<any>({
     api: `${rkdfApi?.getSubmissionsById}/${submissionId}`,
     options: {
       enabled: !!submissionId,
@@ -96,17 +95,6 @@ export default function SubmissionDetailsView({ submissionId }: Readonly<Props>)
       </div>
     );
   }
-
-//   if (error || !submissionData) {
-//     return (
-//       <div className="bg-red-50 text-red-800 rounded-lg p-4">
-//         <div className="flex items-center">
-//           <AlertCircle className="h-5 w-5 mr-2" />
-//           <span>Error loading submission details. Please try again later.</span>
-//         </div>
-//       </div>
-//     );
-//   }
 
   // Get status config or default
   const getStatusDisplay = (status?: string) => {
@@ -181,7 +169,7 @@ export default function SubmissionDetailsView({ submissionId }: Readonly<Props>)
                       <Calendar className="h-4 w-4 mr-1 text-blue-600" />
                       Submission Date
                     </h3>
-                    <p className="text-gray-800">{formatDate(submissionData?.createdAt)}</p>
+                    <p className="text-gray-800">{formatDate(submissionData?.submissionDate || submissionData?.createdAt)}</p>
                   </div>
                   
                   <div>
@@ -246,7 +234,7 @@ export default function SubmissionDetailsView({ submissionId }: Readonly<Props>)
                                   <CornerUpRight className="h-4 w-4 text-gray-400 mr-2 mt-1" />
                                   <div>
                                     <p className="text-xs text-gray-500 mb-1">
-                                      Response from {submissionData?.authorId?.name || "Author"} · {formatDate(message?.responseDate)}
+                                      Response from {submissionData?.submittedBy?.fullName || "Author"} · {formatDate(message?.responseDate)}
                                     </p>
                                     <p className="text-gray-700">{message?.response}</p>
                                   </div>
@@ -281,21 +269,21 @@ export default function SubmissionDetailsView({ submissionId }: Readonly<Props>)
                 <div>
                   <h3 className="text-sm font-medium text-gray-500 mb-1">Name</h3>
                   <p className="text-gray-800">
-                    {submissionData?.authorId?.name || "Author information not available"}
+                    {submissionData?.submittedBy?.fullName || "Author information not available"}
                   </p>
                 </div>
                 
                 <div>
                   <h3 className="text-sm font-medium text-gray-500 mb-1">Email</h3>
                   <p className="text-gray-800">
-                    {submissionData?.authorId?.email || "Email not available"}
+                    {submissionData?.submittedBy?.email || "Email not available"}
                   </p>
                 </div>
                 
-                {submissionData?.authorId?.affiliation && (
+                {submissionData?.submittedBy?.affiliation && (
                   <div>
                     <h3 className="text-sm font-medium text-gray-500 mb-1">Affiliation</h3>
-                    <p className="text-gray-800">{submissionData?.authorId?.affiliation}</p>
+                    <p className="text-gray-800">{submissionData?.submittedBy?.affiliation}</p>
                   </div>
                 )}
               </div>
@@ -310,7 +298,7 @@ export default function SubmissionDetailsView({ submissionId }: Readonly<Props>)
               
               <div className="space-y-4">
                 {/* Manuscript File */}
-                {submissionData?.manuscriptFile && (
+                {submissionData?.fullManuscriptUrl && (
                   <div className="bg-gray-50 rounded-lg p-3">
                     <div className="flex justify-between items-center">
                       <div className="flex items-center space-x-3">
@@ -320,7 +308,7 @@ export default function SubmissionDetailsView({ submissionId }: Readonly<Props>)
                         <div>
                           <h3 className="font-medium text-gray-800">Manuscript</h3>
                           <p className="text-xs text-gray-500">
-                            {submissionData?.manuscriptFile?.split('/')?.pop()}
+                            {submissionData?.manuscriptFile || "manuscript.pdf"}
                           </p>
                         </div>
                       </div>
@@ -329,38 +317,8 @@ export default function SubmissionDetailsView({ submissionId }: Readonly<Props>)
                         variant="ghost" 
                         size="sm"
                         onClick={() => handleFileDownload(
-                          submissionData?.manuscriptFile,
-                          submissionData?.manuscriptFile?.split('/')?.pop() || "manuscript.pdf"
-                        )}
-                      >
-                        <Download className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                )}
-                
-                {/* Cover Letter */}
-                {submissionData?.coverLetter && (
-                  <div className="bg-gray-50 rounded-lg p-3">
-                    <div className="flex justify-between items-center">
-                      <div className="flex items-center space-x-3">
-                        <div className="bg-blue-100 rounded-full p-2">
-                          <FileSymlink className="h-4 w-4 text-blue-600" />
-                        </div>
-                        <div>
-                          <h3 className="font-medium text-gray-800">Cover Letter</h3>
-                          <p className="text-xs text-gray-500">
-                            {submissionData?.coverLetter?.split('/')?.pop()}
-                          </p>
-                        </div>
-                      </div>
-                      
-                      <Button 
-                        variant="ghost" 
-                        size="sm"
-                        onClick={() => handleFileDownload(
-                          submissionData?.coverLetter,
-                          submissionData?.coverLetter?.split('/')?.pop() || "cover-letter.pdf"
+                          submissionData?.fullManuscriptUrl,
+                          submissionData?.manuscriptFile || "manuscript.pdf"
                         )}
                       >
                         <Download className="h-4 w-4" />
@@ -370,7 +328,7 @@ export default function SubmissionDetailsView({ submissionId }: Readonly<Props>)
                 )}
                 
                 {/* No files case */}
-                {!submissionData?.manuscriptFile && !submissionData?.coverLetter && (
+                {!submissionData?.fullManuscriptUrl && (
                   <div className="text-center py-4 text-gray-500">
                     <p>No files available</p>
                   </div>
@@ -386,21 +344,21 @@ export default function SubmissionDetailsView({ submissionId }: Readonly<Props>)
               </h2>
               
               <div className="space-y-4">
-                {submissionData?.statusHistory && submissionData?.statusHistory?.length > 0 ? (
+                {submissionData?.reviewerAssignments && submissionData?.reviewerAssignments?.length > 0 ? (
                   <div className="relative pl-6 space-y-6 before:absolute before:left-2 before:top-0 before:h-full before:w-0.5 before:bg-gray-200">
-                    {submissionData?.statusHistory?.map((history: any, index: number) => (
+                    {submissionData?.reviewerAssignments?.map((assignment: any, index: number) => (
                       <div key={index} className="relative">
                         <div className="absolute -left-6 mt-1.5 h-3 w-3 rounded-full border-2 border-white bg-blue-500"></div>
                         <div>
                           <span className="text-xs font-medium text-blue-600">
-                            {formatDate(history?.date)}
+                            {formatDate(assignment?.assignedDate)}
                           </span>
                           <h3 className="text-sm font-medium text-gray-800">
-                            {history?.status?.replace("_", " ").toUpperCase()}
+                            {assignment?.status?.replace("_", " ").toUpperCase() || "ASSIGNED"}
                           </h3>
-                          {history?.comment && (
+                          {assignment?.reviewerId?.fullName && (
                             <p className="text-xs text-gray-500 mt-1">
-                              {history?.comment}
+                              Reviewer: {assignment?.reviewerId?.fullName}
                             </p>
                           )}
                         </div>
@@ -414,7 +372,7 @@ export default function SubmissionDetailsView({ submissionId }: Readonly<Props>)
                       <div className="absolute -left-6 mt-1.5 h-3 w-3 rounded-full border-2 border-white bg-blue-500"></div>
                       <div>
                         <span className="text-xs font-medium text-blue-600">
-                          {formatDate(submissionData?.createdAt)}
+                          {formatDate(submissionData?.submissionDate || submissionData?.createdAt)}
                         </span>
                         <h3 className="text-sm font-medium text-gray-800">SUBMISSION RECEIVED</h3>
                       </div>
@@ -427,7 +385,7 @@ export default function SubmissionDetailsView({ submissionId }: Readonly<Props>)
                           {formatDate(submissionData?.updatedAt)}
                         </span>
                         <h3 className="text-sm font-medium text-gray-800">
-                          {submissionData?.status?.replace("_", " ").toUpperCase()}
+                          {submissionData?.status?.replace("_", " ").toUpperCase() || "SUBMITTED"}
                         </h3>
                       </div>
                     </div>
