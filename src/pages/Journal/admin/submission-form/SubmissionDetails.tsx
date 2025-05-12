@@ -2,30 +2,12 @@ import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useApi } from "@/hooks/useCustomQuery";
 import { rkdfApi } from "@/lib";
-import { 
-  Book, 
-  FileText, 
-  Calendar, 
-  Tag, 
-  BookOpen, 
-  Clock, 
-  CheckCircle, 
-  XCircle, 
-  AlertCircle, 
-  FileSymlink,
-  Download,
-  MessageCircle,
-  User,
-  CornerUpRight,
-  ChevronDown,
-  ChevronUp
-} from "lucide-react";
+import { Book,FileText,Calendar,Tag,BookOpen,Clock,CheckCircle,XCircle,AlertCircle,Download,MessageCircle,User,CornerUpRight,ChevronDown,ChevronUp} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge"; 
 import { format } from "date-fns";
 
-// Updated status mapping
 const statusConfig = {
   "submitted": { color: "bg-blue-100 text-blue-800", icon: <FileText className="h-4 w-4" /> },
   "pending": { color: "bg-yellow-100 text-yellow-800", icon: <Clock className="h-4 w-4" /> },
@@ -34,18 +16,15 @@ const statusConfig = {
   "rejected": { color: "bg-red-100 text-red-800", icon: <XCircle className="h-4 w-4" /> },
   "revisions_required": { color: "bg-purple-100 text-purple-800", icon: <FileText className="h-4 w-4" /> }
 };
-
 export default function SubmissionDetailsView() {
   const [messagesExpanded, setMessagesExpanded] = useState(true);
   const { submissionId } = useParams<{ submissionId: string }>();
-  
   const { data, isLoading } = useApi<any>({
     api: `${rkdfApi?.getSubmissionsById}/${submissionId}`,
     options: {
       enabled: !!submissionId,
     },
   });
-
   // Get reviewer messages for this submission
   const { data: messagesData, isLoading: messagesLoading } = useApi<any>({
     api: `${rkdfApi?.getReviewerMessages}?submissionId=${submissionId}`,
@@ -53,7 +32,6 @@ export default function SubmissionDetailsView() {
       enabled: !!submissionId,
     },
   });
-
   const submissionData = data?.data;
   const reviewerMessages = messagesData?.data?.docs || [];
 

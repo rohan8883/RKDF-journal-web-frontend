@@ -69,13 +69,7 @@ const ArticlePage = lazyWithRetries(() => import('@/pages/Journal/admin/article'
 const UserMaster = lazyWithRetries(() => import('@/pages/Journal/admin/users'));  
 const Profile = lazyWithRetries(() => import('@/pages/Journal/admin/profile'));
 
-
-
-
-// ------------------------------Tecnician--------------------------------
-// const TecnicianHome = lazyWithRetries(() => import('@/pages/loan/tecnician/home'));
-// const BookingList = lazyWithRetries(() => import('@/pages/loan/tecnician/booking-list'));
-// const TechBookingDetails = lazyWithRetries(() => import('@/pages/loan/tecnician/booking-details'));
+ 
 
 
 
@@ -98,13 +92,13 @@ const routes: Route[] = [
         id: '1',
         name: 'Login',
         path: 'login',
-        element: <Login />
+        element: <LoginPage />
       },
       {
         id: '2',
         name: 'Register',
-        path: 'register',
-        element: <Register />
+        path: 'registration',
+        element: <Registration />
       },
       {
         id: '3',
@@ -121,32 +115,7 @@ const routes: Route[] = [
     ]
   },
 
-  {
-    layout: 'tecnician', // after Auth
-    pages: [
-      // {
-      //   id: '1',
-      //   name: 'Home',
-      //   path: 'tech-home',
-      //   element: <TecnicianHome />,
-      //   exact: true
-      // },
-      // {
-      //   id: '2',
-      //   name: 'Booking List',
-      //   path: 'tech-booking-list',
-      //   element: <BookingList />,
-      //   exact: true
-      // },
-      // {
-      //   id: '3',
-      //   name: 'View Booking Details',
-      //   path: 'tech-booking-details/:id',
-      //   element: <TechBookingDetails />,
-      //   exact: true
-      // },
-    ]
-  },
+  
 
   {
     layout: 'admin', // after Auth
@@ -318,18 +287,18 @@ const routes: Route[] = [
         path: 'indexing',
         element: <Indexing />
       },
-      {
-        id: '3',
-        name: 'Login',
-        path: 'login-page',
-        element: <LoginPage />
-      },
-      {
-        id: '3',
-        name: 'Registration',
-        path: 'registration',
-        element: <Registration />
-      },
+      // {
+      //   id: '3',
+      //   name: 'Login',
+      //   path: 'login-page',
+      //   element: <LoginPage />
+      // },
+      // {
+      //   id: '3',
+      //   name: 'Registration',
+      //   path: 'registration',
+      //   element: <Registration />
+      // },
       {
         id: '3',
         name: 'Submission Form',

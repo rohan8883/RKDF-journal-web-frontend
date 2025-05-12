@@ -40,7 +40,7 @@ const Navbar = () => {
     { title: "ARCHIVES", link: "/Journal/archive" },
     { title: "NEWS", link: "/Journal/announcement" },
     { title: "CONTACT", link: "/Journal/contact" },
-    { title: "REGISTRATION", link: "/Journal/registration" },
+    { title: "REGISTRATION", link: "/Journal/auth/registration" },
     { title: "LOGIN", link: "/Journal/auth/login" },
   ];
 

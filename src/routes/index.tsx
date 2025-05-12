@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { StudentLayout, AuthLayout, AdminLayout } from '@/layouts';
+import { AuthLayout, AdminLayout, LandingLayout } from '@/layouts';
 import { AuthGuard, GuestGuard } from '@/guard';
 import NotFound from '@/pages/errors/NotFound';
 import routes from './allRoutes';
@@ -19,7 +19,7 @@ export default function AllRoutes() {
         path="/Journal/auth"
         element={
           <GuestGuard>
-            <AuthLayout />
+            <LandingLayout />
           </GuestGuard>
         }
       >
@@ -32,25 +32,9 @@ export default function AllRoutes() {
         )}
       </Route>
 
-      {/*************************************GYM Routes********************************************/}
-      <Route
-        path="/Journal"
-        element={
-          <AuthGuard>
-            <StudentLayout />
-          </AuthGuard>
-        }
-      >
-        {routes?.map(
-          ({ layout, pages }) =>
-            layout === 'tecnician' &&
-            pages?.map(({ id, path, element }) => (
-              <Route key={id} path={path} element={element} />
-            ))
-        )}
-      </Route>
 
-{/* admin */}
+
+      {/* admin */}
       <Route
         path="/Journal"
         element={
@@ -69,7 +53,11 @@ export default function AllRoutes() {
       </Route>
 
       {/*************************************Guest Routes********************************************/}
-      <Route path="/Journal">
+      <Route path="/Journal"
+        element={
+          <LandingLayout />
+        }
+      >
         {routes?.map(
           ({ layout, pages }) =>
             layout === 'guest' &&
