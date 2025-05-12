@@ -180,7 +180,7 @@ export default function Login() {
                     </div>
 
                     <div className="mt-4 text-center">
-                      <Link to="/register" className="font-medium text-teal-600 hover:text-teal-500 text-sm">
+                      <Link to="/Journal/auth/registration" className="font-medium text-teal-600 hover:text-teal-500 text-sm">
                         Create an author account
                       </Link>
                     </div>

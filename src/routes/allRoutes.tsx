@@ -30,9 +30,9 @@ const lazyWithRetries = (importer: () => Promise<{ default: ElementType }>) => {
 };
 
 // -------------------------------Before auth routes--------------------------------
-const Login = lazyWithRetries(() => import('@/pages/auth/login'));
+// const Login = lazyWithRetries(() => import('@/pages/auth/login'));
 const OtpLogin = lazyWithRetries(() => import('@/pages/auth/otp-login'));
-const Register = lazyWithRetries(() => import('@/pages/auth/register'));
+// const Register = lazyWithRetries(() => import('@/pages/auth/register'));
 const ForgetPassword = lazyWithRetries(
   () => import('@/pages/auth/forget-password')
 );

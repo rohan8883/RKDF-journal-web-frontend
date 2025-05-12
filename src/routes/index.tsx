@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { AuthLayout, AdminLayout, LandingLayout } from '@/layouts';
+import { AdminLayout, LandingLayout } from '@/layouts';
 import { AuthGuard, GuestGuard } from '@/guard';
 import NotFound from '@/pages/errors/NotFound';
 import routes from './allRoutes';
