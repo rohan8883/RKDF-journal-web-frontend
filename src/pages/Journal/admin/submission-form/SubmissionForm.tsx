@@ -24,10 +24,10 @@ import {
   BookOpen, 
   Save,
   Upload,
-  File,
+  // File,
   Trash,
   Archive,
-  FileSymlink
+  // FileSymlink
 } from "lucide-react";
 
 
@@ -56,25 +56,25 @@ const schema = yup.object().shape({
         return file && file.size <= 10 * 1024 * 1024; // 10MB
       }
     ),
-  coverLetter: yup.mixed()
-    .test(
-      "fileType",
-      "Only PDF, DOC or DOCX files are accepted",
-      (value) => {
-        if (!value) return true; // Optional field
-        const file = Array.isArray(value) ? value[0] : value;
-        return file && ["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"].includes(file.type);
-      }
-    )
-    .test(
-      "fileSize",
-      "File size must be less than 5MB",
-      (value) => {
-        if (!value) return true; // Optional field
-        const file = Array.isArray(value) ? value[0] : value;
-        return file && file.size <= 5 * 1024 * 1024; // 5MB
-      }
-    ),
+  // coverLetter: yup.mixed()
+  //   .test(
+  //     "fileType",
+  //     "Only PDF, DOC or DOCX files are accepted",
+  //     (value) => {
+  //       if (!value) return true; // Optional field
+  //       const file = Array.isArray(value) ? value[0] : value;
+  //       return file && ["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"].includes(file.type);
+  //     }
+  //   )
+  //   .test(
+  //     "fileSize",
+  //     "File size must be less than 5MB",
+  //     (value) => {
+  //       if (!value) return true; // Optional field
+  //       const file = Array.isArray(value) ? value[0] : value;
+  //       return file && file.size <= 5 * 1024 * 1024; // 5MB
+  //     }
+  //   ),
 });
 
 type FormData = yup.InferType<typeof schema>;
@@ -99,7 +99,7 @@ export default function SubmissionForm({
   refetch,
 }: Readonly<Props>) {
   const [manuscriptFileName, setManuscriptFileName] = useState<string>("");
-  const [coverLetterFileName, setCoverLetterFileName] = useState<string>("");
+  // const [coverLetterFileName, setCoverLetterFileName] = useState<string>("");
   
   const postMutation = usePostMutation({});
   const putMutation = usePutMutation({});
@@ -125,7 +125,7 @@ export default function SubmissionForm({
       keywords: "", 
       journalId: "",
       manuscriptFile: undefined,
-      coverLetter: undefined,
+      // coverLetter: undefined,
     },
     resolver: yupResolver(schema),
   });
@@ -153,38 +153,38 @@ export default function SubmissionForm({
     }
   };
 
-  const handleCoverLetterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
+  // const handleCoverLetterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   if (e.target.files && e.target.files[0]) {
+  //     const file = e.target.files[0];
       
-      // Validate file type
-      const allowedTypes = ["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"];
-      if (!allowedTypes.includes(file.type)) {
-        toast.error("Only PDF, DOC or DOCX files are allowed");
-        return;
-      }
+  //     // Validate file type
+  //     const allowedTypes = ["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"];
+  //     if (!allowedTypes.includes(file.type)) {
+  //       toast.error("Only PDF, DOC or DOCX files are allowed");
+  //       return;
+  //     }
       
-      // Validate file size (limit to 5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        toast.error("File size should not exceed 5MB");
-        return;
-      }
+  //     // Validate file size (limit to 5MB)
+  //     if (file.size > 5 * 1024 * 1024) {
+  //       toast.error("File size should not exceed 5MB");
+  //       return;
+  //     }
       
-      methods.setValue("coverLetter", file);
-      setCoverLetterFileName(file.name);
-      toast.success("Cover letter file selected successfully");
-    }
-  };
+  //     methods.setValue("coverLetter", file);
+  //     setCoverLetterFileName(file.name);
+  //     toast.success("Cover letter file selected successfully");
+  //   }
+  // };
 
   const clearManuscriptFile = () => {
     methods.setValue("manuscriptFile", "");
     setManuscriptFileName("");
   };
 
-  const clearCoverLetterFile = () => {
-    methods.setValue("coverLetter", undefined);
-    setCoverLetterFileName("");
-  };
+  // const clearCoverLetterFile = () => {
+  //   methods.setValue("coverLetter", undefined);
+  //   setCoverLetterFileName("");
+  // };
 
   const onSubmit = async (formData: FormData) => {
     try {
@@ -203,12 +203,12 @@ export default function SubmissionForm({
       data.append("manuscriptFile", manuscriptFile);
 
       // Handle cover letter if exists
-      if (formData.coverLetter) {
-        const coverLetter = Array.isArray(formData.coverLetter)
-          ? formData.coverLetter[0]
-          : formData.coverLetter;
-        data.append("coverLetter", coverLetter);
-      }
+      // if (formData.coverLetter) {
+      //   const coverLetter = Array.isArray(formData.coverLetter)
+      //     ? formData.coverLetter[0]
+      //     : formData.coverLetter;
+      //   data.append("coverLetter", coverLetter);
+      // }
 
       if (edit && id) {
         const res = await putMutation.mutateAsync({
@@ -255,7 +255,7 @@ export default function SubmissionForm({
         keywords: data?.data?.keywords?.join(", "), 
         journalId: data?.data?.journalId?._id || data?.data?.journalId,
         manuscriptFile: undefined,
-        coverLetter: undefined,
+        // coverLetter: undefined,
       });
       
       // If manuscript file exists in the data
@@ -264,9 +264,9 @@ export default function SubmissionForm({
       }
       
       // If cover letter exists in the data
-      if (data?.data?.coverLetter) {
-        setCoverLetterFileName(data?.data?.coverLetter.split('/').pop() || "Current cover letter");
-      }
+      // if (data?.data?.coverLetter) {
+      //   setCoverLetterFileName(data?.data?.coverLetter.split('/').pop() || "Current cover letter");
+      // }
     } else {
       methods.reset({
         title: "",
@@ -274,10 +274,10 @@ export default function SubmissionForm({
         keywords: "", 
         journalId: "",
         manuscriptFile: undefined,
-        coverLetter: undefined,
+        // coverLetter: undefined,
       });
       setManuscriptFileName("");
-      setCoverLetterFileName("");
+      // setCoverLetterFileName("");
     }
   }, [edit, data, methods.reset]);
 
@@ -427,65 +427,7 @@ export default function SubmissionForm({
             </div>
             
             {/* Cover Letter Upload Section */}
-            <div className="bg-white p-4 rounded-lg shadow-sm">
-              <h3 className="text-lg font-medium text-gray-800 mb-3 flex items-center">
-                <FileSymlink className="h-5 w-5 mr-2 text-blue-600" />
-                Cover Letter (Optional)
-              </h3>
-              
-              <div className="space-y-4">
-                {/* Cover Letter File Upload */}
-                <div className="border-2 border-dashed border-blue-200 rounded-lg p-4 bg-blue-50 hover:bg-blue-100 transition-colors">
-                  <div className="flex flex-col items-center justify-center space-y-2">
-                    <Upload className="h-10 w-10 text-blue-500" />
-                    <p className="text-sm text-gray-600 text-center">
-                      Upload a cover letter for your submission (PDF, DOC, DOCX - max 5MB)
-                    </p>
-                    
-                    <input
-                      type="file"
-                      id="coverLetterUpload"
-                      accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                      onChange={handleCoverLetterChange}
-                      className="hidden"
-                    />
-                    
-                    <label 
-                      htmlFor="coverLetterUpload" 
-                      className="px-4 py-2 bg-blue-600 text-white rounded-md cursor-pointer hover:bg-blue-700 transition-colors"
-                    >
-                      <Upload className="h-4 w-4 inline mr-2" />
-                      Select Cover Letter
-                    </label>
-                  </div>
-                </div>
-                
-                {/* Selected File Display */}
-                {coverLetterFileName && (
-                  <div className="bg-gray-100 p-3 rounded-md">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-2">
-                        <File className="h-5 w-5 text-blue-600" />
-                        <span className="text-gray-700 font-medium">{coverLetterFileName}</span>
-                      </div>
-                      <button 
-                        type="button"
-                        onClick={clearCoverLetterFile}
-                        className="text-red-500 hover:text-red-700"
-                      >
-                        <Trash className="h-4 w-4" />
-                      </button>
-                    </div>
-                  </div>
-                )}
-                
-                {/* Hidden field to maintain form state */}
-                <input 
-                  type="hidden" 
-                  {...methods.register("coverLetter")}
-                />
-              </div>
-            </div>
+            
           </div>
 
           <div className="mt-4">

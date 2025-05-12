@@ -1,0 +1,1 @@
+import{j as t}from"./index-F4tHwxXJ.js";import{P as o}from"./index-B6_BmV4Z.js";import"./router-DMIetGpf.js";import"./axios-DmypytPv.js";function s(){return t.jsx(o,{title:"About",children:t.jsx("div",{children:"About Page"})})}export{s as default};
