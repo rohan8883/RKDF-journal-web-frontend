@@ -2,7 +2,7 @@ export const menuItems = [
   {
     name: "Dashboard",
     url: 'admin-home',
-    roles: ["Admin", "Editor", "Reviewer"],
+    roles: ["Admin","Author", "Editor", "Reviewer"],
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -36,7 +36,7 @@ export const menuItems = [
   },
   {
     name: "Articles",
-    roles: ["Admin", "Author", "Editor", "Reviewer"],
+    roles: ["Admin", "Editor", "Reviewer"],
     url: 'article',
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" 
@@ -50,7 +50,7 @@ export const menuItems = [
   },
   {
     name: "Journal",
-    roles: ["Admin",  "Editor", "Reviewer"],
+    roles: ["Admin",  "Editor"],
     url: 'Journals-page',
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" 
@@ -64,7 +64,7 @@ export const menuItems = [
   },
   {
     name: "Issue",
-    roles: ["Admin", "Editor", "Reviewer"],
+    roles: ["Admin", "Editor"],
     url: 'issue-list',
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" 

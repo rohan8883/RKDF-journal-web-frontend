@@ -113,10 +113,7 @@ export default function SubmissionList() {
               <Trash2 size={14} /> Delete
             </Button>
           </div>
-          <div className="flex gap-2">
-            <Button size="sm" variant="outline">
-              <FileText size={14} className="mr-2" /> View Files
-            </Button>
+          <div className="flex ">
             <Button 
               size="sm" 
               variant="outline"

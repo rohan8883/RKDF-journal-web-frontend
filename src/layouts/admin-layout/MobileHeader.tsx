@@ -27,9 +27,9 @@ const MobileHeader: React.FC<MobileHeaderProps> = ({ toggleSidebar }) => {
         </svg>
       </button>
 
-      <h1 className="text-xl font-bold">Admin</h1>
+      {/* <h1 className="text-xl font-bold">Admin</h1> */}
 
-      <div className="w-10"></div>
+      {/* <div className="w-10"></div> */}
     </div>
   );
 };

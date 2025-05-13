@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { menuItems } from './menuItem';
+import { useAuth } from '@/store/useAuth';
 
 interface SidebarProps {
   isSidebarOpen: boolean;
@@ -22,17 +23,20 @@ const Sidebar: React.FC<SidebarProps> = ({
   toggleSubmenu
 }) => {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
-  
+  // Filter menu items based on user role
+const filteredMenuItems = user?.role
+  ? menuItems.filter(item => item.roles.includes(user.role))
+  : [];
 
   return (
     <div
       className={`
-        ${
-          isMobile
-            ? `fixed top-0 left-0 bottom-0 z-40 
+        ${isMobile
+          ? `fixed top-0 left-0 bottom-0 z-40 
                ${isSidebarOpen ? "w-64 translate-x-0" : "-translate-x-full"}`
-            : `${isSidebarOpen ? "w-64" : "w-20"} relative`
+          : `${isSidebarOpen ? "w-64" : "w-20"} relative`
         }
         bg-white shadow-lg 
         transition-all duration-300 
@@ -42,7 +46,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       {/* Sidebar Header */}
       <div className="flex items-center justify-between p-4 border-b">
         {isSidebarOpen && (
-          <h2 className="text-xl font-bold text-gray-800">Admin</h2>
+          <h2 className="text-xl font-bold text-gray-800">{user?.role}</h2>
         )}
         <button
           onClick={toggleSidebar}
@@ -82,9 +86,9 @@ const Sidebar: React.FC<SidebarProps> = ({
         </button>
       </div>
 
-      {/* Sidebar Menu with Submenus */}
+      {/* Sidebar Menu */}
       <nav className="mt-5">
-        {menuItems.map((item) => (
+        {filteredMenuItems.map((item) => (
           <div key={item.name}>
             <div
               onClick={() => {
@@ -97,11 +101,10 @@ const Sidebar: React.FC<SidebarProps> = ({
               }}
               className={`
                 flex items-center p-3 cursor-pointer 
-                ${
-                  activeMenuItem === item.name ||
+                ${activeMenuItem === item.name ||
                   activeMenuItem.startsWith(`${item.name} - `)
-                    ? "bg-blue-100 text-blue-600"
-                    : "text-gray-600 hover:bg-gray-100"
+                  ? "bg-blue-100 text-blue-600"
+                  : "text-gray-600 hover:bg-gray-100"
                 }
                 ${isSidebarOpen ? "justify-between px-4" : "justify-center"}
               `}
@@ -122,9 +125,8 @@ const Sidebar: React.FC<SidebarProps> = ({
                   viewBox="0 0 24 24"
                   strokeWidth={1.5}
                   stroke="currentColor"
-                  className={`w-4 h-4 transition-transform ${
-                    expandedMenus[item.name] ? "rotate-180" : ""
-                  }`}
+                  className={`w-4 h-4 transition-transform ${expandedMenus[item.name] ? "rotate-180" : ""
+                    }`}
                 >
                   <path
                     strokeLinecap="round"
@@ -147,10 +149,9 @@ const Sidebar: React.FC<SidebarProps> = ({
                     }}
                     className={`
                       py-2 px-4 cursor-pointer text-sm
-                      ${
-                        activeMenuItem === `${item.name} - ${subItem.name}`
-                          ? "text-blue-600 font-medium"
-                          : "text-gray-600 hover:text-blue-600"
+                      ${activeMenuItem === `${item.name} - ${subItem.name}`
+                        ? "text-blue-600 font-medium"
+                        : "text-gray-600 hover:text-blue-600"
                       }
                     `}
                   >

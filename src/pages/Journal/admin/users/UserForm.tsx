@@ -214,7 +214,7 @@ export default function UserForm({
                 name="userName"
                 label="Username"
                 placeholder="Enter username"
-                disabled={edit}
+                // disabled={edit}
               />
             </div>
           </div>

@@ -72,7 +72,11 @@ export const rkdfApi = {
   updateSubmissions: '/submission/update-submissions',
   updateSubmissionsStatus: '/submission/update-submissions-status',
   deleteSubmissions: '/submission/delete-submissions',
+
+  getAvailableReviewers: '/user/get-all-reviewer',
+  assignReviewer: '/submission/assign-reviewer',
   getReviewerMessages: '/otp/',
+  submitReview: '/otp/',
 
   // ════════════════════════════║  API OF ARTICLE MASTER ║═════════════════════════════════
   createArticles: '/article/create-articles',
