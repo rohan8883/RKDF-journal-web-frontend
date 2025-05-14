@@ -553,7 +553,7 @@ export default function SubmissionDetailsView() {
 const handleAssignReviewer = async (reviewerId: string) => {
   try {
     const res = await postMutation.mutateAsync({
-      api: rkdfApi.assignReviewer, // your endpoint
+      api: rkdfApi.assignReviewer,  
       data: {
         submissionId,
         reviewerId,
@@ -572,26 +572,27 @@ const handleAssignReviewer = async (reviewerId: string) => {
     toast.error("Something went wrong while assigning reviewer");
   }
 };
-
-
+ 
   const handleSubmitReview = async (reviewData: any) => {
-    try {
-      const response = await fetch(`${rkdfApi?.submitReview}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(reviewData),
-      });
-      
-      if (!response.ok) throw new Error('Review submission failed');
-      
+  try {
+    const res = await postMutation.mutateAsync({
+      api: rkdfApi.submitReview,
+      data: reviewData,
+    });
+
+    if (res.data?.success) {
+      toast.success("Review submitted successfully");
       setShowReviewForm(false);
       window.location.reload();
-    } catch (error) {
-      console.error('Error submitting review:', error);
+    } else {
+      toast.error(res.data?.message || "Failed to submit review");
     }
-  };
+  } catch (error) {
+    console.error("Error submitting review:", error);
+    toast.error("Something went wrong while submitting the review");
+  }
+};
+
 
   if (isLoading) {
     return <LoadingSkeleton />;
