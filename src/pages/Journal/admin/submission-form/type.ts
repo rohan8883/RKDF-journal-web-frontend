@@ -1,24 +1,50 @@
-import { I_WITH_PAGINATION } from '@/types/paginationType'
-export type I_USER_TYPE = {
+export interface User {
   _id: string
   fullName: string
+  familyName?: string
+  userName: string
+  affiliation?: string
   roleId: string
-  role: string
-  email: string
-  address: string
-  password: string
   mobile: string
+  email: string
   status: number
-  imageUrl: string
+  imageUrl?: string
+}
+
+export interface Journal {
+  _id: string
+  title: string
+  description: string
+  issn: string
+  publisher: string
+  foundedYear: number
+  website: string
+  coverImage: string
+  status: number
+}
+
+export interface ReviewerAssignment {
+  reviewer: User
+  comment: string
+  commentedAt: string | null
+  _id: string
+}
+
+export interface SubmissionData {
+  _id: string
+  title: string
+  abstract: string
+  keywords: string[]
+  submittedBy: User
+  journalId: Journal
+  status: string
+  manuscriptFile: string
+  fullManuscriptUrl: string
+  submissionDate: string
   createdAt: string
-  updatedAt: string
+  updatedAt?: string
+  reviewerAssignments?: ReviewerAssignment[]
+  currentReviewRound?: {
+    _id: string
+  }
 }
-
-
-
-export type I_USER_TYPE_VIEW = {
-  success: boolean
-  userDetails: I_USER_TYPE
-}
-
-export type I_USER_LIST = I_WITH_PAGINATION<I_USER_TYPE>

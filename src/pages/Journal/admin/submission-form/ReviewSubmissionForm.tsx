@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 export const ReviewSubmissionForm = ({
   submissionId,
-  reviewRoundId,
+  reviewRoundId, 
   onSubmit
 }: {
   submissionId: string;
