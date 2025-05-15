@@ -6,7 +6,7 @@ import { useApi, usePostMutation } from "@/hooks/useCustomQuery"
 import { rkdfApi } from "@/lib"
 import { useAuth } from "@/store/useAuth"
 import toast from "react-hot-toast"
-import { Book, Calendar, Tag, BookOpen, Clock, Users, ClipboardCheck } from "lucide-react"
+import { Book, Calendar, Tag, BookOpen, Clock, Users} from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { format } from "date-fns"
@@ -14,22 +14,18 @@ import { format } from "date-fns"
 // Import separated components
 import { LoadingSkeleton } from "./LoadingSkeleton"
 import { getStatusDisplay } from "./StatusConfigItem"
-import { ReviewerMessagesSection } from "./ReviewerMessagesSection"
 import { AuthorInfoSection } from './AuthorInfoSection'
 import { FilesSection } from "./FilesSection"
 import { ReviewTimelineSection } from "./ReviewTimelineSection"
 import { ReviewerAssignmentModal } from "./ReviewerAssignmentModal"
-import { ReviewSubmissionForm } from "./ReviewSubmissionForm"
 import { ReviewManagement } from "./review/ReviewManagement"
 import type { SubmissionData } from "./type"
 
 export default function SubmissionDetailsView() {
   const postMutation = usePostMutation({})
   const { submissionId } = useParams<{ submissionId: string }>()
-  const { user } = useAuth()
-  const [messagesExpanded, setMessagesExpanded] = useState(true)
-  const [assignModalOpen, setAssignModalOpen] = useState(false)
-  const [showReviewForm, setShowReviewForm] = useState(false)
+  const { user } = useAuth() 
+  const [assignModalOpen, setAssignModalOpen] = useState(false) 
   const [activeTab, setActiveTab] = useState<"details" | "reviews">("details")
 
   // Fetch submission data
@@ -41,12 +37,7 @@ export default function SubmissionDetailsView() {
   })
 
   // Fetch reviewer messages
-  const { data: messagesData, isLoading: messagesLoading } = useApi<any>({
-    api: `${rkdfApi?.getReviewerMessages}?submissionId=${submissionId}`,
-    options: {
-      enabled: !!submissionId,
-    },
-  })
+  
 
   // Fetch available reviewers (for admin)
   const { data: reviewersData, isLoading: reviewersLoading } = useApi<any>({
@@ -56,13 +47,12 @@ export default function SubmissionDetailsView() {
     },
   })
 
-  const submissionData = data?.data as SubmissionData
-  const reviewerMessages = messagesData?.data?.docs || []
+  const submissionData = data?.data as SubmissionData 
   const reviewers = reviewersData?.data?.docs || []
 
   // Check user roles and assignments
   const isAssignedReviewer = user?.role === "Reviewer"
-  const isAuthor = submissionData?.submittedBy?._id === user?._id
+  // const isAuthor = submissionData?.submittedBy?._id === user?._id
   const isAdmin = user?.role === "Admin"
 
   const formatDate = (dateString?: string) => {
@@ -97,25 +87,7 @@ export default function SubmissionDetailsView() {
     }
   }
 
-  const handleSubmitReview = async (reviewData: any) => {
-    try {
-      const res = await postMutation.mutateAsync({
-        api: rkdfApi.submitReview,
-        data: reviewData,
-      })
-
-      if (res.data?.success) {
-        toast.success("Review submitted successfully")
-        setShowReviewForm(false)
-        window.location.reload()
-      } else {
-        toast.error(res.data?.message || "Failed to submit review")
-      }
-    } catch (error) {
-      console.error("Error submitting review:", error)
-      toast.error("Something went wrong while submitting the review")
-    }
-  }
+   
 
   if (isLoading) {
     return <LoadingSkeleton />
@@ -142,12 +114,7 @@ export default function SubmissionDetailsView() {
               </Button>
             )}
 
-            {isAssignedReviewer && !showReviewForm && (
-              <Button variant="default" size="sm" onClick={() => setShowReviewForm(true)}>
-                <ClipboardCheck className="h-4 w-4 mr-2" />
-                Submit Review
-              </Button>
-            )}
+           
           </div>
         </div>
 
@@ -240,32 +207,7 @@ export default function SubmissionDetailsView() {
                   </div>
                 </div>
               </div>
-
-              {/* Reviewer Messages - Only show to authors and reviewers */}
-              {(isAuthor || isAssignedReviewer) && (
-                <ReviewerMessagesSection
-                  messages={reviewerMessages}
-                  loading={messagesLoading}
-                  expanded={messagesExpanded}
-                  onToggle={() => setMessagesExpanded(!messagesExpanded)}
-                  authorName={submissionData?.submittedBy?.fullName}
-                />
-              )}
-
-              {/* Review Form - Only show to assigned reviewers */}
-              {isAssignedReviewer && showReviewForm && (
-                <div className="bg-white rounded-lg shadow-sm p-5">
-                  <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                    <ClipboardCheck className="h-5 w-5 mr-2 text-blue-600" />
-                    Submit Your Review
-                  </h2>
-                  <ReviewSubmissionForm
-                    submissionId={submissionId!}
-                    reviewRoundId={submissionData?.currentReviewRound?._id!}
-                    onSubmit={handleSubmitReview}
-                  />
-                </div>
-              )}
+ 
             </div>
 
             {/* Right Column - Files & Meta Info */}
