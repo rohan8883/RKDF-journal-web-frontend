@@ -19,22 +19,19 @@ import {
 import { rkdfApi } from "@/lib";
 import { 
   Book, 
-  FileText, 
-  Tag, 
+  FileText,  
   BookOpen, 
   Save,
   Upload,
-  // File,
   Trash,
   Archive,
-  // FileSymlink
 } from "lucide-react";
-
+import KeywordTagInput from "./KeywordTagInput"; // Import the new component
 
 const schema = yup.object().shape({
   title: yup.string().required("Title is required"),
   abstract: yup.string().required("Abstract is required"),
-  keywords: yup.string(),
+  keywords: yup.string(), // Keep as string for form handling
   journalId: yup.string().required("Journal is required"),
   manuscriptFile: yup.mixed()
     .required("Manuscript file is required")
@@ -56,25 +53,6 @@ const schema = yup.object().shape({
         return file && file.size <= 10 * 1024 * 1024; // 10MB
       }
     ),
-  // coverLetter: yup.mixed()
-  //   .test(
-  //     "fileType",
-  //     "Only PDF, DOC or DOCX files are accepted",
-  //     (value) => {
-  //       if (!value) return true; // Optional field
-  //       const file = Array.isArray(value) ? value[0] : value;
-  //       return file && ["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"].includes(file.type);
-  //     }
-  //   )
-  //   .test(
-  //     "fileSize",
-  //     "File size must be less than 5MB",
-  //     (value) => {
-  //       if (!value) return true; // Optional field
-  //       const file = Array.isArray(value) ? value[0] : value;
-  //       return file && file.size <= 5 * 1024 * 1024; // 5MB
-  //     }
-  //   ),
 });
 
 type FormData = yup.InferType<typeof schema>;
@@ -98,9 +76,7 @@ export default function SubmissionForm({
   setEdit,
   refetch,
 }: Readonly<Props>) {
-  const [manuscriptFileName, setManuscriptFileName] = useState<string>("");
-  // const [coverLetterFileName, setCoverLetterFileName] = useState<string>("");
-  
+  const [manuscriptFileName, setManuscriptFileName] = useState<string>(""); 
   const postMutation = usePostMutation({});
   const putMutation = usePutMutation({});
 
@@ -125,7 +101,6 @@ export default function SubmissionForm({
       keywords: "", 
       journalId: "",
       manuscriptFile: undefined,
-      // coverLetter: undefined,
     },
     resolver: yupResolver(schema),
   });
@@ -153,39 +128,11 @@ export default function SubmissionForm({
     }
   };
 
-  // const handleCoverLetterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   if (e.target.files && e.target.files[0]) {
-  //     const file = e.target.files[0];
-      
-  //     // Validate file type
-  //     const allowedTypes = ["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"];
-  //     if (!allowedTypes.includes(file.type)) {
-  //       toast.error("Only PDF, DOC or DOCX files are allowed");
-  //       return;
-  //     }
-      
-  //     // Validate file size (limit to 5MB)
-  //     if (file.size > 5 * 1024 * 1024) {
-  //       toast.error("File size should not exceed 5MB");
-  //       return;
-  //     }
-      
-  //     methods.setValue("coverLetter", file);
-  //     setCoverLetterFileName(file.name);
-  //     toast.success("Cover letter file selected successfully");
-  //   }
-  // };
-
   const clearManuscriptFile = () => {
     methods.setValue("manuscriptFile", "");
     setManuscriptFileName("");
   };
-
-  // const clearCoverLetterFile = () => {
-  //   methods.setValue("coverLetter", undefined);
-  //   setCoverLetterFileName("");
-  // };
-
+ 
   const onSubmit = async (formData: FormData) => {
     try {
       const data = new FormData();
@@ -193,7 +140,20 @@ export default function SubmissionForm({
       // Append all text fields
       data.append("title", formData.title);
       data.append("abstract", formData.abstract);
-      if (formData.keywords) data.append("keywords", formData.keywords); 
+      
+      // Process keywords - convert comma-separated string to array if needed by the backend
+      if (formData.keywords) {
+        const keywordsArray = formData.keywords
+          .split(",")
+          .map(keyword => keyword.trim())
+          .filter(keyword => keyword);
+          
+        // If the API expects an array format for keywords
+        data.append("keywords", JSON.stringify(keywordsArray));
+        // If the API expects a comma-separated string
+        // data.append("keywords", formData.keywords);
+      }
+      
       data.append("journalId", formData.journalId);
 
       // Handle manuscript file
@@ -201,15 +161,7 @@ export default function SubmissionForm({
         ? formData.manuscriptFile[0]
         : formData.manuscriptFile;
       data.append("manuscriptFile", manuscriptFile);
-
-      // Handle cover letter if exists
-      // if (formData.coverLetter) {
-      //   const coverLetter = Array.isArray(formData.coverLetter)
-      //     ? formData.coverLetter[0]
-      //     : formData.coverLetter;
-      //   data.append("coverLetter", coverLetter);
-      // }
-
+ 
       if (edit && id) {
         const res = await putMutation.mutateAsync({
           api: `${rkdfApi.updateSubmissions}/${id}`,
@@ -227,9 +179,6 @@ export default function SubmissionForm({
         const res = await postMutation.mutateAsync({
           api: rkdfApi.createSubmissions,
           data,
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
         });
         if (res.data?.success) {
           toast.success(res?.data?.message);
@@ -255,18 +204,13 @@ export default function SubmissionForm({
         keywords: data?.data?.keywords?.join(", "), 
         journalId: data?.data?.journalId?._id || data?.data?.journalId,
         manuscriptFile: undefined,
-        // coverLetter: undefined,
       });
       
       // If manuscript file exists in the data
       if (data?.data?.manuscriptFile) {
         setManuscriptFileName(data?.data?.manuscriptFile.split('/').pop() || "Current manuscript file");
       }
-      
-      // If cover letter exists in the data
-      // if (data?.data?.coverLetter) {
-      //   setCoverLetterFileName(data?.data?.coverLetter.split('/').pop() || "Current cover letter");
-      // }
+    
     } else {
       methods.reset({
         title: "",
@@ -274,10 +218,8 @@ export default function SubmissionForm({
         keywords: "", 
         journalId: "",
         manuscriptFile: undefined,
-        // coverLetter: undefined,
       });
       setManuscriptFileName("");
-      // setCoverLetterFileName("");
     }
   }, [edit, data, methods.reset]);
 
@@ -334,13 +276,13 @@ export default function SubmissionForm({
                   />
                 </div>
                 
-                <div className="flex items-center gap-2">
-                  <Tag className="h-4 w-4 text-blue-600" />
-                  <RHFTextField 
-                    name="keywords" 
-                    label="Keywords" 
-                    placeholder="E.g., research, medicine, technology (comma separated)" 
-                    className="pr-2 pl-2"
+                <div className="flex flex-col w-full">
+                  {/* Replace the regular text field with our new tag input component */}
+                  <KeywordTagInput
+                    control={methods.control}
+                    name="keywords"
+                    label="Keywords"
+                    placeholder="Type and press Enter to add keywords"
                   />
                 </div>
               </div>
@@ -425,9 +367,6 @@ export default function SubmissionForm({
                 />
               </div>
             </div>
-            
-            {/* Cover Letter Upload Section */}
-            
           </div>
 
           <div className="mt-4">

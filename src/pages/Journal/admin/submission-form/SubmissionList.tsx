@@ -213,7 +213,7 @@ export default function SubmissionList() {
                           <TableCell>{submission?.author?.fullName}</TableCell>
                          
                           <TableCell>
-                            <Badge variant="outline">Pending</Badge>
+                            <Badge variant="outline" className='capitalize'>{submission?.status || "N/A"}</Badge>
                           </TableCell>
                           <TableCell className="text-right">
                             <DropdownMenu>

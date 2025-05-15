@@ -6,7 +6,7 @@ import { useApi, usePostMutation } from "@/hooks/useCustomQuery"
 import { rkdfApi } from "@/lib"
 import { useAuth } from "@/store/useAuth"
 import toast from "react-hot-toast"
-import { Book, Calendar, Tag, BookOpen, Clock, Users} from "lucide-react"
+import { Book, Calendar, Tag, BookOpen, Clock, Users } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { format } from "date-fns"
@@ -15,8 +15,7 @@ import { format } from "date-fns"
 import { LoadingSkeleton } from "./LoadingSkeleton"
 import { getStatusDisplay } from "./StatusConfigItem"
 import { AuthorInfoSection } from './AuthorInfoSection'
-import { FilesSection } from "./FilesSection"
-import { ReviewTimelineSection } from "./ReviewTimelineSection"
+import { FilesSection } from "./FilesSection" 
 import { ReviewerAssignmentModal } from "./ReviewerAssignmentModal"
 import { ReviewManagement } from "./review/ReviewManagement"
 import type { SubmissionData } from "./type"
@@ -24,8 +23,8 @@ import type { SubmissionData } from "./type"
 export default function SubmissionDetailsView() {
   const postMutation = usePostMutation({})
   const { submissionId } = useParams<{ submissionId: string }>()
-  const { user } = useAuth() 
-  const [assignModalOpen, setAssignModalOpen] = useState(false) 
+  const { user } = useAuth()
+  const [assignModalOpen, setAssignModalOpen] = useState(false)
   const [activeTab, setActiveTab] = useState<"details" | "reviews">("details")
 
   // Fetch submission data
@@ -37,7 +36,7 @@ export default function SubmissionDetailsView() {
   })
 
   // Fetch reviewer messages
-  
+
 
   // Fetch available reviewers (for admin)
   const { data: reviewersData, isLoading: reviewersLoading } = useApi<any>({
@@ -47,7 +46,7 @@ export default function SubmissionDetailsView() {
     },
   })
 
-  const submissionData = data?.data as SubmissionData 
+  const submissionData = data?.data as SubmissionData
   const reviewers = reviewersData?.data?.docs || []
 
   // Check user roles and assignments
@@ -87,7 +86,7 @@ export default function SubmissionDetailsView() {
     }
   }
 
-   
+
 
   if (isLoading) {
     return <LoadingSkeleton />
@@ -114,30 +113,37 @@ export default function SubmissionDetailsView() {
               </Button>
             )}
 
-           
+
           </div>
         </div>
 
         {/* Tabs */}
-        <div className="flex border-b border-gray-200 mb-6">
+        <div className="flex space-x-1 mb-8">
           <button
-            className={`px-4 py-2 font-medium text-sm ${
-              activeTab === "details" ? "text-blue-600 border-b-2 border-blue-600" : "text-gray-500 hover:text-gray-700"
-            }`}
+            className={`px-6 py-3 font-medium text-sm rounded-t-lg transition-all duration-200 ${activeTab === "details"
+                ? "text-white bg-gradient-to-r from-blue-500 to-blue-600 shadow-md"
+                : "text-gray-600 bg-gray-100 hover:bg-gray-200"
+              }`}
             onClick={() => setActiveTab("details")}
           >
             Submission Details
+            {activeTab === "details" && (
+              <span className="block w-6 h-1 mx-auto mt-2 bg-blue-300 rounded-full"></span>
+            )}
           </button>
           <button
-            className={`px-4 py-2 font-medium text-sm ${
-              activeTab === "reviews" ? "text-blue-600 border-b-2 border-blue-600" : "text-gray-500 hover:text-gray-700"
-            }`}
+            className={`px-6 py-3 font-medium text-sm rounded-t-lg transition-all duration-200 ${activeTab === "reviews"
+                ? "text-white bg-gradient-to-r from-blue-500 to-blue-600 shadow-md"
+                : "text-gray-600 bg-gray-100 hover:bg-gray-200"
+              }`}
             onClick={() => setActiveTab("reviews")}
           >
             Review Process
+            {activeTab === "reviews" && (
+              <span className="block w-6 h-1 mx-auto mt-2 bg-blue-300 rounded-full"></span>
+            )}
           </button>
         </div>
-
         {activeTab === "details" ? (
           /* Main Content Grid - Details Tab */
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -207,7 +213,7 @@ export default function SubmissionDetailsView() {
                   </div>
                 </div>
               </div>
- 
+
             </div>
 
             {/* Right Column - Files & Meta Info */}
@@ -220,9 +226,7 @@ export default function SubmissionDetailsView() {
                 manuscriptUrl={submissionData?.fullManuscriptUrl}
                 manuscriptFile={submissionData?.manuscriptFile}
               />
-
-              {/* Review Status Timeline */}
-              <ReviewTimelineSection submission={submissionData} />
+ 
             </div>
           </div>
         ) : (
