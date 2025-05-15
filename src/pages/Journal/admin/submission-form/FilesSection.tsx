@@ -2,6 +2,7 @@
 
 import { FileText, ExternalLink } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { BASE_URI } from "@/lib"
 
 interface FilesSectionProps {
   manuscriptUrl?: string
@@ -35,7 +36,7 @@ export const FilesSection = ({ manuscriptUrl, manuscriptFile }: FilesSectionProp
                 </div>
               </div>
 
-              <Button variant="ghost" size="sm" onClick={() => openInNewTab(manuscriptUrl)}>
+              <Button variant="ghost" size="sm" onClick={() => openInNewTab(`${BASE_URI}/${manuscriptFile}`)}>
                 <ExternalLink className="h-4 w-4" />
               </Button>
             </div>

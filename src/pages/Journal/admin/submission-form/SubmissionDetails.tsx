@@ -20,6 +20,7 @@ import { FilesSection } from "./FilesSection"
 import { ReviewTimelineSection } from "./ReviewTimelineSection"
 import { ReviewerAssignmentModal } from "./ReviewerAssignmentModal"
 import { ReviewSubmissionForm } from "./ReviewSubmissionForm"
+import { ReviewManagement } from "./review/ReviewManagement"
 import type { SubmissionData } from "./type"
 
 export default function SubmissionDetailsView() {
@@ -29,6 +30,7 @@ export default function SubmissionDetailsView() {
   const [messagesExpanded, setMessagesExpanded] = useState(true)
   const [assignModalOpen, setAssignModalOpen] = useState(false)
   const [showReviewForm, setShowReviewForm] = useState(false)
+  const [activeTab, setActiveTab] = useState<"details" | "reviews">("details")
 
   // Fetch submission data
   const { data, isLoading } = useApi<any>({
@@ -149,117 +151,142 @@ export default function SubmissionDetailsView() {
           </div>
         </div>
 
-        {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left Column - Submission Details */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Basic Info Card */}
-            <div className="bg-white rounded-lg shadow-sm p-5">
-              <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                <Book className="h-5 w-5 mr-2 text-blue-600" />
-                Submission Details
-              </h2>
+        {/* Tabs */}
+        <div className="flex border-b border-gray-200 mb-6">
+          <button
+            className={`px-4 py-2 font-medium text-sm ${
+              activeTab === "details" ? "text-blue-600 border-b-2 border-blue-600" : "text-gray-500 hover:text-gray-700"
+            }`}
+            onClick={() => setActiveTab("details")}
+          >
+            Submission Details
+          </button>
+          <button
+            className={`px-4 py-2 font-medium text-sm ${
+              activeTab === "reviews" ? "text-blue-600 border-b-2 border-blue-600" : "text-gray-500 hover:text-gray-700"
+            }`}
+            onClick={() => setActiveTab("reviews")}
+          >
+            Review Process
+          </button>
+        </div>
 
-              <div className="space-y-4">
-                {/* Abstract */}
-                <div>
-                  <h3 className="text-sm font-medium text-gray-500 mb-1">Abstract</h3>
-                  <p className="text-gray-800 whitespace-pre-line">{submissionData?.abstract}</p>
-                </div>
+        {activeTab === "details" ? (
+          /* Main Content Grid - Details Tab */
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Left Column - Submission Details */}
+            <div className="lg:col-span-2 space-y-6">
+              {/* Basic Info Card */}
+              <div className="bg-white rounded-lg shadow-sm p-5">
+                <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                  <Book className="h-5 w-5 mr-2 text-blue-600" />
+                  Submission Details
+                </h2>
 
-                {/* Keywords */}
-                {submissionData?.keywords?.length > 0 && (
+                <div className="space-y-4">
+                  {/* Abstract */}
                   <div>
-                    <h3 className="text-sm font-medium text-gray-500 mb-1 flex items-center">
-                      <Tag className="h-4 w-4 mr-1 text-blue-600" />
-                      Keywords
-                    </h3>
-                    <div className="flex flex-wrap gap-2">
-                      {submissionData?.keywords?.map((keyword: string, index: number) => (
-                        <span key={index} className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
-                          {keyword}
-                        </span>
-                      ))}
-                    </div>
+                    <h3 className="text-sm font-medium text-gray-500 mb-1">Abstract</h3>
+                    <p className="text-gray-800 whitespace-pre-line">{submissionData?.abstract}</p>
                   </div>
-                )}
 
-                {/* Journal */}
-                <div>
-                  <h3 className="text-sm font-medium text-gray-500 mb-1 flex items-center">
-                    <BookOpen className="h-4 w-4 mr-1 text-blue-600" />
-                    Journal
-                  </h3>
-                  <p className="text-gray-800">
-                    {submissionData?.journalId?.title || "Journal information not available"}
-                  </p>
-                </div>
+                  {/* Keywords */}
+                  {submissionData?.keywords?.length > 0 && (
+                    <div>
+                      <h3 className="text-sm font-medium text-gray-500 mb-1 flex items-center">
+                        <Tag className="h-4 w-4 mr-1 text-blue-600" />
+                        Keywords
+                      </h3>
+                      <div className="flex flex-wrap gap-2">
+                        {submissionData?.keywords?.map((keyword: string, index: number) => (
+                          <span key={index} className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
+                            {keyword}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
-                {/* Dates */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Journal */}
                   <div>
                     <h3 className="text-sm font-medium text-gray-500 mb-1 flex items-center">
-                      <Calendar className="h-4 w-4 mr-1 text-blue-600" />
-                      Submission Date
+                      <BookOpen className="h-4 w-4 mr-1 text-blue-600" />
+                      Journal
                     </h3>
                     <p className="text-gray-800">
-                      {formatDate(submissionData?.submissionDate || submissionData?.createdAt)}
+                      {submissionData?.journalId?.title || "Journal information not available"}
                     </p>
                   </div>
 
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-500 mb-1 flex items-center">
-                      <Clock className="h-4 w-4 mr-1 text-blue-600" />
-                      Last Updated
-                    </h3>
-                    <p className="text-gray-800">{formatDate(submissionData?.updatedAt)}</p>
+                  {/* Dates */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <h3 className="text-sm font-medium text-gray-500 mb-1 flex items-center">
+                        <Calendar className="h-4 w-4 mr-1 text-blue-600" />
+                        Submission Date
+                      </h3>
+                      <p className="text-gray-800">
+                        {formatDate(submissionData?.submissionDate || submissionData?.createdAt)}
+                      </p>
+                    </div>
+
+                    <div>
+                      <h3 className="text-sm font-medium text-gray-500 mb-1 flex items-center">
+                        <Clock className="h-4 w-4 mr-1 text-blue-600" />
+                        Last Updated
+                      </h3>
+                      <p className="text-gray-800">{formatDate(submissionData?.updatedAt)}</p>
+                    </div>
                   </div>
                 </div>
               </div>
+
+              {/* Reviewer Messages - Only show to authors and reviewers */}
+              {(isAuthor || isAssignedReviewer) && (
+                <ReviewerMessagesSection
+                  messages={reviewerMessages}
+                  loading={messagesLoading}
+                  expanded={messagesExpanded}
+                  onToggle={() => setMessagesExpanded(!messagesExpanded)}
+                  authorName={submissionData?.submittedBy?.fullName}
+                />
+              )}
+
+              {/* Review Form - Only show to assigned reviewers */}
+              {isAssignedReviewer && showReviewForm && (
+                <div className="bg-white rounded-lg shadow-sm p-5">
+                  <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                    <ClipboardCheck className="h-5 w-5 mr-2 text-blue-600" />
+                    Submit Your Review
+                  </h2>
+                  <ReviewSubmissionForm
+                    submissionId={submissionId!}
+                    reviewRoundId={submissionData?.currentReviewRound?._id!}
+                    onSubmit={handleSubmitReview}
+                  />
+                </div>
+              )}
             </div>
 
-            {/* Reviewer Messages - Only show to authors and reviewers */}
-            {(isAuthor || isAssignedReviewer) && (
-              <ReviewerMessagesSection
-                messages={reviewerMessages}
-                loading={messagesLoading}
-                expanded={messagesExpanded}
-                onToggle={() => setMessagesExpanded(!messagesExpanded)}
-                authorName={submissionData?.submittedBy?.fullName}
+            {/* Right Column - Files & Meta Info */}
+            <div className="space-y-6">
+              {/* Author Info - Only show to admin and reviewers */}
+              {(isAdmin || isAssignedReviewer) && <AuthorInfoSection author={submissionData?.submittedBy} />}
+
+              {/* Files Card */}
+              <FilesSection
+                manuscriptUrl={submissionData?.fullManuscriptUrl}
+                manuscriptFile={submissionData?.manuscriptFile}
               />
-            )}
 
-            {/* Review Form - Only show to assigned reviewers */}
-            {isAssignedReviewer && showReviewForm && (
-              <div className="bg-white rounded-lg shadow-sm p-5">
-                <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                  <ClipboardCheck className="h-5 w-5 mr-2 text-blue-600" />
-                  Submit Your Review
-                </h2>
-                <ReviewSubmissionForm
-                  submissionId={submissionId!}
-                  reviewRoundId={submissionData?.currentReviewRound?._id!}
-                  onSubmit={handleSubmitReview}
-                />
-              </div>
-            )}
+              {/* Review Status Timeline */}
+              <ReviewTimelineSection submission={submissionData} />
+            </div>
           </div>
-
-          {/* Right Column - Files & Meta Info */}
-          <div className="space-y-6">
-            {/* Author Info - Only show to admin and reviewers */}
-            {(isAdmin || isAssignedReviewer) && <AuthorInfoSection author={submissionData?.submittedBy} />}
-
-            {/* Files Card */}
-            <FilesSection
-              manuscriptUrl={submissionData?.fullManuscriptUrl}
-              manuscriptFile={submissionData?.manuscriptFile}
-            />
-
-            {/* Review Status Timeline */}
-            <ReviewTimelineSection submission={submissionData} />
-          </div>
-        </div>
+        ) : (
+          /* Reviews Tab */
+          <ReviewManagement submissionId={submissionId!} isAdmin={isAdmin} />
+        )}
       </div>
 
       {/* Reviewer Assignment Modal */}

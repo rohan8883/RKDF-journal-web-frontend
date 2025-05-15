@@ -78,6 +78,20 @@ export const rkdfApi = {
   getReviewerMessages: '/otp/',
   submitReview: '/otp/',
 
+
+  // New endpoints for review rounds
+  createReviewRound: '/review-rounds/create-review-round',
+  getReviewRounds: '/review-rounds/get-all-review-round',
+  getReviewRoundById: '/review-rounds/get-by-id-review-round',
+  updateReviewRound: '/review-rounds/update-review-round',
+  deleteReviewRound: '/api/review-rounds',
+
+  // New endpoints for reviews
+  getReviews: '/review/get-all-review',
+  getReviewById: '/api/reviews',
+  createReview: '/review/create-review',
+  updateReview: '/review/update-review',
+
   // ════════════════════════════║  API OF ARTICLE MASTER ║═════════════════════════════════
   createArticles: '/article/create-articles',
   getAllArticles: '/article/get-all-articles',
@@ -85,9 +99,9 @@ export const rkdfApi = {
   updateArticles: '/article/update-articles',
   updateArticlesStatus: '/article/update-articles-status',
   deleteArticles: '/article/delete-articles',
- // ════════════════════════════║  API OF OTP or VERIFY EMAIL ║═════════════════════════════════
+  // ════════════════════════════║  API OF OTP or VERIFY EMAIL ║═════════════════════════════════
   sendOtp: '/otp/send-otp',
   verifyEmailOtp: '/otp/verify-otp',
 
-  
+
 } as const;
