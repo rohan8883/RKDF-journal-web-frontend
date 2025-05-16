@@ -48,6 +48,7 @@ const PubChange = lazyWithRetries(() => import('@/pages/Journal/guest/pubCharge'
 const ResearchArea = lazyWithRetries(() => import('@/pages/Journal/guest/researchArea'));
 const Submissions = lazyWithRetries(() => import('@/pages/Journal/guest/submissions'));
 const Archive = lazyWithRetries(() => import('@/pages/Journal/guest/archive'));
+const ArticlePages = lazyWithRetries(() => import('@/pages/Journal/guest/archive/ArticlePage'));
 const Announcement = lazyWithRetries(() => import('@/pages/Journal/guest/announcement'));
 const EditorialTeam = lazyWithRetries(() => import('@/pages/Journal/guest/editorialTeam'));
 const Indexing = lazyWithRetries(() => import('@/pages/Journal/guest/indexing'));
@@ -274,6 +275,12 @@ const routes: Route[] = [
         name: 'Archive',
         path: 'archive',
         element: <Archive />
+      },
+      {
+        id: '3',
+        name: 'Archive',
+        path: 'archive-page',
+        element: <ArticlePages />
       },
       {
         id: '3',

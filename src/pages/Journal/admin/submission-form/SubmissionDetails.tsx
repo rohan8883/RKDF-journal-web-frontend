@@ -15,10 +15,11 @@ import { format } from "date-fns"
 import { LoadingSkeleton } from "./LoadingSkeleton"
 import { getStatusDisplay } from "./StatusConfigItem"
 import { AuthorInfoSection } from './AuthorInfoSection'
-import { FilesSection } from "./FilesSection" 
+import { FilesSection } from "./FilesSection"
 import { ReviewerAssignmentModal } from "./ReviewerAssignmentModal"
 import { ReviewManagement } from "./review/ReviewManagement"
 import type { SubmissionData } from "./type"
+import { ReviewAssignManagement } from "./ReviewAssignManagement"
 
 export default function SubmissionDetailsView() {
   const postMutation = usePostMutation({})
@@ -86,6 +87,29 @@ export default function SubmissionDetailsView() {
     }
   }
 
+  const handleDeleteReviewerAssignment = async (reviewerId: string) => {
+    try {
+      const res = await postMutation.mutateAsync({
+        api: rkdfApi.deleteReviewerAssignment,
+        data: {
+          submissionId,
+          reviewerId
+        },
+      })
+
+      if (res.data?.success) {
+        toast.success("Reviewer removed successfully")
+        // Optional: refetch data or reload
+        window.location.reload()
+      } else {
+        toast.error(res.data?.message || "Failed to remove reviewer")
+      }
+    } catch (error) {
+      console.error("Error removing reviewer:", error)
+      toast.error("Something went wrong while removing reviewer")
+    }
+  }
+
 
 
   if (isLoading) {
@@ -121,8 +145,8 @@ export default function SubmissionDetailsView() {
         <div className="flex space-x-1 mb-8">
           <button
             className={`px-6 py-3 font-medium text-sm rounded-t-lg transition-all duration-200 ${activeTab === "details"
-                ? "text-white bg-gradient-to-r from-blue-500 to-blue-600 shadow-md"
-                : "text-gray-600 bg-gray-100 hover:bg-gray-200"
+              ? "text-white bg-gradient-to-r from-blue-500 to-blue-600 shadow-md"
+              : "text-gray-600 bg-gray-100 hover:bg-gray-200"
               }`}
             onClick={() => setActiveTab("details")}
           >
@@ -133,8 +157,8 @@ export default function SubmissionDetailsView() {
           </button>
           <button
             className={`px-6 py-3 font-medium text-sm rounded-t-lg transition-all duration-200 ${activeTab === "reviews"
-                ? "text-white bg-gradient-to-r from-blue-500 to-blue-600 shadow-md"
-                : "text-gray-600 bg-gray-100 hover:bg-gray-200"
+              ? "text-white bg-gradient-to-r from-blue-500 to-blue-600 shadow-md"
+              : "text-gray-600 bg-gray-100 hover:bg-gray-200"
               }`}
             onClick={() => setActiveTab("reviews")}
           >
@@ -144,9 +168,19 @@ export default function SubmissionDetailsView() {
             )}
           </button>
         </div>
+        {isAdmin &&
+          <ReviewAssignManagement
+            submissionId={submissionId!}
+            isAdmin={isAdmin}
+            reviewerAssignments={submissionData?.reviewerAssignments || []}
+            onDeleteAssignment={handleDeleteReviewerAssignment}
+          />
+        }
+
         {activeTab === "details" ? (
           /* Main Content Grid - Details Tab */
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-3">
             {/* Left Column - Submission Details */}
             <div className="lg:col-span-2 space-y-6">
               {/* Basic Info Card */}
@@ -226,7 +260,7 @@ export default function SubmissionDetailsView() {
                 manuscriptUrl={submissionData?.fullManuscriptUrl}
                 manuscriptFile={submissionData?.manuscriptFile}
               />
- 
+
             </div>
           </div>
         ) : (
@@ -234,6 +268,7 @@ export default function SubmissionDetailsView() {
           <ReviewManagement submissionId={submissionId!} isAdmin={isAdmin} />
         )}
       </div>
+
 
       {/* Reviewer Assignment Modal */}
       {isAdmin && (

@@ -74,9 +74,11 @@ export const rkdfApi = {
   deleteSubmissions: '/submission/delete-submissions',
 
   getAvailableReviewers: '/user/get-all-reviewer',
+  getAvailableAuthors: '/user/get-all-author',
+
   assignReviewer: '/submission/assign-reviewer',
-  getReviewerMessages: '/otp/',
-  submitReview: '/otp/',
+  updateReviewerAssignment: "/submission/update-reviewer-assignment",
+  deleteReviewerAssignment: "/submission/delete-reviewer-assignment", 
 
 
   // New endpoints for review rounds
