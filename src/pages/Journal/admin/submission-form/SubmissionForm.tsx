@@ -6,8 +6,9 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import {
   ButtonLoading,
   RHFTextField,
-  FormProviders, 
+  FormProviders,
   RHFSelectField,
+  RHFTextArea,
 } from "@/components/forms";
 import EditDialogBox from "@/components/edit-dialog-box-w-full";
 import {
@@ -38,6 +39,7 @@ const getSchema = (userRole: string) => {
       : yup.string().notRequired(),
     abstract: yup.string().required("Abstract is required"),
     keywords: yup.string(),
+    references: yup.string(),
     journalId: yup.string().required("Journal is required"),
     manuscriptFile: yup.mixed()
       .test(
@@ -134,6 +136,7 @@ export default function SubmissionForm({
     defaultValues: {
       title: "",
       abstract: "",
+      references: "",
       keywords: "",
       journalId: "",
       manuscriptFile: undefined,
@@ -244,6 +247,7 @@ export default function SubmissionForm({
       const initialValues: any = {
         title: data?.data?.title,
         abstract: data?.data?.abstract,
+        references: data?.data?.references,
         keywords: data?.data?.keywords?.join(", "),
         journalId: data?.data?.journalId?._id || data?.data?.journalId,
         manuscriptFile: data?.data?.manuscriptFile, // Keep existing file path
@@ -264,6 +268,7 @@ export default function SubmissionForm({
       const defaultValues: any = {
         title: "",
         abstract: "",
+        references: "",
         keywords: "",
         journalId: "",
         manuscriptFile: undefined,
@@ -360,6 +365,7 @@ export default function SubmissionForm({
                   />
                 </div>
 
+
                 <div className="flex flex-col w-full">
                   <KeywordTagInput
                     control={methods.control}
@@ -389,7 +395,16 @@ export default function SubmissionForm({
                 />
               </div>
             </div>
-
+            {/* References */}
+            <div className="relative w-full">
+              <RHFTextArea
+                name="references"
+                label="References"
+                placeholder="Enter your references here..."
+                rows={8}
+                className="w-full border rounded-md p-1 shadow-sm"
+              />
+            </div>
             {/* Manuscript Upload Section */}
             <div className="bg-white p-4 rounded-lg shadow-sm">
               <h3 className="text-lg font-medium text-gray-800 mb-3 flex items-center">
