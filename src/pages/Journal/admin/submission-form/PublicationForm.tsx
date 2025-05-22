@@ -6,14 +6,13 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import {
   ButtonLoading,
   RHFTextField,
-  FormProviders, 
+  FormProviders,
   RHFSelectField,
 } from "@/components/forms";
 import EditDialogBox from "@/components/edit-dialog-box-w-full";
 import {
   useApi,
   usePostMutation,
-  usePutMutation,
 } from "@/hooks/useCustomQuery";
 import { rkdfApi } from "@/lib";
 import {
@@ -21,9 +20,10 @@ import {
   FileText,
   BookOpen,
   Save,
-  Upload,
-  Trash,
-  Archive,
+  FileSpreadsheet,
+  Calendar,
+  Hash,
+   Link, 
 } from "lucide-react";
 import KeywordTagInput from "./KeywordTagInput";
 import { useAuth } from "@/store/useAuth";
@@ -39,34 +39,11 @@ const getSchema = (userRole: string) => {
     abstract: yup.string().required("Abstract is required"),
     keywords: yup.string(),
     journalId: yup.string().required("Journal is required"),
-    manuscriptFile: yup.mixed()
-      .test(
-        "fileRequired",
-        "Manuscript file is required",
-        (value) => {
-          // For edit mode, file might already exist
-          if (userRole === 'EDIT_MODE') return true;
-          return !!value;
-        }
-      )
-      .test(
-        "fileType",
-        "Only PDF, DOC or DOCX files are accepted",
-        (value) => {
-          if (!value) return true; // Skip if no file (for edit mode)
-          const file = Array.isArray(value) ? value[0] : value;
-          return file && ["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"].includes(file.type);
-        }
-      )
-      .test(
-        "fileSize",
-        "File size must be less than 10MB",
-        (value) => {
-          if (!value) return true; // Skip if no file (for edit mode)
-          const file = Array.isArray(value) ? value[0] : value;
-          return file && file.size <= 10 * 1024 * 1024; // 10MB
-        }
-      ),
+     submissionId: yup.string(),
+    doi: yup.string(),
+      pages: yup.string().matches(/^\d+-\d+$/, "Pages must be in format XXXX-XXXX"),
+      publicationDate: yup.string().required("Publication date is required"),
+      
   };
 
   // Add submittedBy validation only for non-Author users
@@ -92,7 +69,7 @@ type Props = {
   refetch?: () => void;
 };
 
-export default function SubmissionForm({
+export default function PublicationForm({
   open,
   setOpen,
   title,
@@ -103,7 +80,6 @@ export default function SubmissionForm({
 }: Readonly<Props>) {
   const [manuscriptFileName, setManuscriptFileName] = useState<string>("");
   const postMutation = usePostMutation({});
-  const putMutation = usePutMutation({});
   const { user } = useAuth();
 
   // Use dynamic schema based on user role
@@ -136,51 +112,32 @@ export default function SubmissionForm({
       abstract: "",
       keywords: "",
       journalId: "",
-      manuscriptFile: undefined,
+        submissionId: "",
+      doi: "",
+      pages: "",
+      publicationDate: "",
       ...(user?.role !== 'Author' && { submittedBy: "" }),
     },
     resolver: yupResolver(schema),
   });
 
-  const handleManuscriptFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-
-      // Validate file type
-      const allowedTypes = ["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"];
-      if (!allowedTypes.includes(file.type)) {
-        toast.error("Only PDF, DOC or DOCX files are allowed");
-        return;
-      }
-
-      // Validate file size (limit to 10MB)
-      if (file.size > 10 * 1024 * 1024) {
-        toast.error("File size should not exceed 10MB");
-        return;
-      }
-
-      methods.setValue("manuscriptFile", file);
-      setManuscriptFileName(file.name);
-      toast.success("Manuscript file selected successfully");
-    }
-  };
-
-  const clearManuscriptFile = () => {
-    methods.setValue("manuscriptFile", "");
-    setManuscriptFileName("");
-  };
-
   const onSubmit = async (formData: FormData) => {
     try {
-      const data = new FormData();
-
-      // Append all text fields
-      data.append("title", formData.title);
-      data.append("abstract", formData.abstract);
+      // Prepare the payload as a simple object
+      const payload: any = {
+        title: formData.title,
+        abstract: formData.abstract,
+        journalId: formData.journalId,
+        submissionId: id,
+        doi: formData.doi,
+        pages: formData.pages,
+        publicationDate: formData.publicationDate,
+        manuscriptFile: data?.data?.fullManuscriptUrl
+      };
 
       // Only include submittedBy if user is not Author
       if (user?.role !== 'Author' && formData?.submittedBy) {
-        data.append("submittedBy", formData?.submittedBy);
+        payload.submittedBy = formData.submittedBy;
       }
 
       // Process keywords
@@ -189,46 +146,20 @@ export default function SubmissionForm({
           .split(",")
           .map(keyword => keyword.trim())
           .filter(keyword => keyword);
-        data.append("keywords", JSON.stringify(keywordsArray));
-      }
-
-      data.append("journalId", formData.journalId);
-
-      // Handle manuscript file - only append if it's a new file
-      if (formData.manuscriptFile && typeof formData.manuscriptFile !== 'string') {
-        const manuscriptFile = Array.isArray(formData.manuscriptFile)
-          ? formData.manuscriptFile[0]
-          : formData.manuscriptFile;
-        data.append("manuscriptFile", manuscriptFile);
+        payload.keywords = keywordsArray;
       }
 
       if (edit && id) {
-        const res = await putMutation.mutateAsync({
-          api: `${rkdfApi.updateSubmissions}/${id}`,
-          data,
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        });
-        if (res.data?.success) {
-          toast.success(res?.data?.message);
-        } else {
-          toast.error("Submission not updated successfully");
-        }
-      } else {
-        const res = await postMutation.mutateAsync({
-          api: rkdfApi.createSubmissions,
-          data,
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
+          const res = await postMutation.mutateAsync({
+          api: rkdfApi.createPublication,
+          data: payload,
         });
         if (res.data?.success) {
           toast.success(res?.data?.message);
         } else {
           toast.error("Submission not created successfully");
         }
-      }
+      } 
 
       setOpen(false);
       if (setEdit) setEdit(false);
@@ -246,7 +177,6 @@ export default function SubmissionForm({
         abstract: data?.data?.abstract,
         keywords: data?.data?.keywords?.join(", "),
         journalId: data?.data?.journalId?._id || data?.data?.journalId,
-        manuscriptFile: data?.data?.manuscriptFile, // Keep existing file path
       };
 
       // Only include submittedBy if user is not Author
@@ -257,8 +187,8 @@ export default function SubmissionForm({
       methods.reset(initialValues);
 
       // If manuscript file exists in the data
-      if (data?.data?.manuscriptFile) {
-        setManuscriptFileName(data?.data?.manuscriptFile.split('/').pop() || "Current manuscript file");
+      if (data?.data?.fullManuscriptUrl) {
+        setManuscriptFileName(data?.data?.fullManuscriptUrl.split('/').pop() || "Current manuscript file");
       }
     } else {
       const defaultValues: any = {
@@ -266,7 +196,6 @@ export default function SubmissionForm({
         abstract: "",
         keywords: "",
         journalId: "",
-        manuscriptFile: undefined,
       };
 
       // Only include submittedBy if user is not Author
@@ -341,16 +270,6 @@ export default function SubmissionForm({
                     className="pr-2 pl-2"
                   />
                 </div>
-                {/* 
-                <div className="relative w-full">
-                  <RHFTextArea
-                    name="abstract"
-                    label="Abstract"
-                    placeholder="Provide a concise summary of your submission"
-                    rows={4}
-                    className="w-full border rounded-md p-1 shadow-sm"
-                  />
-                </div> */}
                 <div className="relative w-full">
                   <QuillField
                     name="abstract"
@@ -390,60 +309,60 @@ export default function SubmissionForm({
               </div>
             </div>
 
-            {/* Manuscript Upload Section */}
             <div className="bg-white p-4 rounded-lg shadow-sm">
               <h3 className="text-lg font-medium text-gray-800 mb-3 flex items-center">
-                <Archive className="h-5 w-5 mr-2 text-blue-600" />
-                Manuscript File
+                <FileSpreadsheet className="h-5 w-5 mr-2 text-blue-600" />
+                Publication Details
               </h3>
-
-              <div className="space-y-4">
-                {/* Manuscript File Upload */}
-                <div className="border-2 border-dashed border-blue-200 rounded-lg p-4 bg-blue-50 hover:bg-blue-100 transition-colors">
-                  <div className="flex flex-col items-center justify-center space-y-2">
-                    <Upload className="h-10 w-10 text-blue-500" />
-                    <p className="text-sm text-gray-600 text-center">
-                      Upload your manuscript file (PDF, DOC, DOCX - max 10MB)
-                    </p>
-
-                    <input
-                      type="file"
-                      id="manuscriptUpload"
-                      accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                      onChange={handleManuscriptFileChange}
-                      className="hidden"
-                    />
-
-                    <label
-                      htmlFor="manuscriptUpload"
-                      className="px-4 py-2 bg-blue-600 text-white rounded-md cursor-pointer hover:bg-blue-700 transition-colors"
-                    >
-                      <Upload className="h-4 w-4 inline mr-2" />
-                      Select Manuscript File
-                    </label>
-                  </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-blue-600" />
+                  <RHFTextField
+                    name="publicationDate"
+                    label="Publication Date"
+                    type="date"
+                    className="pr-2 pl-2"
+                  />
                 </div>
+                <div className="flex items-center gap-2">
+                  <Link className="h-4 w-4 text-blue-600" />
+                  <RHFTextField
+                    name="doi"
+                    label="DOI"
+                    placeholder="e.g., 10.1000/xyz123"
+                    className="pr-2 pl-2"
+                  />
+                </div>
+              </div>
 
-                {/* Selected File Display */}
-                {manuscriptFileName && (
-                  <div className="bg-gray-100 p-3 rounded-md">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-2">
-                        <FileText className="h-5 w-5 text-blue-600" />
-                        <span className="text-gray-700 font-medium">{manuscriptFileName}</span>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={clearManuscriptFile}
-                        className="text-red-500 hover:text-red-700"
-                      >
-                        <Trash className="h-4 w-4" />
-                      </button>
-                    </div>
-                  </div>
-                )}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                <div className="flex items-center gap-2">
+                  <Hash className="h-4 w-4 text-blue-600" />
+                  <RHFTextField
+                    name="pages"
+                    label="Page Range"
+                    placeholder="e.g., 123-145"
+                    className="pr-2 pl-2"
+                  />
+                </div>
               </div>
             </div>
+
+            {/* Manuscript Display Section */}
+            {manuscriptFileName && (
+              <div className="bg-white p-4 rounded-lg shadow-sm">
+                <h3 className="text-lg font-medium text-gray-800 mb-3 flex items-center">
+                  <FileText className="h-5 w-5 mr-2 text-blue-600" />
+                  Manuscript File
+                </h3>
+                <div className="bg-gray-100 p-3 rounded-md">
+                  <div className="flex items-center space-x-2">
+                    <FileText className="h-5 w-5 text-blue-600" />
+                    <span className="text-gray-700 font-medium">{manuscriptFileName}</span>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="mt-4">
@@ -454,7 +373,7 @@ export default function SubmissionForm({
               disabled={methods.formState.isSubmitting}
             >
               <Save className="h-5 w-5 mr-2" />
-              {edit ? "Update Submission" : "Submit Manuscript"}
+              {edit ? "Update Publication" : "Submit Manuscript"}
             </ButtonLoading>
           </div>
         </div>

@@ -36,9 +36,6 @@ export default function SubmissionDetailsView() {
     },
   })
 
-  // Fetch reviewer messages
-
-
   // Fetch available reviewers (for admin)
   const { data: reviewersData, isLoading: reviewersLoading } = useApi<any>({
     api: `${rkdfApi?.getAvailableReviewers}?submissionId=${submissionId}`,
@@ -52,7 +49,6 @@ export default function SubmissionDetailsView() {
 
   // Check user roles and assignments
   const isAssignedReviewer = user?.role === "Reviewer"
-  // const isAuthor = submissionData?.submittedBy?._id === user?._id
   const isAdmin = user?.role === "Admin"
 
   const formatDate = (dateString?: string) => {
@@ -110,13 +106,19 @@ export default function SubmissionDetailsView() {
     }
   }
 
-
-
   if (isLoading) {
     return <LoadingSkeleton />
   }
 
   const statusDisplay = getStatusDisplay(submissionData?.status)
+
+  // Function to render abstract with HTML formatting preserved
+  const renderFormattedAbstract = () => {
+    if (!submissionData?.abstract) return "No abstract available";
+    
+    // Return the HTML content that will be rendered safely with dangerouslySetInnerHTML
+    return submissionData.abstract;
+  }
 
   return (
     <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg shadow-md">
@@ -136,8 +138,6 @@ export default function SubmissionDetailsView() {
                 Assign Reviewer
               </Button>
             )}
-
-
           </div>
         </div>
 
@@ -179,7 +179,6 @@ export default function SubmissionDetailsView() {
 
         {activeTab === "details" ? (
           /* Main Content Grid - Details Tab */
-
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-3">
             {/* Left Column - Submission Details */}
             <div className="lg:col-span-2 space-y-6">
@@ -191,28 +190,46 @@ export default function SubmissionDetailsView() {
                 </h2>
 
                 <div className="space-y-4">
-                  {/* Abstract */}
+                  {/* Abstract - Updated to preserve formatting */}
                   <div>
                     <h3 className="text-sm font-medium text-gray-500 mb-1">Abstract</h3>
-                    <p className="text-gray-800 whitespace-pre-line">{submissionData?.abstract}</p>
+                    <div 
+                      className="text-gray-800"
+                      dangerouslySetInnerHTML={{ __html: renderFormattedAbstract() }}
+                    />
                   </div>
 
-                  {/* Keywords */}
-                  {submissionData?.keywords?.length > 0 && (
-                    <div>
-                      <h3 className="text-sm font-medium text-gray-500 mb-1 flex items-center">
-                        <Tag className="h-4 w-4 mr-1 text-blue-600" />
-                        Keywords
-                      </h3>
-                      <div className="flex flex-wrap gap-2">
-                        {submissionData?.keywords?.map((keyword: string, index: number) => (
-                          <span key={index} className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
-                            {keyword}
-                          </span>
-                        ))}
-                      </div>
+                  {/* Keywords - Updated to handle keywords as separate entities */}
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-500 mb-1 flex items-center">
+                      <Tag className="h-4 w-4 mr-1 text-blue-600" />
+                      Keywords
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
+                      {submissionData?.keywords ? (
+                        Array.isArray(submissionData.keywords) ? (
+                          // If keywords is an array, map through it
+                          submissionData.keywords.map((keyword: string, index: number) => (
+                            <span key={index} className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
+                              {keyword}
+                            </span>
+                          ))
+                        ) : (
+                          // If keywords is a single string, split it by commas or other separators
+                          String(submissionData.keywords).split(/[,;]/)
+                            .map((keyword: string) => keyword.trim())
+                            .filter(keyword => keyword.length > 0)
+                            .map((keyword: string, index: number) => (
+                              <span key={index} className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
+                                {keyword}
+                              </span>
+                            ))
+                        )
+                      ) : (
+                        <p className="text-gray-500 italic">No keywords provided</p>
+                      )}
                     </div>
-                  )}
+                  </div>
 
                   {/* Journal */}
                   <div>
@@ -247,7 +264,6 @@ export default function SubmissionDetailsView() {
                   </div>
                 </div>
               </div>
-
             </div>
 
             {/* Right Column - Files & Meta Info */}
@@ -260,7 +276,6 @@ export default function SubmissionDetailsView() {
                 manuscriptUrl={submissionData?.fullManuscriptUrl}
                 manuscriptFile={submissionData?.manuscriptFile}
               />
-
             </div>
           </div>
         ) : (
@@ -268,7 +283,6 @@ export default function SubmissionDetailsView() {
           <ReviewManagement submissionId={submissionId!} isAdmin={isAdmin} />
         )}
       </div>
-
 
       {/* Reviewer Assignment Modal */}
       {isAdmin && (

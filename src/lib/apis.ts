@@ -78,7 +78,7 @@ export const rkdfApi = {
 
   assignReviewer: '/submission/assign-reviewer',
   updateReviewerAssignment: "/submission/update-reviewer-assignment",
-  deleteReviewerAssignment: "/submission/delete-reviewer-assignment", 
+  deleteReviewerAssignment: "/submission/delete-reviewer-assignment",
 
 
   // New endpoints for review rounds
@@ -101,6 +101,14 @@ export const rkdfApi = {
   updateArticles: '/article/update-articles',
   updateArticlesStatus: '/article/update-articles-status',
   deleteArticles: '/article/delete-articles',
+
+  // ════════════════════════════║  API OF PUBLICATION ║═════════════════════════════════
+  createPublication: '/publication/create-publication',
+  getAllPublication: '/publication/get-all-publication',
+  getPublicationById: '/publication/get-by-id-publication',
+  updatePublication: '/publication/update-publication',
+  updatePublicationStatus: '/publication/update-publication-status',
+  deletePublication: '/publication/delete-publication',
   // ════════════════════════════║  API OF OTP or VERIFY EMAIL ║═════════════════════════════════
   sendOtp: '/otp/send-otp',
   verifyEmailOtp: '/otp/verify-otp',

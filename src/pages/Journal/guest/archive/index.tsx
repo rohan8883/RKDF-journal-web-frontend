@@ -88,15 +88,15 @@ export default function ArchivePage() {
             <div className="lg:col-span-2 space-y-8">
               {/* Search Archive Section */}
               <section className="transform transition-all hover:shadow-lg">
-                <div className="bg-gradient-to-r from-blue-600 to-blue-500 text-white p-5 rounded-t-lg flex items-center gap-3">
+                <div className="bg-gradient-to-r from-teal-600 to-teal-500 text-white p-5 rounded-t-lg flex items-center gap-3">
                   <Search className="h-6 w-6" />
                   <h2 className="text-xl font-semibold">Search Archive</h2>
                 </div>
                 <div className="bg-white border-t-0 rounded-b-lg shadow-md p-6">
                   <div className="flex gap-4">
                     <div className="hidden sm:block">
-                      <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
-                        <Search className="h-8 w-8 text-blue-600" />
+                      <div className="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center">
+                        <Search className="h-8 w-8 text-teal-600" />
                       </div>
                     </div>
                     <div className="flex-1">
@@ -104,24 +104,24 @@ export default function ArchivePage() {
                         <input
                           type="text"
                           placeholder="Search by title, author, or keyword..."
-                          className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                         />
                         <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
                       </div>
                       <div className="flex flex-wrap gap-4 mt-4">
-                        <select className="flex-1 min-w-[150px] px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <select className="flex-1 min-w-[150px] px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
                           <option value="">All Years</option>
                           <option value="2023">2023</option>
                           <option value="2022">2022</option>
                           <option value="2021">2021</option>
                         </select>
-                        <select className="flex-1 min-w-[150px] px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <select className="flex-1 min-w-[150px] px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
                           <option value="">All Volumes</option>
                           <option value="6">Volume 6</option>
                           <option value="5">Volume 5</option>
                           <option value="4">Volume 4</option>
                         </select>
-                        <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md flex items-center gap-2">
+                        <button className="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-md flex items-center gap-2">
                           <Search className="h-4 w-4" />
                           Search
                         </button>

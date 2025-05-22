@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom' // Import from react-router-dom instead
+import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -29,6 +29,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu" 
+import PublicationForm from './PublicationForm'
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 interface SubmissionCardProps {
   submission: any;
@@ -37,19 +39,21 @@ interface SubmissionCardProps {
 }
 
 export default function SubmissionList() {
-  const navigate = useNavigate() // Use navigate from react-router
+  const navigate = useNavigate()
   const [page, setPage] = useState<number>(1)
   const [perPage, setPerPage] = useState<number>(10)
   const [search, setSearch] = useState<string>('')
+  const [openPublication, setOpenPublication] = useState<boolean>(false)
   const [open, setOpen] = useState<boolean>(false)
   const [id, setId] = useState<string>('')
   const [edit, setEdit] = useState<boolean>(false)
-  // const deleteMutation = useDeleteMutation({})
+  const [editPublication, setEditPublication] = useState<boolean>(false)
+  const [activeTab, setActiveTab] = useState<string>("all")
 
   const submissionData = useApi<any>({
-    api: `${rkdfApi.getAllSubmissions}?page=${page}&limit=${perPage}&q=${search}`,
+    api: `${rkdfApi.getAllSubmissions}?page=${page}&limit=${perPage}&q=${search}${activeTab !== "all" ? `&status=${activeTab}` : ''}`,
     key: 'getAllSubmissions',
-    value: [page, perPage, search],
+    value: [page, perPage, search, activeTab],
     options: {
       enabled: true,
     },
@@ -60,8 +64,13 @@ export default function SubmissionList() {
     setEdit(true)
     setId(id)
   }
+  
+  const handlePublication = (id: string): void => {
+    setOpenPublication(true)
+    setEditPublication(true)
+    setId(id)
+  }
 
-  // Navigate to submission details page
   const handleViewDetails = (id: string): void => {
     navigate(`/journal/submissions/${id}`)
   }
@@ -76,8 +85,13 @@ export default function SubmissionList() {
     submissionData.refetch()
   }
 
+  const handleTabChange = (value: string): void => {
+    setActiveTab(value)
+    setPage(1)
+  }
+
   // Submission card for mobile view
-  const SubmissionCard: React.FC<SubmissionCardProps> = ({ submission,  handleViewDetails }) => (
+  const SubmissionCard: React.FC<SubmissionCardProps> = ({ submission, handleViewDetails }) => (
     <Card className="mb-4">
       <CardContent className="pt-4">
         <div className="flex justify-between items-start mb-2">
@@ -138,26 +152,24 @@ export default function SubmissionList() {
         setEdit={setEdit}
         refetch={submissionData.refetch}
       />
+      <PublicationForm
+        open={openPublication}
+        setOpen={setOpenPublication}
+        title={editPublication ? 'Publication' : 'Add Publication'}
+        id={id}
+        edit={editPublication}
+        setEdit={setEditPublication}
+        refetch={submissionData.refetch}
+      />
       
       <div className="bg-white rounded-lg shadow">
         <div className="p-4 md:p-6">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
-            <CardTitle className="text-xl font-bold">
-              Submission Management
-            </CardTitle>
-            
-            <div className="flex flex-col sm:flex-row w-full md:w-auto gap-3">
-              <form onSubmit={handleSearchSubmit} className="relative w-full sm:w-64">
-                <input
-                  type="text"
-                  placeholder="Search submissions..."
-                  value={search}
-                  onChange={handleSearchChange}
-                  className="w-full h-10 pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                />
-                <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
-              </form>
-
+          <div className="flex flex-col gap-6 mb-6">
+            <div className="flex justify-between items-center">
+              <CardTitle className="text-xl font-bold">
+                Submission Management
+              </CardTitle>
+              
               <Button
                 className="flex items-center gap-2 whitespace-nowrap"
                 onClick={() => {
@@ -170,10 +182,63 @@ export default function SubmissionList() {
                 Add Submission
               </Button>
             </div>
+            
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <Tabs 
+                defaultValue="all" 
+                value={activeTab} 
+                onValueChange={handleTabChange}
+                className="w-full md:w-auto"
+              >
+                <TabsList className="w-full grid grid-cols-5 bg-gray-100 p-1 rounded-lg">
+                  <TabsTrigger 
+                    value="all" 
+                    className="data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-primary rounded-md py-1.5"
+                  >
+                    All
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="submitted" 
+                    className="data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-primary rounded-md py-1.5"
+                  >
+                    Submitted
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="under_review" 
+                    className="data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-primary rounded-md py-1.5"
+                  >
+                    Reviewing
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="completed_review" 
+                    className="data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-primary rounded-md py-1.5"
+                  >
+                    Completed
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="rejected_review" 
+                    className="data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-primary rounded-md py-1.5"
+                  >
+                    Rejected
+                  </TabsTrigger>
+                </TabsList>
+              </Tabs>
+              
+              <form onSubmit={handleSearchSubmit} className="relative w-full md:w-64">
+                <input
+                  type="text"
+                  placeholder="Search submissions..."
+                  value={search}
+                  onChange={handleSearchChange}
+                  className="w-full h-10 pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                />
+                <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+              </form>
+            </div>
           </div>
 
           <CardDescription className="mb-4">
-            Total Submissions: {submissionData?.data?.data?.totalDocs || 0}
+            Total {activeTab === "all" ? "Reviews" : activeTab === "submitted" ? "Submitted" : activeTab === "under_review" ? "Under Review" : activeTab === "rejected_review" ? "Rejected Review": "Completed Review" } Submissions: {submissionData?.data?.data?.totalDocs || 0}
           </CardDescription>
 
           {submissionData?.isLoading ? (
@@ -199,7 +264,7 @@ export default function SubmissionList() {
                     {submissionData?.data?.data?.docs?.length === 0 ? (
                       <TableRow>
                         <TableCell colSpan={7} className="text-center py-8">
-                          No submissions found
+                          No {activeTab === "all" ? "" : activeTab === "submitted" ? "submitted" : activeTab === "under_review" ? "under review" : "completed review"} submissions found
                         </TableCell>
                       </TableRow>
                     ) : (
@@ -213,7 +278,17 @@ export default function SubmissionList() {
                           <TableCell>{submission?.author?.fullName}</TableCell>
                          
                           <TableCell>
-                            <Badge variant="outline" className='capitalize'>{submission?.status || "N/A"}</Badge>
+                            <Badge 
+                              variant="outline" 
+                              className={`capitalize ${
+                                submission?.status === "submitted" ? "bg-blue-50 text-blue-700 border-blue-200" : 
+                                submission?.status === "under_review" ? "bg-amber-50 text-amber-700 border-amber-200" : 
+                                submission?.status === "rejected_review" ? "bg-red-50 text-red-500 border-black" : 
+                                "bg-green-50 text-green-700 border-green-200"
+                              }`}
+                            >
+                              {submission?.status || "N/A"}
+                            </Badge>
                           </TableCell>
                           <TableCell className="text-right">
                             <DropdownMenu>
@@ -226,8 +301,11 @@ export default function SubmissionList() {
                                 <DropdownMenuItem onClick={() => handleEdit(submission?._id)}>
                                   <Edit size={14} className="mr-2" /> Edit
                                 </DropdownMenuItem>
-                                 <DropdownMenuItem onClick={() => handleViewDetails(submission?._id)}>
+                                <DropdownMenuItem onClick={() => handleViewDetails(submission?._id)}>
                                   <FileText size={14} className="mr-2" /> View Details
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handlePublication(submission?._id)}>
+                                  <FileText size={14} className="mr-2" /> Publication
                                 </DropdownMenuItem>
                                 <DropdownMenuItem className="text-red-600">
                                   <Trash2 size={14} className="mr-2" /> Delete
@@ -246,7 +324,7 @@ export default function SubmissionList() {
               <div className="md:hidden">
                 {submissionData?.data?.data?.docs?.length === 0 ? (
                   <div className="text-center py-8">
-                    No submissions found
+                    No {activeTab === "all" ? "" : activeTab === "submitted" ? "submitted" : activeTab === "under_review" ? "under review" : "completed review"} submissions found
                   </div>
                 ) : (
                   submissionData?.data?.data?.docs?.map((submission: any, index: number) => (
