@@ -38,7 +38,7 @@ const getSchema = (userRole: string) => {
       : yup.string().notRequired(),
     abstract: yup.string().required("Abstract is required"),
     keywords: yup.string(),
-    journalId: yup.string().required("Journal is required"),
+    issueId: yup.string().required("Issue  is required"),
      submissionId: yup.string(),
     doi: yup.string(),
       pages: yup.string().matches(/^\d+-\d+$/, "Pages must be in format XXXX-XXXX"),
@@ -92,8 +92,8 @@ export default function PublicationForm({
     },
   });
 
-  const journalList = useApi<any>({
-    api: `${rkdfApi.getAllJournal}?page=1&limit=100`,
+ const issueList = useApi<any>({
+    api: `${rkdfApi.getAllIssue}?page=1&limit=100`,
     options: {
       enabled: true,
     },
@@ -111,7 +111,7 @@ export default function PublicationForm({
       title: "",
       abstract: "",
       keywords: "",
-      journalId: "",
+      issueId: "",
         submissionId: "",
       doi: "",
       pages: "",
@@ -127,7 +127,7 @@ export default function PublicationForm({
       const payload: any = {
         title: formData.title,
         abstract: formData.abstract,
-        journalId: formData.journalId,
+        issueId: formData.issueId,
         submissionId: id,
         doi: formData.doi,
         pages: formData.pages,
@@ -195,7 +195,7 @@ export default function PublicationForm({
         title: "",
         abstract: "",
         keywords: "",
-        journalId: "",
+        issueId: "",
       };
 
       // Only include submittedBy if user is not Author
@@ -298,10 +298,10 @@ export default function PublicationForm({
               </h3>
               <div className="space-y-4">
                 <RHFSelectField
-                  name="journalId"
-                  label="Select Journal"
-                  data={journalList?.data?.data?.docs?.map((item: any) => ({
-                    label: item.title,
+                  name="issueId"
+                  label="Select Issue"
+                  data={issueList?.data?.data?.docs?.map((item: any) => ({
+                    label: `${item.journal?.title} - Vol. ${item.volume}, No. ${item.issueNumber}`,
                     value: item._id,
                   }))}
                   className="pr-2 pl-2"

@@ -103,12 +103,12 @@ export const rkdfApi = {
   deleteArticles: '/article/delete-articles',
 
   // ════════════════════════════║  API OF PUBLICATION ║═════════════════════════════════
-  createPublication: '/publication/create-publication',
-  getAllPublication: '/publication/get-all-publication',
-  getPublicationById: '/publication/get-by-id-publication',
-  updatePublication: '/publication/update-publication',
-  updatePublicationStatus: '/publication/update-publication-status',
-  deletePublication: '/publication/delete-publication',
+  createPublication: '/article/create-articles',
+  getAllPublication: '/article/get-all-articles',
+  getPublicationById: '/article/get-by-id-articles',
+  updatePublication: '/article/update-articles',
+  updatePublicationStatus: '/article/update-publication-status',
+  deletePublication: '/article/delete-articles',
   // ════════════════════════════║  API OF OTP or VERIFY EMAIL ║═════════════════════════════════
   sendOtp: '/otp/send-otp',
   verifyEmailOtp: '/otp/verify-otp',
