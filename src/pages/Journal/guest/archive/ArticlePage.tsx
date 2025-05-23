@@ -1,4 +1,4 @@
-import { Calendar, BookOpen, FileText, User } from 'lucide-react';
+import { Calendar, FileText, User } from 'lucide-react';
 import Page from '@/components/helmet-page';
 import SideContent from '../sideContent';
 import { useApi } from '@/hooks/useCustomQuery';
@@ -71,6 +71,14 @@ export default function ArticlePage() {
     },
   });
 
+  // Sample references data (replace with your actual data or API response)
+  const references = [
+    "Bag, A.K. (1979) Mathematics in ancient and medieval India, Chaukhambha Orientalia, Varanasi.",
+    "Balachandra Rao, S. (1994) Indian mathematics and astronomy, Jnana Deepa Publications, Bangalore.",
+    "Boyer, C.B. (1968) A history of mathematics, John Wiley & Sons, New York.",
+    "Datta, B. and Singh, A.N. (1962) History of Hindu mathematics, Asia Publishing House, Bombay."
+  ];
+
   if (isFetching) {
     return (
       <Page title="Loading...">
@@ -100,23 +108,23 @@ export default function ArticlePage() {
   const articleData = data.data;
   const journalData = articleData.issueId.journalId;
   const issueData = articleData.issueId;
-  
+
   // Get author information
   const getAuthorInfo = () => {
     const submission = articleData.submissionId;
     if (!submission) return null;
-    
+
     if (typeof submission.submittedBy === 'string') {
       return {
         name: 'Unknown Author',
         affiliation: journalData.publisher
       };
     }
-    
+
     return {
-      name: submission.submittedBy.fullName || 
-           `${submission.submittedBy.userName}` || 
-           'Unknown Author',
+      name: submission.submittedBy.fullName ||
+        `${submission.submittedBy.userName}` ||
+        'Unknown Author',
       affiliation: submission.submittedBy.affiliation || journalData.publisher
     };
   };
@@ -124,25 +132,13 @@ export default function ArticlePage() {
   const authorInfo = getAuthorInfo();
 
   // Format dates
-  const publicationDate = articleData.publicationDate 
-    ? format(new Date(articleData.publicationDate), 'MMM d, yyyy') 
-    : 'Not specified';
-    
-  const issueYear = issueData.publicationDate 
-    ? format(new Date(issueData.publicationDate), 'yyyy') 
+  const publicationDate = articleData.publicationDate
+    ? format(new Date(articleData.publicationDate), 'MMM d, yyyy')
     : 'Not specified';
 
-  // Metrics data
-  const metrics = {
-    pdfViews: 12,
-    timeline: [
-      format(new Date(), 'MMM yyyy'),
-      format(new Date(new Date().setMonth(new Date().getMonth() + 6)), 'MMM yyyy'),
-      format(new Date(new Date().setFullYear(new Date().getFullYear() + 1)), 'MMM yyyy')
-    ],
-    impactFactor: 4.0,
-    frequency: "monthly"
-  };
+  const issueYear = issueData.publicationDate
+    ? format(new Date(issueData.publicationDate), 'yyyy')
+    : 'Not specified';
 
   return (
     <Page title={articleData.title}>
@@ -167,7 +163,7 @@ export default function ArticlePage() {
               {/* Article Header Section */}
               <section className="bg-white rounded-lg shadow-md p-6">
                 <h1 className="text-2xl font-bold text-gray-800 mb-4">{articleData.title}</h1>
-                
+
                 <div className="flex flex-wrap gap-4 text-sm text-gray-600 mb-6">
                   <span className="flex items-center gap-1">
                     <Calendar className="h-4 w-4" />
@@ -214,44 +210,30 @@ export default function ArticlePage() {
                     <h2 className="text-xl font-semibold">Abstract</h2>
                   </div>
                   <div className="p-6">
-                    <div 
-                      className="text-gray-700 prose" 
-                      dangerouslySetInnerHTML={{ __html: articleData.abstract }} 
+                    <div
+                      className="text-gray-700 prose"
+                      dangerouslySetInnerHTML={{ __html: articleData.abstract }}
                     />
                   </div>
                 </section>
               )}
 
+              {/* References Section */}
               <section className="bg-white rounded-lg shadow-md overflow-hidden">
                 <div className="bg-gradient-to-r from-teal-600 to-teal-500 text-white p-4 flex items-center gap-3">
-                  <BookOpen className="h-6 w-6" />
-                  <h2 className="text-xl font-semibold">Article Metrics</h2>
+                  <FileText className="h-6 w-6" />
+                  <h2 className="text-xl font-semibold">References</h2>
                 </div>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-6">
-                  <div className="bg-teal-50 p-4 rounded-lg text-center">
-                    <div className="text-2xl font-bold text-teal-700">{metrics.pdfViews}</div>
-                    <div className="text-sm text-gray-600">PDF Views</div>
-                  </div>
-                  <div className="bg-teal-50 p-4 rounded-lg">
-                    <h3 className="text-sm font-semibold text-gray-700 mb-2">Timeline</h3>
-                    <ul className="space-y-1">
-                      {metrics.timeline.map((time, index) => (
-                        <li key={index} className="text-sm text-gray-600">{time}</li>
-                      ))}
-                    </ul>
-                  </div>
-                  <div className="bg-teal-50 p-4 rounded-lg text-center">
-                    <div className="text-2xl font-bold text-teal-700">{metrics.impactFactor}</div>
-                    <div className="text-sm text-gray-600">Impact Factor</div>
-                  </div>
-                  <div className="bg-teal-50 p-4 rounded-lg text-center">
-                    <div className="text-xl font-bold text-teal-700 capitalize">{metrics.frequency}</div>
-                    <div className="text-sm text-gray-600">Frequency</div>
-                  </div>
+                <div className="p-6">
+                  <ol className="list-decimal list-inside space-y-2">
+                    {references.map((ref, index) => (
+                      <li key={index} className="text-gray-700">{ref}</li>
+                    ))}
+                  </ol>
                 </div>
               </section>
             </div>
-            
+
             {/* Sidebar */}
             <div className="space-y-6">
               <div className="bg-white rounded-lg shadow-md p-6">
@@ -281,21 +263,37 @@ export default function ArticlePage() {
               </div>
 
               {articleData.manuscriptFile && (
-                <div className="bg-teal-50 rounded-lg shadow-md overflow-hidden">
-                  <div className="bg-gradient-to-r from-teal-600 to-teal-500 text-white p-4 -m-0 mb-4">
-                    <h3 className="text-lg font-semibold">Download</h3>
+                <div className="bg-white rounded-lg shadow-md overflow-hidden border border-teal-100">
+                  <div className="bg-gradient-to-r from-teal-600 to-teal-500 text-white p-4 flex items-center gap-3">
+                    <FileText className="h-5 w-5" />
+                    <h3 className="text-lg font-semibold">Download Article</h3>
                   </div>
-                  <div className="p-4 pt-0 text-center">
-                    <a 
-                      href={articleData.manuscriptFile} 
-                      download
-                      className="block w-full bg-teal-600 hover:bg-teal-700 text-white py-3 px-4 rounded-lg font-medium transition-colors"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Download PDF
-                    </a>
-                    <p className="text-xs text-gray-500 mt-2">Available under Creative Commons License</p>
+                  <div className="p-6">
+                    <div className="flex flex-col items-center text-center">
+                      <div className="bg-teal-50 p-4 rounded-full mb-4">
+                        <FileText className="h-8 w-8 text-teal-600" />
+                      </div>
+                      <h4 className="text-lg font-medium text-gray-800 mb-2">Full Text PDF</h4>
+                      <p className="text-sm text-gray-600 mb-4">Download the complete article in PDF format</p>
+                      <a
+                        href={articleData.manuscriptFile}
+                        download
+                        className="w-full flex items-center justify-center gap-2 bg-teal-600 hover:bg-teal-700 text-white py-3 px-6 rounded-lg font-medium transition-colors shadow-md hover:shadow-lg"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <FileText className="h-5 w-5" />
+                        Download Now
+                      </a>
+                      <p className="text-xs text-gray-500 mt-3 flex items-center">
+                        <span className="inline-flex items-center">
+                          <svg className="h-3 w-3 text-teal-500 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                          </svg>
+                          Available under Creative Commons License
+                        </span>
+                      </p>
+                    </div>
                   </div>
                 </div>
               )}

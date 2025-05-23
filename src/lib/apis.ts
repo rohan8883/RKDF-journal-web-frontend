@@ -112,7 +112,7 @@ export const rkdfApi = {
 
   // ════════════════════════════║  API OF GUEST AUTHOR ║═════════════════════════════════
   getAllGuestIssue: '/guest-issue/get-all-issues',
-  getAllGuestPublication: '/guest-article/get-all-articles',
+  getAllGuestPublication: '/guest-article/author-all-articles',
   getAllGuestPublicationById: '/guest-article/get-by-id-articles',
 
   // ════════════════════════════║  API OF OTP or VERIFY EMAIL ║═════════════════════════════════

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { useForm } from "react-hook-form";
+import { useForm, useFieldArray } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import {
@@ -9,6 +9,7 @@ import {
   FormProviders,
   RHFSelectField,
   RHFTextArea,
+  RHFSwitch,
 } from "@/components/forms";
 import EditDialogBox from "@/components/edit-dialog-box-w-full";
 import {
@@ -25,10 +26,14 @@ import {
   Upload,
   Trash,
   Archive,
+  UserPlus,
+  Users,
 } from "lucide-react";
 import KeywordTagInput from "./KeywordTagInput";
 import { useAuth } from "@/store/useAuth";
 import QuillField from "@/hooks/useQuillForm";
+
+ 
 
 // Dynamic schema based on user role
 const getSchema = (userRole: string) => {
@@ -39,8 +44,33 @@ const getSchema = (userRole: string) => {
       : yup.string().notRequired(),
     abstract: yup.string().required("Abstract is required"),
     keywords: yup.string(),
-    references: yup.string(),
+    references: yup.string().notRequired(),
     journalId: yup.string().required("Journal is required"),
+    hasContributors: yup.boolean(),
+    contributors: yup.array().of(
+      yup.object().shape({
+        fullName: yup.string().when('hasContributors', {
+          is: true,
+          then: (schema) => schema.required('Full name is required'),
+          otherwise: (schema) => schema.notRequired(),
+        }),
+        email: yup.string().when('hasContributors', {
+          is: true,
+          then: (schema) => schema.email('Invalid email').required('Email is required'),
+          otherwise: (schema) => schema.notRequired(),
+        }),
+        affiliation: yup.string().when('hasContributors', {
+          is: true,
+          then: (schema) => schema.required('Affiliation is required'),
+          otherwise: (schema) => schema.notRequired(),
+        }),
+        bioStatement: yup.string().when('hasContributors', {
+          is: true,
+          then: (schema) => schema.required('Bio statement is required'),
+          otherwise: (schema) => schema.notRequired(),
+        }),
+      })
+    ),
     manuscriptFile: yup.mixed()
       .test(
         "fileRequired",
@@ -140,9 +170,16 @@ export default function SubmissionForm({
       keywords: "",
       journalId: "",
       manuscriptFile: undefined,
+      hasContributors: false,
+      contributors: [],
       ...(user?.role !== 'Author' && { submittedBy: "" }),
     },
     resolver: yupResolver(schema),
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    control: methods.control,
+    name: "contributors",
   });
 
   const handleManuscriptFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -173,6 +210,15 @@ export default function SubmissionForm({
     setManuscriptFileName("");
   };
 
+  const addContributor = () => {
+    append({
+      fullName: "",
+      email: "",
+      affiliation: "",
+      bioStatement: ""
+    });
+  };
+
   const onSubmit = async (formData: FormData) => {
     try {
       const data = new FormData();
@@ -180,6 +226,7 @@ export default function SubmissionForm({
       // Append all text fields
       data.append("title", formData.title);
       data.append("abstract", formData.abstract);
+      data.append("references", String(formData.references));
 
       // Only include submittedBy if user is not Author
       if (user?.role !== 'Author' && formData?.submittedBy) {
@@ -196,6 +243,13 @@ export default function SubmissionForm({
       }
 
       data.append("journalId", formData.journalId);
+      
+      data.append("hasContributors", String(formData.hasContributors));
+
+      // Handle contributors if any
+      if (formData.hasContributors && formData.contributors) {
+        data.append("contributors", JSON.stringify(formData.contributors));
+      }
 
       // Handle manuscript file - only append if it's a new file
       if (formData.manuscriptFile && typeof formData.manuscriptFile !== 'string') {
@@ -251,6 +305,8 @@ export default function SubmissionForm({
         keywords: data?.data?.keywords?.join(", "),
         journalId: data?.data?.journalId?._id || data?.data?.journalId,
         manuscriptFile: data?.data?.manuscriptFile, // Keep existing file path
+        hasContributors: data?.data?.contributors?.length > 0,
+        contributors: data?.data?.contributors || [],
       };
 
       // Only include submittedBy if user is not Author
@@ -272,6 +328,8 @@ export default function SubmissionForm({
         keywords: "",
         journalId: "",
         manuscriptFile: undefined,
+        hasContributors: false,
+        contributors: [],
       };
 
       // Only include submittedBy if user is not Author
@@ -294,6 +352,8 @@ export default function SubmissionForm({
       toast.error(errorMessages.join(", "));
     }
   };
+
+  const hasContributors = methods.watch("hasContributors");
 
   return (
     <EditDialogBox
@@ -346,16 +406,6 @@ export default function SubmissionForm({
                     className="pr-2 pl-2"
                   />
                 </div>
-                {/* 
-                <div className="relative w-full">
-                  <RHFTextArea
-                    name="abstract"
-                    label="Abstract"
-                    placeholder="Provide a concise summary of your submission"
-                    rows={4}
-                    className="w-full border rounded-md p-1 shadow-sm"
-                  />
-                </div> */}
                 <div className="relative w-full">
                   <QuillField
                     name="abstract"
@@ -364,7 +414,6 @@ export default function SubmissionForm({
                     placeholder="Enter your abstract here..."
                   />
                 </div>
-
 
                 <div className="flex flex-col w-full">
                   <KeywordTagInput
@@ -375,6 +424,72 @@ export default function SubmissionForm({
                   />
                 </div>
               </div>
+            </div>
+
+            {/* Contributors Section */}
+            {/* Contributors Section */}
+            <div className="bg-white p-4 rounded-lg shadow-sm">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-lg font-medium text-gray-800 flex items-center">
+                  <Users className="h-5 w-5 mr-2 text-blue-600" />
+                  Contributors
+                </h3>
+                <RHFSwitch
+                  name="hasContributors"
+                  label="Has Contributors"
+                />
+              </div>
+
+              {hasContributors && (
+                <div className="space-y-4">
+                  {fields.map((field, index) => (
+                    <div key={field.id} className="border border-gray-200 rounded-lg p-4 bg-gray-50">
+                      <div className="flex justify-between items-center mb-2">
+                        <h4 className="font-medium text-gray-700">Contributor #{index + 1}</h4>
+                        <button
+                          type="button"
+                          onClick={() => remove(index)}
+                          className="text-red-500 hover:text-red-700 text-sm"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <RHFTextField
+                          name={`contributors.${index}.fullName`}
+                          label="Full Name"
+                          placeholder="Enter full name"
+                        />
+                        <RHFTextField
+                          name={`contributors.${index}.email`}
+                          label="Email"
+                          placeholder="Enter email"
+                          type="email"
+                        />
+                        <RHFTextField
+                          name={`contributors.${index}.affiliation`}
+                          label="Affiliation"
+                          placeholder="Enter institution/organization"
+                        />
+                        <RHFTextField
+                          name={`contributors.${index}.bioStatement`}
+                          label="Bio Statement"
+                          placeholder="Department and rank"
+                        />
+                      </div>
+                    </div>
+                  ))}
+
+                  <button
+                    type="button"
+                    onClick={addContributor}
+                    className="flex items-center justify-center w-full py-2 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors"
+                  >
+                    <UserPlus className="h-4 w-4 mr-2 text-blue-600" />
+                    Add Another Contributor
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Journal Selection */}
@@ -395,6 +510,7 @@ export default function SubmissionForm({
                 />
               </div>
             </div>
+
             {/* References */}
             <div className="relative w-full">
               <RHFTextArea
@@ -405,6 +521,7 @@ export default function SubmissionForm({
                 className="w-full border rounded-md p-1 shadow-sm"
               />
             </div>
+
             {/* Manuscript Upload Section */}
             <div className="bg-white p-4 rounded-lg shadow-sm">
               <h3 className="text-lg font-medium text-gray-800 mb-3 flex items-center">

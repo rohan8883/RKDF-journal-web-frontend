@@ -1,6 +1,7 @@
 import Page from '@/components/helmet-page'
 import SideContent from '../sideContent'
 import { AlertCircle, Check, BookOpen, Copyright, Send, LogIn } from 'lucide-react'
+import { Link } from 'react-router-dom'
 
 export default function Submissions() {
   return (
@@ -33,12 +34,15 @@ export default function Submissions() {
                   <p className="text-teal-700 font-medium text-lg mb-4">
                     Login or Register to make a submission through our online system
                   </p>
-                  <button className="bg-teal-600 hover:bg-teal-700 text-white font-medium py-2 px-4 rounded-md shadow-sm flex items-center gap-2">
-                    <span>Go to Submission Portal</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clipRule="evenodd" />
-                    </svg>
-                  </button>
+                  <Link to="/Journal/auth/registration">
+                    <button className="bg-teal-600 hover:bg-teal-700 text-white font-medium py-2 px-4 rounded-md shadow-sm flex items-center gap-2">
+                      <span>Go to Submission Portal</span>
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clipRule="evenodd" />
+                      </svg>
+                    </button>
+                  </Link>
+
                 </div>
               </section>
 
@@ -87,15 +91,15 @@ export default function Submissions() {
                     <p>
                       Prospective authors should note that only original and previously unpublished contributions that must not currently be under review by another journal or conference are solicited. All papers submitted to this Journal will undergo the peer review. Authors are cordially invited to submit papers to the upcoming edition.
                     </p>
-                    
+
                     <p>
                       The manuscript/paper can be submitted via email to <a href="mailto:publications@rkdfuniversity.org" className="text-teal-600 hover:text-teal-800 hover:underline">publications@rkdfuniversity.org</a>. The email must bear the subject line "<strong>IJHESM Paper Submission</strong>".
                     </p>
-                    
+
                     <p>
                       If you face problems with paper submission, please feel free to contact the Editor-in-Chief at <a href="mailto:vc@rkdfuniversity.org" className="text-teal-600 hover:text-teal-800 hover:underline">vc@rkdfuniversity.org</a>
                     </p>
-                    
+
                     <p>
                       Manuscripts submitted to this journal will be deemed as they have not been published and are not under consideration for publication elsewhere.
                     </p>
@@ -116,7 +120,7 @@ export default function Submissions() {
                 </div>
               </section>
             </div>
-            
+
             {/* Sidebar - Takes 1/3 on desktop */}
             <SideContent />
           </div>
