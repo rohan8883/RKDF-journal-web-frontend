@@ -109,10 +109,11 @@ export const rkdfApi = {
   updatePublication: '/article/update-articles',
   updatePublicationStatus: '/article/update-publication-status',
   deletePublication: '/article/delete-articles',
-  
+
   // ════════════════════════════║  API OF GUEST AUTHOR ║═════════════════════════════════
   getAllGuestIssue: '/guest-issue/get-all-issues',
   getAllGuestPublication: '/guest-article/get-all-articles',
+  getAllGuestPublicationById: '/guest-article/get-by-id-articles',
 
   // ════════════════════════════║  API OF OTP or VERIFY EMAIL ║═════════════════════════════════
   sendOtp: '/otp/send-otp',

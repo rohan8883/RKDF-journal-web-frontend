@@ -162,7 +162,7 @@ export default function ArchivePage() {
                             </div>
                             <div className="flex-1 min-w-0">
                               <h3 className="text-lg font-semibold text-gray-800 mb-1">
-                                <Link to={`/article/${article._id}`} className="hover:text-teal-600">
+                                <Link to={`/Journal/article-view/${article._id}`} className="hover:text-teal-600">
                                   {article.title}
                                 </Link>
                               </h3>
@@ -191,7 +191,7 @@ export default function ArchivePage() {
                             </div>
                             <div className="flex-shrink-0">
                               <Link
-                                to={`/article/${article._id}`}
+                                to={`/Journal/article-view/${article._id}`}
                                 className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-full shadow-sm text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
                               >
                                 View Article

@@ -1,0 +1,1 @@
+import{j as e}from"./index-CcP31-MS.js";import{P as t}from"./index-BuLA2Zcz.js";import"./router-GXfyPTrP.js";import"./axios-DmypytPv.js";function s(){return e.jsx(t,{title:"Announcement",children:e.jsx("div",{children:"News Page"})})}export{s as default};

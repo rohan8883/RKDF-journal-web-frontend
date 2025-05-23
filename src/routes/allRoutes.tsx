@@ -271,8 +271,8 @@ const routes: Route[] = [
       },
       {
         id: '3',
-        name: 'Archive',
-        path: 'archive-page',
+        name: 'Article View',
+        path: 'article-view/:id',
         element: <ArticlePages />
       },
       {
