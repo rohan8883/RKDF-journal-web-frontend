@@ -14,6 +14,14 @@ interface Author {
   affiliation: string;
 }
 
+interface Contributor {
+  _id: string;
+  fullName: string;
+  email: string;
+  affiliation: string;
+  bioStatement: string;
+}
+
 interface Journal {
   _id: string;
   title: string;
@@ -40,7 +48,9 @@ interface Issue {
 interface Submission {
   _id: string;
   submittedBy: Author | string;
-  // ... other submission fields
+  contributors: Contributor[];
+  hasContributors: boolean;
+  references: string;
 }
 
 interface ArticleData {
@@ -70,14 +80,6 @@ export default function ArticlePage() {
       enabled: !!id,
     },
   });
-
-  // Sample references data (replace with your actual data or API response)
-  const references = [
-    "Bag, A.K. (1979) Mathematics in ancient and medieval India, Chaukhambha Orientalia, Varanasi.",
-    "Balachandra Rao, S. (1994) Indian mathematics and astronomy, Jnana Deepa Publications, Bangalore.",
-    "Boyer, C.B. (1968) A history of mathematics, John Wiley & Sons, New York.",
-    "Datta, B. and Singh, A.N. (1962) History of Hindu mathematics, Asia Publishing House, Bombay."
-  ];
 
   if (isFetching) {
     return (
@@ -130,6 +132,10 @@ export default function ArticlePage() {
   };
 
   const authorInfo = getAuthorInfo();
+  const contributors = articleData.submissionId.contributors || [];
+  const references = articleData.submissionId.references
+    ? articleData.submissionId.references.split('\n').filter(ref => ref.trim() !== '')
+    : [];
 
   // Format dates
   const publicationDate = articleData.publicationDate
@@ -190,14 +196,45 @@ export default function ArticlePage() {
                   </div>
                 )}
 
-                {authorInfo && (
-                  <div className="flex items-start gap-4 mb-6 p-4 bg-gray-50 rounded-lg">
-                    <div className="bg-teal-100 p-3 rounded-full">
-                      <User className="h-5 w-5 text-teal-600" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-gray-800">{authorInfo.name}</h3>
-                      <p className="text-sm text-gray-600">{authorInfo.affiliation}</p>
+                {/* Author and Contributors Section */}
+                {(authorInfo || contributors.length > 0) && (
+                  <div className="mb-6">
+                    <h3 className="text-sm font-semibold text-gray-700 mb-2">Authors & Contributors:</h3>
+                    <div className="space-y-4">
+                      {/* Primary Author */}
+                      {authorInfo && (
+                        <div className="flex items-start gap-4 p-4 bg-gray-50 rounded-lg">
+                          <div className="bg-teal-100 p-3 rounded-full">
+                            <User className="h-5 w-5 text-teal-600" />
+                          </div>
+                          <div>
+                            <h4 className="font-semibold text-gray-800">{authorInfo.name} (Author)</h4>
+                            <p className="text-sm text-gray-600">{authorInfo.affiliation}</p>
+                          </div>
+                        </div>
+                      )}
+                      {/* Contributors */}
+                      {contributors.length > 0 && (
+                        <div className="space-y-4">
+                          {contributors.map((contributor, index) => (
+                            <div key={contributor._id} className="flex items-start gap-4 p-4 bg-gray-50 rounded-lg">
+                              <div className="bg-teal-100 p-3 rounded-full">
+                                <User className="h-5 w-5 text-teal-600" />
+                              </div>
+                              <div>
+                                <h4 className="font-semibold text-gray-800">{contributor.fullName} (Contributor)</h4>
+                                <p className="text-sm text-gray-600">{contributor.affiliation}</p>
+                                {/* {contributor.email && (
+                                  <p className="text-sm text-gray-600">Email: {contributor.email}</p>
+                                )}
+                                {contributor.bioStatement && (
+                                  <p className="text-sm text-gray-600">Bio: {contributor.bioStatement}</p>
+                                )} */}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}
@@ -219,19 +256,21 @@ export default function ArticlePage() {
               )}
 
               {/* References Section */}
-              <section className="bg-white rounded-lg shadow-md overflow-hidden">
-                <div className="bg-gradient-to-r from-teal-600 to-teal-500 text-white p-4 flex items-center gap-3">
-                  <FileText className="h-6 w-6" />
-                  <h2 className="text-xl font-semibold">References</h2>
-                </div>
-                <div className="p-6">
-                  <ol className="list-decimal list-inside space-y-2">
-                    {references.map((ref, index) => (
-                      <li key={index} className="text-gray-700">{ref}</li>
-                    ))}
-                  </ol>
-                </div>
-              </section>
+              {references.length > 0 && (
+                <section className="bg-white rounded-lg shadow-md overflow-hidden">
+                  <div className="bg-gradient-to-r from-teal-600 to-teal-500 text-white p-4 flex items-center gap-3">
+                    <FileText className="h-6 w-6" />
+                    <h2 className="text-xl font-semibold">References</h2>
+                  </div>
+                  <div className="p-6">
+                    <ol className="list-decimal list-inside space-y-2">
+                      {references.map((ref, index) => (
+                        <li key={index} className="text-gray-700">{ref}</li>
+                      ))}
+                    </ol>
+                  </div>
+                </section>
+              )}
             </div>
 
             {/* Sidebar */}
