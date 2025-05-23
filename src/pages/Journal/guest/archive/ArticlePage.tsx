@@ -216,7 +216,7 @@ export default function ArticlePage() {
                       {/* Contributors */}
                       {contributors.length > 0 && (
                         <div className="space-y-4">
-                          {contributors.map((contributor, index) => (
+                          {contributors.map((contributor) => (
                             <div key={contributor._id} className="flex items-start gap-4 p-4 bg-gray-50 rounded-lg">
                               <div className="bg-teal-100 p-3 rounded-full">
                                 <User className="h-5 w-5 text-teal-600" />
