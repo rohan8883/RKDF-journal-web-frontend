@@ -135,13 +135,13 @@ export default function EditProfile({
                       placeholder="Full Name"
                     />
                   </div>
-                  <div className="space-y-2">
+                  {/* <div className="space-y-2">
                     <RHFTextField
                       name="gymName"
                       inputValidation={['removeDoubleSpace']}
                       placeholder="GYM Name"
                     />
-                  </div>
+                  </div> */}
                   <div className="space-y-2">
                     <RHFTextField
                       type="number"

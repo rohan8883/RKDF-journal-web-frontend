@@ -60,7 +60,6 @@ const PublicationProcedure = lazyWithRetries(() => import('@/pages/Journal/guest
 
 // -------------------------------Admin--------------------------------
 const AdminHome = lazyWithRetries(() => import('@/pages/Journal/admin/home'));
-const CreateUser = lazyWithRetries(() => import('@/pages/Journal/admin/create-user'));
 const RoleMaster = lazyWithRetries(() => import('@/pages/Journal/admin/role'));
 const JournalsPage = lazyWithRetries(() => import('@/pages/Journal/admin/Journal-form'));
 const IssuePage = lazyWithRetries(() => import('@/pages/Journal/admin/issue'));
@@ -128,13 +127,7 @@ const routes: Route[] = [
         element: <AdminHome />,
         exact: true
       },
-      {
-        id: '2',
-        name: 'Home',
-        path: 'create-user',
-        element: <CreateUser />,
-        exact: true
-      },
+      
       {
         id: '3',
         name: 'Role',
