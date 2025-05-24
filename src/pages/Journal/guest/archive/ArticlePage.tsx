@@ -199,7 +199,7 @@ export default function ArticlePage() {
                 {/* Author and Contributors Section */}
                 {(authorInfo || contributors.length > 0) && (
                   <div className="mb-6">
-                    <h3 className="text-sm font-semibold text-gray-700 mb-2">Authors & Contributors:</h3>
+                    <h3 className="text-sm font-semibold text-gray-700 mb-2"> {(contributors.length > 0) ? "Authors": "Author"} :</h3>
                     <div className="space-y-4">
                       {/* Primary Author */}
                       {authorInfo && (
@@ -208,7 +208,7 @@ export default function ArticlePage() {
                             <User className="h-5 w-5 text-teal-600" />
                           </div>
                           <div>
-                            <h4 className="font-semibold text-gray-800">{authorInfo.name} (Author)</h4>
+                            <h4 className="font-semibold text-gray-800">{authorInfo.name}</h4>
                             <p className="text-sm text-gray-600">{authorInfo.affiliation}</p>
                           </div>
                         </div>
@@ -222,7 +222,7 @@ export default function ArticlePage() {
                                 <User className="h-5 w-5 text-teal-600" />
                               </div>
                               <div>
-                                <h4 className="font-semibold text-gray-800">{contributor.fullName} (Contributor)</h4>
+                                <h4 className="font-semibold text-gray-800">{contributor.fullName}</h4>
                                 <p className="text-sm text-gray-600">{contributor.affiliation}</p>
                                 {/* {contributor.email && (
                                   <p className="text-sm text-gray-600">Email: {contributor.email}</p>

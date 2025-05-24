@@ -27,21 +27,24 @@ import {
   Trash,
   Archive,
   UserPlus,
+  User,
   Users,
 } from "lucide-react";
 import KeywordTagInput from "./KeywordTagInput";
 import { useAuth } from "@/store/useAuth";
 import QuillField from "@/hooks/useQuillForm";
 
- 
+
 
 // Dynamic schema based on user role
 const getSchema = (userRole: string) => {
   const baseSchema = {
+    authorName: yup.string().required("Author Name is required"),
+    authorEmail: yup.string().required("Email is required"),
+    authorAffiliation: yup.string().required("Affiliation is required"),
+    authorBioStatement: yup.string().required("BIO Statement is required"),
     title: yup.string().required("Title is required"),
-    submittedBy: userRole !== 'Author'
-      ? yup.string().required("Author is required")
-      : yup.string().notRequired(),
+
     abstract: yup.string().required("Abstract is required"),
     keywords: yup.string(),
     references: yup.string().notRequired(),
@@ -101,13 +104,7 @@ const getSchema = (userRole: string) => {
       ),
   };
 
-  // Add submittedBy validation only for non-Author users
-  if (userRole !== 'Author') {
-    return yup.object().shape({
-      ...baseSchema,
-      submittedBy: yup.string().required("Author is required"),
-    });
-  }
+
 
   return yup.object().shape(baseSchema);
 };
@@ -155,15 +152,12 @@ export default function SubmissionForm({
     },
   });
 
-  const authorList = useApi<any>({
-    api: `${rkdfApi.getAvailableAuthors}?page=1&limit=100`,
-    options: {
-      enabled: true,
-    },
-  });
-
   const methods = useForm<FormData>({
     defaultValues: {
+      authorName: "",
+      authorEmail: "",
+      authorAffiliation: "",
+      authorBioStatement: "",
       title: "",
       abstract: "",
       references: "",
@@ -172,7 +166,6 @@ export default function SubmissionForm({
       manuscriptFile: undefined,
       hasContributors: false,
       contributors: [],
-      ...(user?.role !== 'Author' && { submittedBy: "" }),
     },
     resolver: yupResolver(schema),
   });
@@ -224,14 +217,14 @@ export default function SubmissionForm({
       const data = new FormData();
 
       // Append all text fields
+      data.append("authorName", formData.authorName);
+      data.append("authorEmail", formData.authorEmail);
+      data.append("authorAffiliation", formData.authorAffiliation);
+      data.append("authorBioStatement", formData.authorBioStatement);
       data.append("title", formData.title);
       data.append("abstract", formData.abstract);
       data.append("references", String(formData.references));
 
-      // Only include submittedBy if user is not Author
-      if (user?.role !== 'Author' && formData?.submittedBy) {
-        data.append("submittedBy", formData?.submittedBy);
-      }
 
       // Process keywords
       if (formData.keywords) {
@@ -243,7 +236,7 @@ export default function SubmissionForm({
       }
 
       data.append("journalId", formData.journalId);
-      
+
       data.append("hasContributors", String(formData.hasContributors));
 
       // Handle contributors if any
@@ -276,9 +269,9 @@ export default function SubmissionForm({
         const res = await postMutation.mutateAsync({
           api: rkdfApi.createSubmissions,
           data,
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
+          // headers: {
+          //   "Content-Type": "multipart/form-data",
+          // },
         });
         if (res.data?.success) {
           toast.success(res?.data?.message);
@@ -298,7 +291,11 @@ export default function SubmissionForm({
 
   useEffect(() => {
     if (edit && data) {
-      const initialValues: any = {
+     methods.reset({
+        authorName: data?.data?.authorName,
+        authorEmail: data?.data?.authorEmail,
+        authorAffiliation: data?.data?.authorAffiliation,
+        authorBioStatement: data?.data?.authorBioStatement,
         title: data?.data?.title,
         abstract: data?.data?.abstract,
         references: data?.data?.references,
@@ -307,21 +304,14 @@ export default function SubmissionForm({
         manuscriptFile: data?.data?.manuscriptFile, // Keep existing file path
         hasContributors: data?.data?.contributors?.length > 0,
         contributors: data?.data?.contributors || [],
-      };
-
-      // Only include submittedBy if user is not Author
-      if (user?.role !== 'Author') {
-        initialValues.submittedBy = data?.data?.submittedBy?._id || data?.data?.submittedBy;
-      }
-
-      methods.reset(initialValues);
+      });
 
       // If manuscript file exists in the data
       if (data?.data?.manuscriptFile) {
         setManuscriptFileName(data?.data?.manuscriptFile.split('/').pop() || "Current manuscript file");
       }
     } else {
-      const defaultValues: any = {
+      methods.reset({
         title: "",
         abstract: "",
         references: "",
@@ -330,14 +320,7 @@ export default function SubmissionForm({
         manuscriptFile: undefined,
         hasContributors: false,
         contributors: [],
-      };
-
-      // Only include submittedBy if user is not Author
-      if (user?.role !== 'Author') {
-        defaultValues.submittedBy = "";
-      }
-
-      methods.reset(defaultValues);
+      });
       setManuscriptFileName("");
     }
   }, [edit, data, methods.reset, user?.role]);
@@ -370,26 +353,47 @@ export default function SubmissionForm({
       >
         <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg">
           <div className="space-y-4 max-h-[75vh] overflow-y-auto pr-2">
-            {/* Author Selection - only show for non-Author users */}
-            {user?.role !== 'Author' && (
-              <div className="bg-white p-4 rounded-lg shadow-sm">
-                <h3 className="text-lg font-medium text-gray-800 mb-3 flex items-center">
-                  <BookOpen className="h-5 w-5 mr-2 text-blue-600" />
-                  Author Information
-                </h3>
-                <div className="space-y-4">
-                  <RHFSelectField
-                    name="submittedBy"
-                    label="Select Author"
-                    data={authorList?.data?.data?.docs?.map((item: any) => ({
-                      label: item.fullName,
-                      value: item._id,
-                    }))}
+            <div className="bg-white p-3 rounded-lg shadow-sm">
+              <h3 className="text-lg font-medium text-gray-800 mb-3 flex items-center">
+                <User className="h-5 w-5 mr-2 text-blue-600" />
+                Author Information
+              </h3>
+              <div className="grid grid-cols-2 grid-rows-2 gap-2 ">
+                <div className="w-full">
+                  <RHFTextField
+                    name="authorName"
+                    label="Author Name"
+                    placeholder="Enter your author name"
                     className="pr-2 pl-2"
                   />
                 </div>
-              </div>
-            )}
+                <div className="w-full">
+                  <RHFTextField
+                    name="authorEmail"
+                    label="Email"
+                    placeholder="Enter your email"
+                    className="pr-2 pl-2"
+                  />
+                </div>
+                <div className="w-full">
+                  <RHFTextField
+                    name="authorAffiliation"
+                    label="Affiliation"
+                    placeholder="Enter your affiliation"
+                    className="pr-2 pl-2"
+                  />
+                </div>
+                <div className="w-full">
+                  <RHFTextField
+                    name="authorBioStatement"
+                    label="Bio Statement"
+                    placeholder="Bio Statement (e.g., department and rank)"
+                    className="pr-2 pl-2"
+                  />
+                </div>
+              </div> 
+            </div>
+
 
             {/* Title Section */}
             <div className="bg-white p-3 rounded-lg shadow-sm">
@@ -426,7 +430,6 @@ export default function SubmissionForm({
               </div>
             </div>
 
-            {/* Contributors Section */}
             {/* Contributors Section */}
             <div className="bg-white p-4 rounded-lg shadow-sm">
               <div className="flex items-center justify-between mb-3">
